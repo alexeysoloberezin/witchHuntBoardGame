@@ -1,0 +1,25 @@
+.cardSafe{
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(26, 28, 35);
+    padding: 15px;
+    border-radius: 7px;
+}
+.cardBox{
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(26, 28, 35);
+    padding: 10px 15px;
+    border-radius: 7px;
+}
+.vs-input, .vs-select__input, .vs-select__options{
+    background: rgb(35, 35, 40) !important;
+    color: white;
+    width: 100%;
+}
+.vs-input:focus{
+    background: rgb(42, 42, 49);
+
+}
+
+.vs-button--border:focus{
+    background: transparent !important;
+}
