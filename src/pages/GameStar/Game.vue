@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
-<!--    {{ playersRoles }}-->
+    {{dayLog }}
     <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
     <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
       <div v-for="(card, i) in playersRoles" :key="card.name" class="cardBox mb-2 flex items-center justify-between relative"
@@ -42,7 +42,7 @@
             <vs-button
                 border
                 size="small"
-                @click="playersRoles[i].shield++;saveAll()"
+                @click="playersRoles[i].shield++;saveAll();"
             >
               <svg style="width: 18px;" fill="#d5d6d7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>lock-pattern</title><path d="M7,3A4,4 0 0,1 11,7C11,8.86 9.73,10.43 8,10.87V13.13C8.37,13.22 8.72,13.37 9.04,13.56L13.56,9.04C13.2,8.44 13,7.75 13,7A4,4 0 0,1 17,3A4,4 0 0,1 21,7A4,4 0 0,1 17,11C16.26,11 15.57,10.8 15,10.45L10.45,15C10.8,15.57 11,16.26 11,17A4,4 0 0,1 7,21A4,4 0 0,1 3,17C3,15.14 4.27,13.57 6,13.13V10.87C4.27,10.43 3,8.86 3,7A4,4 0 0,1 7,3M17,13A4,4 0 0,1 21,17A4,4 0 0,1 17,21A4,4 0 0,1 13,17A4,4 0 0,1 17,13M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15Z" /></svg>
             </vs-button>
@@ -52,7 +52,7 @@
             <vs-button
                 border
                 size="small"
-                @click="playersRoles[i].shield++;saveAll()"
+                @click="playersRoles[i].shield++;saveAll();"
             >
               <ShieldIcon >+</ShieldIcon>
             </vs-button>
@@ -60,7 +60,7 @@
                 v-if="playersRoles[i].shield !== 0"
                 border
                 size="small"
-                @click="playersRoles[i].shield--;saveAll()"
+                @click="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
             >
               <ShieldIcon >-</ShieldIcon>
             </vs-button>
@@ -71,7 +71,7 @@
                 danger
                 border
                 size="small"
-                @click="playersRoles[i].heart++;saveAll()"
+                @click="playersRoles[i].heart++;saveAll();"
             >
               <HearIcon >+</HearIcon>
             </vs-button>
@@ -80,7 +80,7 @@
                 danger
                 border
                 size="small"
-                @click="playersRoles[i].heart--;saveAll()"
+                @click="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
             >
               <HearIcon >-</HearIcon>
             </vs-button>
@@ -105,7 +105,6 @@
             {{ getNightPerson.text }}
           </p>
 
-
           <template v-if="getNightPerson.name === 'Азартный игрок'">
             <div v-if="!gamblerChooseClosed" class="flex items-center justify-center mt-2">
               <vs-button
@@ -118,6 +117,14 @@
               >
                 Нечетные
               </vs-button>
+            </div>
+          </template>
+
+          <template v-if="getNightPerson.name === 'Могильщик или ученик' && dayLog.length > 0">
+            <hr class="opacity-25 my-3"/>
+            <div class="text-center">Была:</div>
+            <div v-for="(item, i) in dayLog" :key="i + item.type" class="mb-2 text-center">
+              {{ item.type }} Игрока {{ item.player }}
             </div>
           </template>
 
@@ -146,7 +153,21 @@
             </vs-button>
           </div>
         </div>
+      </div>
+      <div class="nightPanel p-3" :key="log" :class="log ? 'active' : ''">
+        <div>
+          <div v-for="(item, i) in nightHistory" :key="i + item.type" class="mb-2 text-center">
+            {{ item.type }} Игрока {{ item.player }}
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <vs-button
+              @click="closeLog"
 
+          >
+            Закрыть
+          </vs-button>
+        </div>
       </div>
       <div style="height: 60px;left: 50%;transform: translateX(-50%);bottom: 10px" class="fixed z-50 w-screen h-16 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
         <div class="grid h-full max-w-lg grid-cols-5 mx-auto">
@@ -167,7 +188,9 @@
             <div class="tooltip-arrow" data-popper-arrow></div>
           </div>
           <div class="flex items-center justify-center">
-            <button @click="isNight = !isNight" data-tooltip-target="tooltip-new" type="button" class="inline-flex items-center outline-none justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
+            <button @click="isNight = true" data-tooltip-target="tooltip-new" type="button"
+                    :class="isNight ? 'bg-blue-600' : ''"
+                    class="inline-flex items-center outline-none justify-center w-10 h-10 font-medium  rounded-full  group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
               <svg xmlns="http://www.w3.org/2000/svg" width="23px" fill="#fff" viewBox="0 0 24 24"><title>weather-night</title><path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z" /></svg>
               <span class="sr-only">New item</span>
             </button>
@@ -209,6 +232,12 @@ import {getByNames} from "@/store/cards";
 import types from "@/js/types";
 import Timer from "@/components/Timer";
 
+
+/*
+* Кого пытались убить
+* Кто умер
+*
+* */
 export default {
   name: "GameComming",
   components: {Timer, Skeleton, ShieldIcon, HearIcon},
@@ -217,21 +246,30 @@ export default {
       playersRoles: {},
       panelAction: null,
       isNight: false,
+      log: false,
       cardTypes: types,
       nightVal: 1,
-
+      nightHistory: [],
+      dayLog: [],
 
       nightSteps: [
+        {
+          name: 'Судья или ученик',
+          text: `
+            Равное количество голосов на прошлом голосовании? Да -
+            Просыпается Судья. Хотите ли вы казнить кого-нибудь из прошлого голосования?
+          `
+        },
         {
           name: 'Азартный игрок',
           firstNight: true,
           text: `
-            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммуниет.
+            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммунитет.
             Чётным или нечетным.
           `
         },
         {
-          name: 'Могильщик',
+          name: 'Могильщик или ученик',
           text: `
             Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков.
           `
@@ -297,6 +335,18 @@ export default {
     },
   },
   methods: {
+    closeLog(){
+      this.log = false
+      this.nightHistory = []
+    },
+    handlerWithShieldOrHeart(index){
+      if(this.isNight){
+        this.nightHistory.push({
+          player: this.playersRoles[index].number,
+          type: 'Попытка убийства'
+        })
+      }
+    },
     gamblerHaveShield(choose){
       if(choose === 'четные'){
         return this.nightVal % 2 === 0;
@@ -331,6 +381,7 @@ export default {
       })
       this.isNight = false
       this.nightVal = ++this.nightVal
+      this.nightLog = true
       this.activeNightStep = 1
     },
     setPanelAction(action){
@@ -348,6 +399,19 @@ export default {
         }
 
         this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
+
+        if(this.isNight){
+          this.nightHistory.push({
+            player: this.playersRoles[indexPlayer].number,
+            type: 'Убийство'
+          })
+        }else{
+          this.dayLog.push({
+            player: this.playersRoles[indexPlayer].number,
+            type: 'Казнь'
+          })
+        }
+
       }else if(this.panelAction === 'fakeKill'){
         this.playersRoles[indexPlayer].fakeKill =  !this.playersRoles[indexPlayer].fakeKill
       }else if(this.panelAction === 'makeWitch'){
@@ -397,7 +461,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nightPanel{
   position: fixed;
   bottom: 80px;
