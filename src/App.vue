@@ -55,7 +55,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch("setState");
-    this.$toast.info("State has been reset");
   },
 };
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
-    {{dayLog }}
     <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
     <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
       <div v-for="(card, i) in playersRoles" :key="card.name" class="cardBox mb-2 flex items-center justify-between relative"
@@ -100,34 +99,41 @@
             <vs-input v-model.number="nightVal"  placeholder="Ночь" class="w-full "/>
           </div>
 
-          <h3 class="text-center text-xl">{{ getNightPerson.name }}</h3>
-          <p class="text-center mt-1 px-4">
-            {{ getNightPerson.text }}
-          </p>
+          <template v-if="nightVal !== 0">
+            <h3 class="text-center text-xl">{{ getNightPerson.name }}</h3>
+            <p class="text-center mt-1 px-4">
+              {{ getNightPerson.text }}
+            </p>
 
-          <template v-if="getNightPerson.name === 'Азартный игрок'">
-            <div v-if="!gamblerChooseClosed" class="flex items-center justify-center mt-2">
-              <vs-button
-                  @click="setGamblerChoose('четные')"
-              >
-                Четные ночи
-              </vs-button>
-              <vs-button
-                  @click="setGamblerChoose('нечетные')"
-              >
-                Нечетные
-              </vs-button>
-            </div>
+            <template v-if="getNightPerson.name === 'Могильщик или ученик' && dayLog.length > 0">
+              <hr class="opacity-25 my-3"/>
+              <div class="text-center">Была:</div>
+              <div v-for="(item, i) in dayLog" :key="i + item.type" class="mb-2 text-center">
+                {{ item.type }} Игрока {{ item.player }}
+              </div>
+            </template>
           </template>
+          <template v-else>
+            <h3 class="text-center text-xl">{{ getNightWelcomePerson.name }}</h3>
+            <p class="text-center mt-1 px-4">
+              {{ getNightWelcomePerson.text }}
+            </p>
 
-          <template v-if="getNightPerson.name === 'Могильщик или ученик' && dayLog.length > 0">
-            <hr class="opacity-25 my-3"/>
-            <div class="text-center">Была:</div>
-            <div v-for="(item, i) in dayLog" :key="i + item.type" class="mb-2 text-center">
-              {{ item.type }} Игрока {{ item.player }}
-            </div>
+            <template v-if="getNightWelcomePerson.name === 'Азартный игрок'">
+              <div v-if="!gamblerChooseClosed" class="flex items-center justify-center mt-2">
+                <vs-button
+                    @click="setGamblerChoose('четные')"
+                >
+                  Четные ночи
+                </vs-button>
+                <vs-button
+                    @click="setGamblerChoose('нечетные')"
+                >
+                  Нечетные
+                </vs-button>
+              </div>
+            </template>
           </template>
-
 
           <div class="flex items-center justify-center mt-2">
             <vs-button
@@ -138,7 +144,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
             </vs-button>
             <vs-button
-                v-if="activeNightStep !== nightSteps.length - 1"
+                v-if="activeNightStep !== nightStepsWelcome.length - 1"
                 size="large"
                 @click="activeNightStep++"
             >
@@ -146,12 +152,13 @@
             </vs-button>
 
             <vs-button
-                v-if="activeNightStep === nightSteps.length - 1"
+                v-if="activeNightStep === nightStepsWelcome.length - 1"
                 @click="handleCloseNight"
             >
               Закончить ночь
             </vs-button>
           </div>
+
         </div>
       </div>
       <div class="nightPanel p-3" :key="log" :class="log ? 'active' : ''">
@@ -248,24 +255,61 @@ export default {
       isNight: false,
       log: false,
       cardTypes: types,
-      nightVal: 1,
+      nightVal: 0,
       nightHistory: [],
       dayLog: [],
 
+      nightStepsWelcome: [
+        {
+          name: 'Ведьмы',
+          text: `
+            Знакомятся. Отмечаем кто witcher.
+          `
+        },
+        {
+          name: 'Азартный игрок',
+          text: `
+            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммунитет.
+            Чётным или нечетным.
+          `
+        },
+        {
+          name: 'Бомбардировщик',
+          text: `
+            Выбирает кому дать бомбу.
+          `
+        },
+        {
+          name: 'Оракул',
+          text: `
+            Узнает личность случайного мирного.
+          `
+        },
+        {
+          name: 'Ученик',
+          text: `
+            Выбирает могильщик или судья. Нужно показать кто сидит на выбранной роле.
+          `
+        },
+        {
+          name: 'Послушник',
+          text: `
+            Узнает кто священник
+          `
+        },
+        {
+          name: 'Сторож',
+          text: `
+            Узнает личность случайного мирного который не просыпался.
+          `
+        },
+      ],
       nightSteps: [
         {
           name: 'Судья или ученик',
           text: `
             Равное количество голосов на прошлом голосовании? Да -
             Просыпается Судья. Хотите ли вы казнить кого-нибудь из прошлого голосования?
-          `
-        },
-        {
-          name: 'Азартный игрок',
-          firstNight: true,
-          text: `
-            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммунитет.
-            Чётным или нечетным.
           `
         },
         {
@@ -295,13 +339,14 @@ export default {
         {
           name: 'Священник',
           text: `
-            Просыпаются Священник и делает свою проверку.(на ведьму)
+            Просыпаются Священник и делает свою проверку.(на ведьму).
+            Не забудь оведомить фанатика если его преверят. И дать доп жизнь
           `
         },
         {
           name: 'Инквизитор',
           text: `
-            Просыпаются Священник и делает свою проверку. (Информация, Атака...)
+            Просыпаются Инквизитор и делает свою проверку по типу. (Информация, Атака...)
           `
         },
         {
@@ -317,13 +362,7 @@ export default {
             Если предыдущей ночью выживал человек. Просыпается охотник. И убивает цель. Которая выжела.
           `
         },
-        {
-          name: 'Сторож',
-          firstNight: true,
-          text: `
-            Узнает личность случайного мирного который не просыпался.
-          `
-        },
+
       ],
       activeNightStep: 0,
       gamblerChooseClosed: false,
@@ -332,6 +371,9 @@ export default {
   computed: {
     getNightPerson(){
       return this.nightSteps[this.activeNightStep]
+    },
+    getNightWelcomePerson(){
+      return this.nightStepsWelcome[this.activeNightStep]
     },
   },
   methods: {
@@ -381,7 +423,7 @@ export default {
       })
       this.isNight = false
       this.nightVal = ++this.nightVal
-      this.nightLog = true
+      this.log = true
       this.activeNightStep = 1
     },
     setPanelAction(action){
@@ -413,6 +455,7 @@ export default {
         }
 
       }else if(this.panelAction === 'fakeKill'){
+        this.handlerWithShieldOrHeart(indexPlayer)
         this.playersRoles[indexPlayer].fakeKill =  !this.playersRoles[indexPlayer].fakeKill
       }else if(this.panelAction === 'makeWitch'){
         this.playersRoles[indexPlayer].isGood =  !this.playersRoles[indexPlayer].isGood
