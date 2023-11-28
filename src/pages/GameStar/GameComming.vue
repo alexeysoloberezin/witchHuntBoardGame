@@ -67,6 +67,8 @@ export default {
       const errorList = Array.from(errorSet);
 
       this.errorList = errorList;
+
+      this.save()
     },
   },
   mounted() {

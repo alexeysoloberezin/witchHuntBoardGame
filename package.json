@@ -16,6 +16,7 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-i18n": "^8.22.2",
+    "vue-radial-progress": "^0.3.2",
     "vue-router": "^3.1.5",
     "vue-toast-notification": "^0.6.0",
     "vue2-transitions": "^0.3.0",
