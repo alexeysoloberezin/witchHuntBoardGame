@@ -2,7 +2,7 @@
   <div class="w-full bg-gray-200 dark:bg-gray-900 overflow-y-auto pb-10 flex flex-col pl-0 lg:pl-64 min-h-screen text-white pt-6">
     <h1 class="text-2xl text-center">PDF правила</h1>
     <div class="pdfBox">
-      <a href="../../public/doc.pdf" class="btn-pdf" download>
+      <a href="./doc.pdf" class="btn-pdf" download>
         Скачать
       </a>
       <router-link to="/main/home" class="btn-pdf-back">
@@ -576,8 +576,10 @@
   </div>
 </template>
 
-<script setup>
-
+<script >
+export default {
+  name: "DownloadPdf"
+}
 </script>
 
 <style scoped>
