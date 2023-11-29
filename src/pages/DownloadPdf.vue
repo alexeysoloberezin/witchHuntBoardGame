@@ -5,6 +5,21 @@
       <a href="./doc.pdf" class="btn-pdf" download>
         Скачать
       </a>
+      <a href="../doc.pdf" class="btn-pdf" download>
+        Скачать
+      </a>
+      <a href="./assets/doc.pdf" class="btn-pdf" download>
+        Скачать
+      </a>
+      <a href="../assets/doc.pdf" class="btn-pdf" download>
+        Скачать /assets/doc.pdf
+      </a>
+      <a href="./src/assets/doc.pdf" class="btn-pdf" download>
+        Скачать /src/assets/doc.pdf
+      </a>
+      <a href="./public/doc.pdf" class="btn-pdf" download>
+        Скачать /public/doc.pdf
+      </a>
       <router-link to="/main/home" class="btn-pdf-back">
         На главную
       </router-link>
