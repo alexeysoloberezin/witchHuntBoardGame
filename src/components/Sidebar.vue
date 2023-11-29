@@ -67,7 +67,7 @@
     <div  id="main-mobal-nav" class="">
       <div style="height: 60px;left: 50%;transform: translateX(-50%);bottom: 10px"
            class="fixed z-50 w-screen h-18 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
-        <div class="grid h-full max-w-lg grid-cols-3 mx-auto">
+        <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
           <router-link to="/main/home/" class="inline-flex outline-none flex-col items-center justify-center px-5 rounded-s-full  group">
               <svg style="width: 30px;"  class="mr-2" xmlns="http://www.w3.org/2000/svg"  fill="#d5d6d7"
                    viewBox="0 0 24 24"><title>cards-outline</title>
@@ -78,9 +78,13 @@
           </router-link>
 
           <router-link to="/GameStart"  class="inline-flex flex-col items-center outline-none justify-center px-5  group">
-              <svg style="width: 35px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>gamepad-variant-outline</title><path d="M6,9H8V11H10V13H8V15H6V13H4V11H6V9M18.5,9A1.5,1.5 0 0,1 20,10.5A1.5,1.5 0 0,1 18.5,12A1.5,1.5 0 0,1 17,10.5A1.5,1.5 0 0,1 18.5,9M15.5,12A1.5,1.5 0 0,1 17,13.5A1.5,1.5 0 0,1 15.5,15A1.5,1.5 0 0,1 14,13.5A1.5,1.5 0 0,1 15.5,12M17,5A7,7 0 0,1 24,12A7,7 0 0,1 17,19C15.04,19 13.27,18.2 12,16.9C10.73,18.2 8.96,19 7,19A7,7 0 0,1 0,12A7,7 0 0,1 7,5H17M7,7A5,5 0 0,0 2,12A5,5 0 0,0 7,17C8.64,17 10.09,16.21 11,15H13C13.91,16.21 15.36,17 17,17A5,5 0 0,0 22,12A5,5 0 0,0 17,7H7Z" /></svg>
+              <svg style="width: 32px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>gamepad-variant-outline</title><path d="M6,9H8V11H10V13H8V15H6V13H4V11H6V9M18.5,9A1.5,1.5 0 0,1 20,10.5A1.5,1.5 0 0,1 18.5,12A1.5,1.5 0 0,1 17,10.5A1.5,1.5 0 0,1 18.5,9M15.5,12A1.5,1.5 0 0,1 17,13.5A1.5,1.5 0 0,1 15.5,15A1.5,1.5 0 0,1 14,13.5A1.5,1.5 0 0,1 15.5,12M17,5A7,7 0 0,1 24,12A7,7 0 0,1 17,19C15.04,19 13.27,18.2 12,16.9C10.73,18.2 8.96,19 7,19A7,7 0 0,1 0,12A7,7 0 0,1 7,5H17M7,7A5,5 0 0,0 2,12A5,5 0 0,0 7,17C8.64,17 10.09,16.21 11,15H13C13.91,16.21 15.36,17 17,17A5,5 0 0,0 22,12A5,5 0 0,0 17,7H7Z" /></svg>
               <div class="" style="font-size: 11px" >Начать игру</div>
+          </router-link>
 
+          <router-link to="/pdf"   class="inline-flex opacity-50 flex-col items-center outline-none justify-center px-5  group">
+            <svg style="width: 30px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-pdf-box</title><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9.5 11.5C9.5 12.3 8.8 13 8 13H7V15H5.5V9H8C8.8 9 9.5 9.7 9.5 10.5V11.5M14.5 13.5C14.5 14.3 13.8 15 13 15H10.5V9H13C13.8 9 14.5 9.7 14.5 10.5V13.5M18.5 10.5H17V11.5H18.5V13H17V15H15.5V9H18.5V10.5M12 10.5H13V13.5H12V10.5M7 10.5H8V11.5H7V10.5Z" /></svg>
+            <div class="" style="font-size: 11px" >Правила PDF</div>
           </router-link>
 
           <router-link to="/Game" :style="{pointerEvents: haveActiveGame ? '' : 'none', opacity: haveActiveGame ? '.5' : '.15'}"  class="inline-flex opacity-50 flex-col items-center outline-none justify-center px-5  group">
