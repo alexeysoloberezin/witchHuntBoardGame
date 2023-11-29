@@ -8,8 +8,41 @@
     border: 1px solid rgba(255, 255, 255, 0.13);
     background: rgba(26, 28, 35);
     padding: 10px 15px;
+    position: relative;
     border-radius: 7px;
+    z-index: 10;
+    transition: transform 0.08s linear;
 }
+.cardBox-movieAction{
+    position: absolute;
+    top: 0;
+    display: flex;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    height: 100%;
+}
+.cardBox-movieAction-l, .cardBox-movieAction-r{
+    width: 50vw;
+    height: calc(100% - 20px);
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 10px;
+    background: rgb(38, 36, 36);
+}
+.cardBox-movieAction-r{
+    align-items: flex-end;
+}
+.cardBox-movieAction-r{
+
+}
+.cardBox-movieAction-l{
+
+}
+
 .vs-input, .vs-select__input, .vs-select__options{
     background: rgb(35, 35, 40) !important;
     color: white;
@@ -22,4 +55,9 @@
 
 .vs-button--border:focus{
     background: transparent !important;
+}
+
+.v-toast__item--success{
+    border: 1px solid rgb(70,201,58) !important;
+    background: #121317 !important;
 }

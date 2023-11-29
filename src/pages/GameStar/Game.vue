@@ -1,104 +1,23 @@
 <template>
-  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
+  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900 overflow-x-hidden" >
     <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
     <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
-      <div v-for="(card, i) in playersRoles" :key="card.name"
-           class="cardBox mb-2 flex items-center justify-between relative"
-           :style="{
-              opacity: card.killed ? '.2' : '1',
-              border: card.isGood ? '' : '2px dashed rgba(255,71,87, .45)',
-              backgroundColor: card.isGood ? '' : 'rgba(255,71,87, .12)'
-            }"
-      >
-        <div class="text-md">
-
-          <div class="flex" style="padding-left: 1px">
-            <HearIcon v-for="heart in card.heart" :key="card.name + 'HEART' + heart" class="mb-1"/>
-          </div>
-          <div class="flex">
-            <ShieldIcon v-for="shield in card.shield" :key="card.name + 'shield' + shield" class="mb-1"/>
-
-            <div v-if="card.name === 'Азартный игрок'" class="flex items-center text-sm">
-              <ShieldIcon v-if="isNight && gamblerHaveShield(card.gamblerChoose)" class="mb-1 mr-1"/>
-              <div :style="{color: isNight && gamblerHaveShield(card.gamblerChoose) ? 'rgb(25,91,255)' : 'gray'}">
-                {{ card.gamblerChoose }}
-              </div>
-            </div>
-          </div>
-          <div v-if="card.fakeKill" style="color: rgb(25,91,255)" class="flex items-center ml-1">
-            Фейково убит
-            <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill="rgb(25,91,255)" viewBox="0 0 24 24"><title>
-              asterisk</title>
-              <path
-                  d="M21 13H14.4L19.1 17.7L17.7 19.1L13 14.4V21H11V14.3L6.3 19L4.9 17.6L9.4 13H3V11H9.6L4.9 6.3L6.3 4.9L11 9.6V3H13V9.4L17.6 4.8L19 6.3L14.3 11H21V13Z"/>
-            </svg>
-          </div>
-
-          <div class="ml-1">
-            <span class="opacity-75" :style="{color: card.killed ? 'rgb(255,71,87)' : ''}">Игрок {{
-                card.number
-              }}</span>:
-            <div :style="{color: card.killed ? 'rgb(255,71,87)' : 'rgb(25,91,255)'}">{{ card.name }}</div>
-            <div class="text-sm" :style="{color: card.killed ? 'rgb(255,71,87)' : ''} ">Тип карты:
-              {{ cardTypes[card.type] }}
-            </div>
-          </div>
-
-        </div>
-        <div class="flex-shrink-0 flex-grow-1 flex items-center "
-             :style="{pointerEvents: card.killed ? 'none' : '', opacity: card.killed ? '.5' : '1'}">
-          <div v-if="card.chain">
-            <vs-button
-                border
-                size="small"
-                @click="playersRoles[i].shield++;saveAll();"
-            >
-              <svg style="width: 18px;" fill="#d5d6d7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>
-                lock-pattern</title>
-                <path
-                    d="M7,3A4,4 0 0,1 11,7C11,8.86 9.73,10.43 8,10.87V13.13C8.37,13.22 8.72,13.37 9.04,13.56L13.56,9.04C13.2,8.44 13,7.75 13,7A4,4 0 0,1 17,3A4,4 0 0,1 21,7A4,4 0 0,1 17,11C16.26,11 15.57,10.8 15,10.45L10.45,15C10.8,15.57 11,16.26 11,17A4,4 0 0,1 7,21A4,4 0 0,1 3,17C3,15.14 4.27,13.57 6,13.13V10.87C4.27,10.43 3,8.86 3,7A4,4 0 0,1 7,3M17,13A4,4 0 0,1 21,17A4,4 0 0,1 17,21A4,4 0 0,1 13,17A4,4 0 0,1 17,13M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15Z"/>
-              </svg>
-            </vs-button>
-          </div>
-          <div class="ml-2 opacity-75 flex flex-col"
-          >
-            <vs-button
-                border
-                @click="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
-            >
-              <ShieldIcon>+</ShieldIcon>
-            </vs-button>
-            <vs-button
-                v-if="playersRoles[i].shield !== 0"
-                border
-                @click="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
-            >
-              <ShieldIcon>-</ShieldIcon>
-            </vs-button>
-          </div>
-          <div class="ml-2 opacity-75 flex flex-col"
-          >
-            <vs-button
-                danger
-                border
-                @click="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
-            >
-              <HearIcon>+</HearIcon>
-            </vs-button>
-            <vs-button
-                v-if="playersRoles[i].heart > 1"
-                danger
-                border
-                @click="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
-            >
-              <HearIcon>-</HearIcon>
-            </vs-button>
-          </div>
-        </div>
-        <div v-if="panelAction" class="absolute top-0 left-0 h-full w-full" @click="action(i)">
-          <Skeleton/>
-        </div>
-      </div>
+      <CardPlayer
+          v-for="(card, i) in playersRoles"
+          :key="card.name"
+          :card="card"
+          :panelAction="panelAction"
+          :isNight="isNight"
+          :gamblerHaveShield="isNight && gamblerHaveShield(card.gamblerChoose)"
+          :cardTypes="cardTypes"
+          :shields="playersRoles[i].shield"
+          :hearts="playersRoles[i].heart"
+          @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
+          @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
+          @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
+          @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
+          @update:clickOnSkeleton="action(i)"
+      />
     </div>
 
     <div class="mobPanel">
@@ -280,19 +199,11 @@
 </template>
 
 <script>
-import HearIcon from "@/components/HearIcon";
-import ShieldIcon from "@/components/ShieldIcon";
-import Skeleton from "@/components/Skeleton";
 import {getByNames} from "@/store/cards";
 import types from "@/js/types";
 import Timer from "@/components/Timer";
+import CardPlayer from "@/components/CardPlayer";
 
-
-/*
-* Кого пытались убить
-* Кто умер
-*
-* */
 const nightStepsWelcome = [
   {
     name: 'Ведьмы',
@@ -417,7 +328,7 @@ const nightSteps = [
 
 export default {
   name: "GameComming",
-  components: {Timer, Skeleton, ShieldIcon, HearIcon},
+  components: {CardPlayer, Timer},
   data() {
     return {
       playersRoles: {},
@@ -479,7 +390,6 @@ export default {
       }
 
       return false
-
     },
     setGamblerChoose(choose) {
       this.playersRoles = this.playersRoles.map(el => {

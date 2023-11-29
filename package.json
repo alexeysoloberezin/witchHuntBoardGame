@@ -19,6 +19,7 @@
     "vue-radial-progress": "^0.3.2",
     "vue-router": "^3.1.5",
     "vue-toast-notification": "^0.6.0",
+    "vue2-touch-events": "^3.2.3",
     "vue2-transitions": "^0.3.0",
     "vuesax": "^4.0.1-alpha.25",
     "vuex": "^3.1.2"

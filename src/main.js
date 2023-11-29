@@ -17,7 +17,26 @@ import Toast from 'vue-toast-notification';
 
 import 'vue-toast-notification/dist/theme-sugar.css';
 
-Vue.use(Toast);
+import Vue2TouchEvents from 'vue2-touch-events'
+
+Vue.use(Vue2TouchEvents, {
+    disableClick: false,
+    touchClass: 'touch-active',
+    tapTolerance: 10,
+    touchHoldTolerance: 400,
+    swipeTolerance: 30,
+    longTapTimeInterval: 400,
+    namespace: 'touch'
+})
+Vue.use(Toast, {
+    position: 'top-right',
+    duration: 1500,
+    className: ['my-toast'], // добавьте класс стилей, который вы определите в своем CSS
+    styles: {
+        color: 'white', // цвет текста
+        backgroundColor: 'rgba(255, 71, 87, 0.8)', // цвет фона
+    },
+});
 Vue.config.productionTip = false;
 
 Vue.use(Vuesax, {
