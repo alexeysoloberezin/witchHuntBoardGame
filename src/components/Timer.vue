@@ -122,7 +122,7 @@
           <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
       </div>
-      <button @click="open = !open" type="button" data-dial-toggle="speed-dial-menu-default"
+      <button @click="open = !open;loadVotedList()" type="button" data-dial-toggle="speed-dial-menu-default"
               aria-controls="speed-dial-menu-default" aria-expanded="false"
               style="width: 50px;height: 50px;"
               class="flex items-center justify-center text-white bg-blue-700 rounded-full mb-2  hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
@@ -139,6 +139,7 @@
 </template>
 <script>
 import RadialProgressBar from 'vue-radial-progress'
+import resetGame from '../js/utils'
 
 export default {
   name: 'Timer',
@@ -200,11 +201,7 @@ export default {
     leaveGame(){
       const userConfirmed = confirm("Вы уверены что хотите закрыть игру и удалить историю?");
       if (userConfirmed) {
-        localStorage.removeItem('playersRoles')
-        localStorage.removeItem('gameRoles')
-        localStorage.removeItem('saveGame')
-        localStorage.removeItem('logList')
-        localStorage.removeItem('saveGame_all')
+        resetGame()
 
         this.$router.push('/GameStart')
       }

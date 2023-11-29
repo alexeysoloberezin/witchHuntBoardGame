@@ -1,6 +1,7 @@
 <template>
   <div class="leading-normal tracking-normal" id="main-body">
     <div class="flex flex-wrap text-gray-500 dark:text-gray-400">
+
       <Sidebar />
 
       <div

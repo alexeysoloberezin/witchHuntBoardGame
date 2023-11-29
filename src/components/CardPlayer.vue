@@ -32,11 +32,18 @@
                 d="M21 13H14.4L19.1 17.7L17.7 19.1L13 14.4V21H11V14.3L6.3 19L4.9 17.6L9.4 13H3V11H9.6L4.9 6.3L6.3 4.9L11 9.6V3H13V9.4L17.6 4.8L19 6.3L14.3 11H21V13Z"/>
           </svg>
         </div>
-
         <div class="ml-1">
-            <span class="opacity-75" :style="{color: card.killed ? 'rgb(255,71,87)' : ''}">Игрок {{
-                card.number
-              }}</span>:
+            <div class="flex items-center">
+              <span class="opacity-75 flex" :style="{color: card.killed ? 'rgb(255,71,87)' : ''}">
+              Игрок {{
+                  card.number
+                }}:</span>
+              <div class="flex items-center">
+            <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
+            <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path d="M10 3H14V14H10V3M10 21V17H14V21H10Z" /></svg>
+          </span>
+              </div>
+            </div>
           <div :style="{color: card.killed ? 'rgb(255,71,87)' : 'rgb(25,91,255)'}">{{ card.name }}</div>
           <div class="text-sm" :style="{color: card.killed ? 'rgb(255,71,87)' : ''} ">Тип карты:
             {{ cardTypes[card.type] }}
@@ -168,6 +175,16 @@ export default {
         }else{
           this.$toast.success('Поддержано')
         }
+      }else if(position < -85){
+        console.log('position', position)
+        this.$emit('update:foll', this.card.number)
+        // let saveGame = localStorage.getItem('saveGame')
+        // if(saveGame){
+        //   saveGame = JSON.parse(saveGame)
+        //   saveGame[this.card.number].foll = saveGame[this.card.number].foll + 1
+        //
+        //   saveGame
+        // }
       }
 
       this.touchMove = {

@@ -1,5 +1,10 @@
 <template>
   <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
+    <router-link to="/main/home/" class="mb-1">
+      <vs-button >
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </vs-button>
+    </router-link>
     <div class="mb-5">
       <div class="text-sm opacity-50 mb-1">Кол. игроков</div>
       <vs-input v-model.number="players" placeholder="Кол. игроков" class="w-full"/>
@@ -15,13 +20,10 @@
       </div>
     </div>
     <hr class="my-2 opacity-25"/>
-    <div class="flex items-center gap-4">
+    <div class="flex  items-center gap-4">
         <vs-button :active-disabled="roles.length !== players" @click="start">
             Начать игру
         </vs-button>
-      <vs-button @click="resetPrevGame">
-          Сбросить предыдущую игру
-      </vs-button>
       <div class="text-sm opacity-50">
         Ролей: {{ roles.length }}
       </div>
@@ -29,11 +31,15 @@
         Игроков: {{ players }}
       </div>
     </div>
+    <vs-button @click="resetPrevGame">
+      Сбросить предыдущую игру
+    </vs-button>
   </div>
 </template>
 
 <script >
 import cards from "@/store/cards";
+import resetGame from "@/js/utils";
 
 const defRoles = [
   "Священник",
@@ -68,11 +74,8 @@ export default {
     resetPrevGame(){
       const userConfirmed = confirm("Вы уверены?");
       if (userConfirmed) {
-        localStorage.removeItem('playersRoles')
-        localStorage.removeItem('gameRoles')
-        localStorage.removeItem('saveGame')
-        localStorage.removeItem('saveGame_all')
-        localStorage.removeItem('logList')
+        resetGame()
+
         this.roles = defRoles
         this.players = 10
       }

@@ -1,11 +1,17 @@
 <template>
   <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
+    <router-link to="/GameStart" class="mb-1">
+      <vs-button >
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </vs-button>
+    </router-link>
+
     <div v-if="Array.isArray(roles) && roles.length > 5" :key="JSON.stringify(playersRoles)">
       <div v-for="(card, i) in getCards" :key="card.id" class="cardBox mb-2">
         <div>
           Игрок: {{ i + 1 }}
         </div>
-        <select v-model="playersRoles[i + 1]" @change="checkErrors" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg h-[40px] p-2 mt-2 block focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <select v-model="playersRoles[i + 1]" @change="checkErrors" style="height: 40px;min-height: 40px;" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg h-[40px] p-2 mt-2 block focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <option v-for="role in roles" :label="role" :key="role" :value="role">{{ role }}</option>
         </select>
         <div v-if="errorList.includes(playersRoles[i + 1])" class="text-sm text-red-700 ml-2 mt-2">
@@ -23,6 +29,7 @@
         </router-link>
       </vs-button>
     </div>
+    <br><br><br><br><br><br><br><br><br><br>
     <br><br><br><br><br><br><br><br><br><br>
   </div>
 </template>

@@ -17,7 +17,13 @@
           @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
           @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
           @update:clickOnSkeleton="action(i)"
+          @update:foll="makeFoll"
       />
+    </div>
+    <div v-else>
+      <vs-button @click="handlerResetGame">
+        Сбросить игру
+      </vs-button>
     </div>
 
     <div class="mobPanel">
@@ -203,6 +209,7 @@ import {getByNames} from "@/store/cards";
 import types from "@/js/types";
 import Timer from "@/components/Timer";
 import CardPlayer from "@/components/CardPlayer";
+import resetGame from "@/js/utils";
 
 const nightStepsWelcome = [
   {
@@ -355,6 +362,22 @@ export default {
     },
   },
   methods: {
+    makeFoll(index){
+      console.log('foll', index)
+      const find = this.playersRoles.find(player => player.number === index)
+
+      if(find.foll >= 4){
+        find.foll = 0
+      }else{
+        find.foll = find.foll + 1
+        this.$toast.success('Фол Игроку: ' +  index + `<br/> У вас ${find.foll} фола`)
+      }
+
+      this.saveAll()
+    },
+    handlerResetGame() {
+      resetGame()
+    },
     setInGlobalLog(message){
       let res =  localStorage.getItem('logList' )
       if(res){
@@ -510,6 +533,7 @@ export default {
             name: playersRoles[number],
             type: card[0].type,
             heart: card[0].id === 8 ? 2 : 1,
+            foll: 0,
             isGood: true,
             gamblerChoose: '',
             fakeKill: false,
@@ -555,6 +579,10 @@ export default {
     }
 
     this.loadData()
+
+    setTimeout(() => {
+      this.saveAll()
+    }, 2000)
   },
 }
 </script>
