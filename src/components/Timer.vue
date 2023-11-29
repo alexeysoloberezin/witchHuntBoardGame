@@ -5,6 +5,13 @@
       <div class="bg-blue-600 h-2 rounded-full" :style="{width: value + '%', transition: 'width 0.5s'}"></div>
     </div>
 
+    <div v-if="logListShow" class="fixed logList bg-gray-800 flex items-center justify-center rounded"
+         style="top: 0;left: 0;width: 100vw;height: 100vh;z-index: 101;padding: 30px 20px 30px 80px">
+        <div class="bg-gray-900  w-full h-full rounded-lg">
+          {{ logList }}
+        </div>
+    </div>
+
     <div v-if="lock" class="fixed bg-gray-800 flex items-center justify-center"
          style="top: 0;left: 0;width: 100vw;height: 100vh;z-index: 101;">
 
@@ -28,6 +35,18 @@
          :style="{bottom: !lock ? '80px' : '15px'}">
 
       <div class="flex flex-col items-center  mb-4 space-y-2" :class="!open ? 'hidden': ''">
+        <button @click="showLog" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
+                style="width: 50px;height: 50px;"
+                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+          <svg  class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>math-log</title><path d="M18 7C16.9 7 16 7.9 16 9V15C16 16.1 16.9 17 18 17H20C21.1 17 22 16.1 22 15V11H20V15H18V9H22V7H18M2 7V17H8V15H4V7H2M11 7C9.9 7 9 7.9 9 9V15C9 16.1 9.9 17 11 17H13C14.1 17 15 16.1 15 15V9C15 7.9 14.1 7 13 7H11M11 9H13V15H11V9Z" /></svg>
+          <span class="sr-only">Log</span>
+        </button>
+        <button @click="leaveGame" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
+                style="width: 50px;height: 50px;"
+                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+          <svg class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exit-run</title><path d="M13.34,8.17C12.41,8.17 11.65,7.4 11.65,6.47A1.69,1.69 0 0,1 13.34,4.78C14.28,4.78 15.04,5.54 15.04,6.47C15.04,7.4 14.28,8.17 13.34,8.17M10.3,19.93L4.37,18.75L4.71,17.05L8.86,17.9L10.21,11.04L8.69,11.64V14.5H7V10.54L11.4,8.67L12.07,8.59C12.67,8.59 13.17,8.93 13.5,9.44L14.36,10.79C15.04,12 16.39,12.82 18,12.82V14.5C16.14,14.5 14.44,13.67 13.34,12.4L12.84,14.94L14.61,16.63V23H12.92V17.9L11.14,16.21L10.3,19.93M21,23H19V3H6V16.11L4,15.69V1H21V23M6,23H4V19.78L6,20.2V23Z" /></svg>
+          <span class="sr-only">leave</span>
+        </button>
         <button @click="startTimer" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
                 style="width: 50px;height: 50px;"
                 class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
@@ -87,10 +106,10 @@
                 <div>Игрок: {{ person }} </div>
 
                 <div v-if="i === votedListItems.length - 1"   class="w-100">Оставшиеся: {{ votedListItemsFinalSum }}</div>
-                <vs-input v-else v-model.number="votedListItemsFinal[person]" class="w-100"></vs-input>
+                <vs-input v-else v-model.number="votedListItemsFinal[person]" type="number" class="w-100"></vs-input>
               </div>
 
-              <vs-button @click="votedStart = false;votedListItems = []">
+              <vs-button @click="votedStart = false;votedListItems = [];votedListItemsFinal={}">
                 Сбросить
               </vs-button>
             </div>
@@ -170,6 +189,8 @@ export default {
       open: false,
       toast: this.$toast,
 
+      logListShow: false,
+      logList: [],
       totalSteps: 60
     }
   },
@@ -182,13 +203,33 @@ export default {
     }
   },
   methods: {
+    showLog(){
+      const logList = localStorage.getItem('logList')
+      if(logList){
+        this.logList = JSON.parse(logList)
+      }
+
+      this.logListShow = !this.logListShow
+    },
+    leaveGame(){
+      const userConfirmed = confirm("Вы уверены что хотите закрыть игру и удалить историю?");
+      if (userConfirmed) {
+        localStorage.removeItem('playersRoles')
+        localStorage.removeItem('gameRoles')
+        localStorage.removeItem('saveGame')
+        localStorage.removeItem('logList')
+        localStorage.removeItem('saveGame_all')
+
+        this.$router.push('/GameStart')
+      }
+    },
     unlock() {
       if (this.lock === false) {
         this.lock = true
       } else {
         const enteredPassword = window.prompt('Please enter your password:');
 
-        if (enteredPassword === '000' || enteredPassword === 'zzz') {
+        if (enteredPassword === '000' || enteredPassword === 'zzz' || enteredPassword === 'ZZZ' || enteredPassword === 'я' || enteredPassword === 'Z' || enteredPassword === 'z') {
           this.lock = false
           this.open = false
           this.stopTimer()
