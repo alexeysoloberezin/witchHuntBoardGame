@@ -12,9 +12,11 @@
         <div>
           <img v-if="!ghostMode" :src="card.image"  alt=""/>
           <div v-else class="cardSafe">
-            <div class="text-xl">{{ card.name }}</div>
-            <div >{{ card.name_en }}</div>
-            <div >тип: {{ types[card.type] }}</div>
+            <div>
+              <div class="text-xl">{{ card.name }}</div>
+              <div >{{ card.name_en }}</div>
+              <div >тип: {{ types[card.type] }}</div>
+            </div>
           </div>
         </div>
         <div class="basis-1/4">
@@ -25,24 +27,19 @@
         <div>
           <div v-if="Array.isArray(card.linkCards) && card.linkCards.length > 0" class="basis-1/2">
             <h2 class="text-2xl text-white mb-3">Связанные персонажи</h2>
-            <div v-for="(c, i) in getLinks(card.linkCards)" :key="i">
+
+            <div v-for="(c, i) in getLinks(card.linkCards)" :key="i" class="mb-1">
               <router-link  :to="`/main/cards/${c.id}`"   >
-                <div v-if="!ghostMode" class="flex items-center mb-3">
-                  <img :src="c.ava" alt="" style="max-width: 120px;"/>
-                  <div>
-                    <!--              <div>{{ c }}</div>-->
-                    <div>{{ c.name }}</div>
-                  </div>
-                </div>
-                <CardSafe v-else :card="c"/>
+                <CardSafe  :card="c" :hide-image="!ghostMode"/>
               </router-link>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <br><br><br><br>
 
+  </div>
 </template>
 
 <script>

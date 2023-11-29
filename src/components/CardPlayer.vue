@@ -3,6 +3,7 @@
     <div class="cardBox mb-2 flex items-center justify-between relative"
          v-touch:moving="movingHandler"
          v-touch:end="movedHandler"
+         v-touch:tap="tapHandler"
          :style="{
               opacity: card.killed ? '.2' : '1',
               border: card.isGood ? '' : '2px dashed rgba(255,71,87, .45)',
@@ -33,17 +34,19 @@
           </svg>
         </div>
         <div class="ml-1">
-            <div class="flex items-center">
+          <div class="flex items-center">
               <span class="opacity-75 flex" :style="{color: card.killed ? 'rgb(255,71,87)' : ''}">
               Игрок {{
                   card.number
                 }}:</span>
-              <div class="flex items-center">
+            <div class="flex items-center">
             <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
-            <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path d="M10 3H14V14H10V3M10 21V17H14V21H10Z" /></svg>
+            <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path
+                d="M10 3H14V14H10V3M10 21V17H14V21H10Z"/></svg>
           </span>
-              </div>
             </div>
+          </div>
           <div :style="{color: card.killed ? 'rgb(255,71,87)' : 'rgb(25,91,255)'}">{{ card.name }}</div>
           <div class="text-sm" :style="{color: card.killed ? 'rgb(255,71,87)' : ''} ">Тип карты:
             {{ cardTypes[card.type] }}
@@ -107,14 +110,22 @@
       </div>
     </div>
 
-    <div class="cardBox-movieAction">
+    <div v-if="!card.killed" class="cardBox-movieAction">
       <div class="cardBox-movieAction-l">
-        <svg class="opacity-50" style="max-width: 45px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>thumb-up-outline</title><path d="M5,9V21H1V9H5M9,21A2,2 0 0,1 7,19V9C7,8.45 7.22,7.95 7.59,7.59L14.17,1L15.23,2.06C15.5,2.33 15.67,2.7 15.67,3.11L15.64,3.43L14.69,8H21C22.11,8 23,8.9 23,10V12C23,12.26 22.95,12.5 22.86,12.73L19.84,19.78C19.54,20.5 18.83,21 18,21H9M9,19H18.03L21,12V10H12.21L13.34,4.68L9,9.03V19Z" /></svg>
-        <div  class="opacity-75 mt-1" style="font-size: 11px;line-height: 1">На <br/> голосование</div>
+        <svg class="opacity-50" style="max-width: 45px;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24"><title>thumb-up-outline</title>
+          <path
+              d="M5,9V21H1V9H5M9,21A2,2 0 0,1 7,19V9C7,8.45 7.22,7.95 7.59,7.59L14.17,1L15.23,2.06C15.5,2.33 15.67,2.7 15.67,3.11L15.64,3.43L14.69,8H21C22.11,8 23,8.9 23,10V12C23,12.26 22.95,12.5 22.86,12.73L19.84,19.78C19.54,20.5 18.83,21 18,21H9M9,19H18.03L21,12V10H12.21L13.34,4.68L9,9.03V19Z"/>
+        </svg>
+        <div class="opacity-75 mt-1" style="font-size: 11px;line-height: 1">На <br/> голосование</div>
       </div>
       <div class="cardBox-movieAction-r">
-        <svg class="opacity-50" style="max-width: 45px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>alert-decagram-outline</title><path d="M23,12L20.56,14.78L20.9,18.46L17.29,19.28L15.4,22.46L12,21L8.6,22.47L6.71,19.29L3.1,18.47L3.44,14.78L1,12L3.44,9.21L3.1,5.53L6.71,4.72L8.6,1.54L12,3L15.4,1.54L17.29,4.72L20.9,5.54L20.56,9.22L23,12M20.33,12L18.5,9.89L18.74,7.1L16,6.5L14.58,4.07L12,5.18L9.42,4.07L8,6.5L5.26,7.09L5.5,9.88L3.67,12L5.5,14.1L5.26,16.9L8,17.5L9.42,19.93L12,18.81L14.58,19.92L16,17.5L18.74,16.89L18.5,14.1L20.33,12M11,15H13V17H11V15M11,7H13V13H11V7" /></svg>
-        <div  class="opacity-75 mt-1 mr-3" style="font-size: 11px;line-height: 1">Фол</div>
+        <svg class="opacity-50" style="max-width: 45px;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24"><title>alert-decagram-outline</title>
+          <path
+              d="M23,12L20.56,14.78L20.9,18.46L17.29,19.28L15.4,22.46L12,21L8.6,22.47L6.71,19.29L3.1,18.47L3.44,14.78L1,12L3.44,9.21L3.1,5.53L6.71,4.72L8.6,1.54L12,3L15.4,1.54L17.29,4.72L20.9,5.54L20.56,9.22L23,12M20.33,12L18.5,9.89L18.74,7.1L16,6.5L14.58,4.07L12,5.18L9.42,4.07L8,6.5L5.26,7.09L5.5,9.88L3.67,12L5.5,14.1L5.26,16.9L8,17.5L9.42,19.93L12,18.81L14.58,19.92L16,17.5L18.74,16.89L18.5,14.1L20.33,12M11,15H13V17H11V15M11,7H13V13H11V7"/>
+        </svg>
+        <div class="opacity-75 mt-1 mr-3" style="font-size: 11px;line-height: 1">Фол</div>
       </div>
     </div>
   </div>
@@ -143,13 +154,23 @@ export default {
       touchMove: {
         x: 0,
         xStart: 0,
-      }
+        y: 0,
+        yStart: 0
+      },
+      activeTouch: false,
+      timer: null
     }
   },
   computed: {
+    disableTouch(){
+      return this.card.killed || !this.activeTouch
+    },
     movingParams() {
+      if (this.disableTouch) {
+        return 'translateX(0px)'
+      }
+
       const position = this.touchMove.x - this.touchMove.xStart
-      // return `translateX(100px)`
 
       if (position > 100) {
         return `translateX(100px)`
@@ -161,8 +182,17 @@ export default {
     },
   },
   methods: {
-    movedHandler(event){
-      console.log('moved', event)
+    tapHandler(){
+      this.activeTouch = true
+      this.timer = setTimeout(() => {
+        this.activeTouch = false
+      }, 3500)
+    },
+    movedHandler() {
+      if (this.disableTouch) {
+        return null;
+      }
+
       const position = this.touchMove.x - this.touchMove.xStart
       if (position > 85) {
         const votedListItems = new Set(JSON.parse(localStorage.getItem('votedListItems')) || []);
@@ -172,31 +202,31 @@ export default {
           localStorage.setItem('votedListItems', JSON.stringify(Array.from(votedListItems)));
 
           this.$toast.success('Игрок: ' + this.card.number + ' выставлен на голосование')
-        }else{
+        } else {
           this.$toast.success('Поддержано')
         }
-      }else if(position < -85){
-        console.log('position', position)
+      } else if (position < -85) {
         this.$emit('update:foll', this.card.number)
-        // let saveGame = localStorage.getItem('saveGame')
-        // if(saveGame){
-        //   saveGame = JSON.parse(saveGame)
-        //   saveGame[this.card.number].foll = saveGame[this.card.number].foll + 1
-        //
-        //   saveGame
-        // }
       }
 
       this.touchMove = {
         x: 0,
         xStart: 0,
       }
+      this.activeTouch = false
+      clearTimeout(this.timer);
+      this.timer = null
     },
     movingHandler(event) {
-      if (this.touchMove.xStart === 0) {
-        this.touchMove.xStart = event.touches[0].clientX
+      if(this.disableTouch){
+        return null;
       }
-      this.touchMove.x = event.touches[0].clientX
+
+
+      if (this.touchMove.xStart === 0) {
+        this.touchMove.xStart = event.touches[0].clientX;
+      }
+      this.touchMove.x = event.touches[0].clientX;
     },
 
 

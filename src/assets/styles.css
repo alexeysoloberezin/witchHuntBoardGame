@@ -2,7 +2,15 @@
     border: 1px solid rgba(255, 255, 255, 0.13);
     background: rgba(26, 28, 35);
     padding: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
     border-radius: 7px;
+}
+@media (max-width: 1000px) {
+    .cardSafe{
+        padding: 15px 10px;
+    }
 }
 .cardBox{
     border: 1px solid rgba(255, 255, 255, 0.13);
@@ -60,4 +68,23 @@
 .v-toast__item--success{
     border: 1px solid rgb(70,201,58) !important;
     background: #121317 !important;
+}
+
+
+.list-enter-active {
+    animation: fade-in 0.5s ease-in-out;
+}
+
+.list-leave-active {
+    animation: fade-in 0.5s ease-in-out reverse;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
 }

@@ -7,8 +7,10 @@
 
     <div v-if="logListShow" class="fixed logList bg-gray-800 flex items-center justify-center rounded"
          style="top: 0;left: 0;width: 100vw;height: 100vh;z-index: 101;padding: 30px 20px 30px 80px">
-        <div class="bg-gray-900  w-full h-full rounded-lg">
-          {{ logList }}
+        <div class="bg-gray-900  w-full h-full rounded-lg p-3 overflow-y-auto">
+          <div v-for="(el,i) in logList" :key="'logList-' + i">
+            -- {{ el }}
+          </div>
         </div>
     </div>
 
