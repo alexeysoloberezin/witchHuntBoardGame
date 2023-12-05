@@ -1,30 +1,37 @@
 <template>
   <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900 overflow-x-hidden" >
-    <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
-    <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
-      <CardPlayer
-          v-for="(card, i) in playersRoles"
-          :key="card.name"
-          :card="card"
-          :panelAction="panelAction"
-          :isNight="isNight"
-          :gamblerHaveShield="isNight && gamblerHaveShield(card.gamblerChoose)"
-          :cardTypes="cardTypes"
-          :shields="playersRoles[i].shield"
-          :hearts="playersRoles[i].heart"
-          @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
-          @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
-          @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
-          @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
-          @update:clickOnSkeleton="action(i)"
-          @update:foll="makeFoll"
-      />
-    </div>
+    <template v-if="!showRoles">
+      <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
+      <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
+        <CardPlayer
+            v-for="(card, i) in playersRoles"
+            :key="card.name"
+            :card="card"
+            :panelAction="panelAction"
+            :isNight="isNight"
+            :gamblerHaveShield="isNight && gamblerHaveShield(card.gamblerChoose)"
+            :cardTypes="cardTypes"
+            :shields="playersRoles[i].shield"
+            :hearts="playersRoles[i].heart"
+            @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
+            @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
+            @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
+            @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
+            @update:clickOnSkeleton="action(i)"
+            @update:foll="makeFoll"
+        />
+      </div>
+      <div v-else>
+        <vs-button @click="handlerResetGame">
+          Сбросить игру
+        </vs-button>
+      </div>
+    </template>
     <div v-else>
-      <vs-button @click="handlerResetGame">
-        Сбросить игру
-      </vs-button>
+      <CardSafe v-for="(card, i) in showRolesCards" :key="'showRoles-card-' + i" :card="card" :hide-image="false" class="mb-2"/>
+      <vs-button @click="hideShowRoles">Закрыть роли</vs-button>
     </div>
+
 
     <div class="mobPanel">
       <div class="nightPanel p-3" :class="isNight ? 'active' : ''">
@@ -116,7 +123,7 @@
         </div>
       </div>
       <div style="height: 60px;left: 50%;transform: translateX(-50%);bottom: 10px"
-           class="fixed z-50 w-screen h-16 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
+           class="fixed z-50 w-screen h-18 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
         <div class="grid h-full max-w-lg grid-cols-5 mx-auto">
           <button @click="setPanelAction('kill')" data-tooltip-target="tooltip-home" type="button"
                   class="inline-flex outline-none flex-col items-center justify-center px-5 rounded-s-full  group">
@@ -126,6 +133,7 @@
                   d="M7,5H23V9H22V10H16A1,1 0 0,0 15,11V12A2,2 0 0,1 13,14H9.62C9.24,14 8.89,14.22 8.72,14.56L6.27,19.45C6.1,19.79 5.76,20 5.38,20H2C2,20 -1,20 3,14C3,14 6,10 2,10V5H3L3.5,4H6.5L7,5M14,12V11A1,1 0 0,0 13,10H12C12,10 11,11 12,12A2,2 0 0,1 10,10A1,1 0 0,0 9,11V12A1,1 0 0,0 10,13H13A1,1 0 0,0 14,12Z"/>
             </svg>
             <span class="sr-only">Убить</span>
+            <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Убить</div>
           </button>
           <div id="tooltip-home" role="tooltip"
                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -141,6 +149,8 @@
                   d="M21 13H14.4L19.1 17.7L17.7 19.1L13 14.4V21H11V14.3L6.3 19L4.9 17.6L9.4 13H3V11H9.6L4.9 6.3L6.3 4.9L11 9.6V3H13V9.4L17.6 4.8L19 6.3L14.3 11H21V13Z"/>
             </svg>
             <span class="sr-only">Fake kill</span>
+            <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Fake kill</div>
+
           </button>
           <div id="tooltip-wallet" role="tooltip"
                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -149,7 +159,7 @@
           </div>
           <div class="flex items-center justify-center text-center">
             <div>
-              <button @click="isNight = true" data-tooltip-target="tooltip-new" type="button"
+              <button @click="startNight" data-tooltip-target="tooltip-new" type="button"
                       :class="isNight ? 'bg-blue-600' : ''"
                       class="inline-flex items-center outline-none justify-center w-10 h-10 font-medium  rounded-full  group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
                 <svg xmlns="http://www.w3.org/2000/svg" width="23px" fill="#fff" viewBox="0 0 24 24"><title>
@@ -159,7 +169,7 @@
                 </svg>
                 <span class="sr-only">New item</span>
               </button>
-              <div class="" style="font-size: 11px">Ст. стола: {{ nightVal }}</div>
+              <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Ст. стола: {{ nightVal }}</div>
             </div>
           </div>
           <div id="tooltip-new" role="tooltip"
@@ -175,6 +185,7 @@
                   d="M19,15V3H23V15H19M15,3A2,2 0 0,1 17,5V15C17,15.55 16.78,16.05 16.41,16.41L9.83,23L8.77,21.94C8.5,21.67 8.33,21.3 8.33,20.88L8.36,20.57L9.31,16H3C1.89,16 1,15.1 1,14V12C1,11.74 1.05,11.5 1.14,11.27L4.16,4.22C4.46,3.5 5.17,3 6,3H15M15,5H5.97L3,12V14H11.78L10.65,19.32L15,14.97V5Z"/>
             </svg>
             <span class="sr-only">Make witch</span>
+            <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Ведьмы</div>
           </button>
           <div id="tooltip-settings" role="tooltip"
                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -189,6 +200,7 @@
                   d="M7,3A4,4 0 0,1 11,7C11,8.86 9.73,10.43 8,10.87V13.13C8.37,13.22 8.72,13.37 9.04,13.56L13.56,9.04C13.2,8.44 13,7.75 13,7A4,4 0 0,1 17,3A4,4 0 0,1 21,7A4,4 0 0,1 17,11C16.26,11 15.57,10.8 15,10.45L10.45,15C10.8,15.57 11,16.26 11,17A4,4 0 0,1 7,21A4,4 0 0,1 3,17C3,15.14 4.27,13.57 6,13.13V10.87C4.27,10.43 3,8.86 3,7A4,4 0 0,1 7,3M17,13A4,4 0 0,1 21,17A4,4 0 0,1 17,21A4,4 0 0,1 13,17A4,4 0 0,1 17,13M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15Z"/>
             </svg>
             <span class="sr-only">Profile</span>
+            <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Подмена ролей</div>
           </button>
           <div id="tooltip-profile" role="tooltip"
                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -199,17 +211,22 @@
       </div>
 
     </div>
+    <vs-button v-if="showRoles === false" @click="showRoles = true">
+      Показать роли
+    </vs-button>
     <br><br><br><br><br><br><br><br><br><br>
+
     <br><br><br><br><br><br><br><br><br><br>
   </div>
 </template>
 
 <script>
-import {getByNames} from "@/store/cards";
+import cards, {getByNames} from "@/store/cards";
 import types from "@/js/types";
 import Timer from "@/components/Timer";
 import CardPlayer from "@/components/CardPlayer";
 import resetGame from "@/js/utils";
+import CardSafe from "@/components/Card";
 
 const nightStepsWelcome = [
   {
@@ -244,8 +261,8 @@ const nightStepsWelcome = [
   {
     name: 'Ученик',
     ifPlayerInGame: true,
-    text: `
-            Выбирает могильщик или судья. Нужно показать кто сидит на выбранной роле.
+    text: (gravedigger, judge) => `
+            Выбирает могильщик(${gravedigger}) или судья(${judge}). Нужно показать кто сидит на выбранной роле.
           `
   },
   {
@@ -264,14 +281,6 @@ const nightStepsWelcome = [
   },
 ]
 const nightSteps = [
-  {
-    name: 'Судья или ученик',
-    ifPlayerInGame: false,
-    text: `
-            Равное количество голосов на прошлом голосовании? Да -
-            Просыпается Судья. Хотите ли вы казнить кого-нибудь из прошлого голосования?
-          `
-  },
   {
     name: 'Могильщик или ученик',
     ifPlayerInGame: false,
@@ -297,7 +306,9 @@ const nightSteps = [
     name: 'Ведьмы',
     ifPlayerInGame: false,
     text: `
-            Просыпаются Ведьмы и выбирают цель для убийства.
+            Просыпаются Ведьмы.
+             Хотите ли вы сделать иллюзорное убийство?
+             Кого убивают ведьмы ?
           `
   },
   {
@@ -307,6 +318,11 @@ const nightSteps = [
             Просыпаются Священник и делает свою проверку.(на ведьму).
             Не забудь оведомить фанатика если его преверят. И дать доп жизнь
           `
+  },
+  {
+    name: 'Фанатик',
+    ifPlayerInGame: true,
+    text: ` Просыпаются Фанатик. Проверяли ли вас?`
   },
   {
     name: 'Инквизитор',
@@ -335,9 +351,10 @@ const nightSteps = [
 
 export default {
   name: "GameComming",
-  components: {CardPlayer, Timer},
+  components: {CardSafe, CardPlayer, Timer},
   data() {
     return {
+      showRoles: false,
       playersRoles: {},
       panelAction: null,
       isNight: false,
@@ -351,17 +368,80 @@ export default {
       nightSteps: [],
       activeNightStep: 0,
       gamblerChooseClosed: false,
+
+      saveInterval: null
     }
   },
   computed: {
+    showRolesCards(){
+      const roles = Object.values(this.playersRoles).map(el => el.name)
+      const res = cards.filter(card => roles.map(el => el.toLowerCase()).includes(card.name.toLowerCase()))
+
+      for (let i = res.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [res[i], res[j]] = [res[j], res[i]];
+      }
+
+      return res;
+    },
     getNightPerson() {
       return this.nightSteps[this.activeNightStep]
     },
     getNightWelcomePerson() {
+      const person = this.nightStepsWelcome[this.activeNightStep]
+
+      const roles = Object.values(this.playersRoles)
+      console.log('playersRoles', this.playersRoles, this.playersRoles.length)
+      let gravedigger, judge;
+
+      roles.forEach(role => {
+        if(role.name === 'Могильщик'){
+          gravedigger = role.number
+        }else if(role.name === 'Судья'){
+          judge = role.number
+        }
+      })
+
+      if(person?.name === 'Ученик'){
+        return {
+          ...person,
+          text: person.text(gravedigger, judge)
+        }
+      }
+
       return this.nightStepsWelcome[this.activeNightStep]
     },
   },
   methods: {
+    hideShowRoles(){
+      const enteredPassword = window.prompt('Please enter your password:');
+
+      if (enteredPassword === '000' || enteredPassword === 'zzz' || enteredPassword === 'ZZZ' || enteredPassword === 'я' || enteredPassword === 'Z' || enteredPassword === 'z') {
+        this.showRoles = false
+      }
+    },
+    gamblerShield(remove = false){
+      const find = this.playersRoles.find(player => player.name === 'Азартный игрок')
+      if(find){
+        if(find.killed){
+          return null;
+        }
+        if(this.gamblerHaveShield(find.gamblerChoose)){
+          if(remove){
+            find.shield = find.shield - 1
+          }else{
+            find.shield = find.shield + 1
+          }
+
+        }
+      }
+    },
+    startNight(){
+      // gambler shield
+      this.gamblerShield()
+
+      this.isNight = true
+    },
     makeFoll(index){
       console.log('foll', index)
       const find = this.playersRoles.find(player => player.number === index)
@@ -429,6 +509,8 @@ export default {
       this.setInGlobalLog('Гамблер (Азартный игрок выбирает): ' + choose + ' ночи')
     },
     handleCloseNight() {
+      this.gamblerShield(true)
+
       this.playersRoles = this.playersRoles.map(el => {
         return {
           ...el,
@@ -456,22 +538,34 @@ export default {
           return;
         }
 
-        this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
+        const kill = () => {
+          this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
 
-        if (this.isNight) {
-          this.nightHistory.push({
-            player: this.playersRoles[indexPlayer].number,
-            type: 'Убийство'
-          })
-          this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
-        } else {
-          this.dayLog.push({
-            player: this.playersRoles[indexPlayer].number,
-            type: 'Казнь'
-          })
-          this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
+          if (this.isNight) {
+            this.nightHistory.push({
+              player: this.playersRoles[indexPlayer].number,
+              type: 'Убийство'
+            })
+            this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
+          } else {
+            this.dayLog.push({
+              player: this.playersRoles[indexPlayer].number,
+              type: 'Казнь'
+            })
+            this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
+          }
         }
 
+        let confirmedKill;
+        console.log(this.playersRoles[indexPlayer], 'this.playersRoles[indexPlayer]')
+        if((this.playersRoles[indexPlayer].heart > 1 || this.playersRoles[indexPlayer].shield > 0) && !this.playersRoles[indexPlayer].killed){
+          confirmedKill = confirm(`Вы уверены что хотите убить игрока: ${this.playersRoles[indexPlayer].number}? У него 2 жизни или броня`);
+          if (confirmedKill) {
+            kill();
+          }
+        }else {
+          kill();
+        }
       } else if (this.panelAction === 'fakeKill') {
         this.handlerWithShieldOrHeart(indexPlayer)
         this.setInGlobalLog('Фейковое Убийство Игрока: ' + indexPlayer)
@@ -580,10 +674,13 @@ export default {
 
     this.loadData()
 
-    setTimeout(() => {
+    this.saveInterval = setInterval(() => {
       this.saveAll()
     }, 2000)
   },
+  beforeDestroy() {
+    clearInterval(this.saveInterval)
+  }
 }
 </script>
 

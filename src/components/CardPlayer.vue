@@ -19,8 +19,7 @@
           <ShieldIcon v-for="shield in card.shield" :key="card.name + 'shield' + shield" class="mb-1"/>
 
           <div v-if="card.name === 'Азартный игрок'" class="flex items-center text-sm">
-            <ShieldIcon v-if="gamblerHaveShield" class="mb-1 mr-1"/>
-            <div :style="{color: gamblerHaveShield ? 'rgb(25,91,255)' : 'gray'}">
+            <div :style="{color: gamblerHaveShield ? 'rgb(25,91,255)' : 'gray'}" class="ml-1">
               {{ card.gamblerChoose }}
             </div>
           </div>

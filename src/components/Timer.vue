@@ -108,12 +108,22 @@
                 <div>Игрок: {{ person }} </div>
 
                 <div v-if="i === votedListItems.length - 1"   class="w-100">Оставшиеся: {{ votedListItemsFinalSum }}</div>
-                <vs-input v-else v-model.number="votedListItemsFinal[person]" type="number" class="w-100"></vs-input>
+                <vs-input v-else
+                          v-model.number="votedListItemsFinal[person]"
+                          @change="addLastEl(person, i)"
+                          type="number"
+                          class="w-100"
+                ></vs-input>
               </div>
 
-              <vs-button @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
-                Сбросить
-              </vs-button>
+              <div class="flex">
+                <vs-button @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
+                  Сбросить
+                </vs-button>
+                <vs-button @click="saveVoted">
+                  Результаты верные сохранить.
+                </vs-button>
+              </div>
             </div>
 
           </div>
@@ -179,6 +189,38 @@ export default {
   },
 
   methods: {
+    saveVoted(){
+      const copyArr = JSON.parse(JSON.stringify(this.votedListItems))
+      const lastEl = copyArr[copyArr.length - 1]
+
+      this.votedListItemsFinal[lastEl] = this.votedListItemsFinalSum
+
+      const values = Object.values(this.votedListItemsFinal)
+      const objs = Object.keys(this.votedListItemsFinal).map(key => ({
+        number: key,
+        value: this.votedListItemsFinal[key]
+      }));
+
+      const maxNumber = Math.max(...values);
+
+      const res = objs.filter(el => el.value === maxNumber)
+
+      if (res.length === 1) {
+        alert(`Больше всего голосов у: ${res.map(el => el.number)} игрока - ${res.map(el => el.value)} голоса`)
+      } else {
+        console.log();
+        alert(
+            `Больше всего голосов у: ${res.map(el => el.number).join(', ')} игроков - по ${res[0].value} голоса
+Просыпается судья и выбирает кого хочет судить: ${res.map(el => el.number).join(' или ')}
+        `)
+      }
+
+      this.votedStart = false;
+      this.votedModal = false;
+      this.votedListItems = [];
+      this.votedListItemsFinal={};
+      this.resetVotedList()
+    },
     resetVotedList(){
       localStorage.removeItem('votedListItems')
     },

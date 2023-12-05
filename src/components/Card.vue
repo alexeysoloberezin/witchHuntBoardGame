@@ -4,7 +4,7 @@
       <img v-if="hideImage" :src="card.ava" style="max-width: 70px;" alt="">
       <div>
         <h3><span class="text-white">{{ card.name }}</span> <span class="text-sm" style="line-height: 1.1">({{ card.name_en }})</span></h3>
-        <p></p>
+        <p v-if="detail" v-html="card.info" class="text-sm opacity-50"></p>
       </div>
     </div>
   </div>
@@ -13,7 +13,7 @@
 <script>
 export default {
   name: "CardSafe",
-  props: ['card', 'hideImage']
+  props: ['card', 'hideImage', 'detail']
 }
 </script>
 
