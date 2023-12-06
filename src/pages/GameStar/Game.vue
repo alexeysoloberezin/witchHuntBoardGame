@@ -639,11 +639,12 @@ export default {
       } else {
         this.playersRoles = {}
       }
-
-
     },
   },
   mounted() {
+    console.log('cards', cards)
+
+
     let playersRoles = localStorage.getItem('playersRoles')
     if(playersRoles){
       playersRoles = JSON.parse(playersRoles)

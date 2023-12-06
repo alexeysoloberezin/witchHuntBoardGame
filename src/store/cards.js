@@ -1,3 +1,8 @@
+
+// const names = {
+//   "": ""
+// }
+
 const cards = [
   {
     image: require('../assets/cards/v1.png'),

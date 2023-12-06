@@ -93,7 +93,7 @@
           <div :style="{transform: !votedModal ? 'translateX(200%)' : '', transition: '.5s', bottom: !lock ? '80px' : '15px'}"  class="fixed bg-gray-800 "
                style="z-index: 102;right: 10px;padding: 25px 15px 15px 15px;width: calc(100vw - 100px);box-shadow: 0 10px 125px rgba(11, 54, 87, 0.79); border: 1px solid rgba(255,255,255,0.13);border-radius: 12px">
 
-            <div v-if="!votedStart" class="grid">
+            <div v-if="!votedStart && votedListIsArray" class="grid">
               <vs-checkbox v-for="(person) in votedList.filter(el => !el.killed)" :key="'as' + person.number" :val="person.number"
                            v-model="votedListItems" @change="votedListItemsChanged">
                 Игрок: {{ person.number }}
@@ -110,7 +110,6 @@
                 <div v-if="i === votedListItems.length - 1"   class="w-100">Оставшиеся: {{ votedListItemsFinalSum }}</div>
                 <vs-input v-else
                           v-model.number="votedListItemsFinal[person]"
-                          @change="addLastEl(person, i)"
                           type="number"
                           class="w-100"
                 ></vs-input>
@@ -158,7 +157,12 @@ export default {
   components: {
     RadialProgressBar
   },
-  props: ['votedList'],
+  props: {
+    votedList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       votedListItems: [],
@@ -180,7 +184,14 @@ export default {
     }
   },
   computed: {
+    votedListIsArray(){
+      return Array.isArray(this.votedList)
+    },
     votedListItemsFinalSum(){
+      if(!this.votedListIsArray){
+        return 0
+      }
+
       const res = Object.values(this.votedListItemsFinal)
       const sum = res.reduce((acc, el) => +acc + +el, 0);
       const list = this.votedList.filter(el => !el.killed)
