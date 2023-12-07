@@ -1,10 +1,35 @@
+export const names = {
+    "Benevolent Old Dame": "Старая дама",
+    "Gravedigger": "Могильщик",
+    "Assassin": "Ассасин",
+    "Hunter": "Охотник",
+    "Nurse": "Медсестра",
+    "Gambler": "Азартный игрок",
+    "Judge": "Судья",
+    "Survivalist": "Выжившый",
+    "Inquisitor": "Инквизитор",
+    "Peeping Tom": "Подглядывающий Том",
+    "Oracle": "Оракул",
+    "Priest": "Священник",
+    "Apprentice": "Ученик",
+    "Fortune Teller": "Гадалка",
+    "Bomber": "Бомбардировщик",
+    "Spiritualist": "Спиритуалист",
+    "(D.O.B.) Dirty Old Bastard": "Cтарый ублюдок",
+    "Watchman": "Сторож",
+    "Loose Cannon": "Свободная пушка",
+    "Fanatic": "Фанатик",
+    "Acolyte": "Послушник",
+    "Emissary": "Эмиссар"
+}
+
 const cards = [
   {
     image: require('../assets/cards/v1.png'),
     ava: require('../assets/ava/Property 1=Default.png'),
     type: 'guard',
     id: 1,
-    name: "Старая дама",
+    name: names["Benevolent Old Dame"],
     name_en: "Benevolent Old Dame",
     linkCards: [],
     info: `
@@ -26,7 +51,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant2.png'),
     id: 2,
     type: 'info',
-    name: "Могильщик",
+    name: names["Gravedigger"],
     linkCards: [13],
     name_en: "Gravedigger",
     info: `
@@ -48,7 +73,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant3.png'),
     id: 3,
     type: 'attack',
-    name: "Ассасин",
+    name: names["Assassin"],
     linkCards: [],
     name_en: "Assassin",
     info: `
@@ -87,7 +112,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant4.png'),
     id: 4,
     type: 'attack',
-    name: "Охотник",
+    name: names["Hunter"],
     linkCards: [],
     info: `
       <h3>
@@ -111,7 +136,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant5.png'),
     id: 5,
     type: 'guard',
-    name: "Медсестра",
+    name: names["Nurse"],
     linkCards: [],
     info: `
       <h3>Один раз за игру до конца 
@@ -147,7 +172,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant6.png'),
     id: 6,
     type: 'guard',
-    name: "Азартный игрок",
+    name: names["Gambler"],
     linkCards: [], info: `
      <h3> В начале игры вы можете выбрать четное или нечетное число. В эти
       ночи (но не дни) вы защищены от убийств.</h3>
@@ -167,7 +192,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant7.png'),
     id: 7,
     type: 'attack',
-    name: "Судья",
+    name: names["Judge"],
     linkCards: [13], info: `
       <h3>В конце любого дня, когда игроки не могут выбрать мишень для подвешивания,
       вы можете решить это самостоятельно. Это подвешивание всегда работает,
@@ -203,7 +228,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant8.png'),
     id: 8,
     type: 'guard',
-    name: "Выжившый",
+    name: names["Survivalist"],
     linkCards: [], info: `
       <h3>У вас +1 жизнь! <span>Усё, пара пара пам</span></h3>
     `,
@@ -233,7 +258,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant10.png'),
     id: 10,
     type: 'info',
-    name: "Подглядывающий Том",
+    name: names["Peeping Tom"],
     linkCards: [], info: `
       <h3> Один раз за игру вы можете проснуться
       с любым несвятым персонажем. Если
@@ -273,7 +298,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant11.png'),
     id: 11,
     type: 'info',
-    name: "Оракул",
+    name: names["Oracle"],
     linkCards: [], info: `
       <h3>В начале игры вы узнаете личность
        случайного Деревенского крестьянина.</h3>
@@ -295,7 +320,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant12.png'),
     id: 12,
     type: 'holy',
-    name: "Священник",
+    name: names["Priest"],
     linkCards: [21, 20], info: `
       <h3>Каждую ночь вы можете проверять, состоит ли цель в Шабаше ведьм.</h3>
       <b>Может ли священник быть Ведьмой?</b>
@@ -311,7 +336,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant13.png'),
     id: 13,
     type: 'attack|info',
-    name: "Ученик",
+    name: names["Apprentice"],
     linkCards: [2, 7], info: `
       <h3>В начале игры вы можете выбрать судью или могильщика. <br/>
       Вы узнаете, у кого этот персонаж, и принимаете на себя его обязанности, если
@@ -328,7 +353,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant14.png'),
     id: 14,
     type: 'info',
-    name: "Гадалка",
+    name: names["Fortune Teller"],
     linkCards: [], info: `
      <h3> В начале игры выберите персонажа. Вы узнаете, что
       скажет ведущий, если этот персонаж умрет ночью.</h3>
@@ -356,7 +381,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant15.png'),
     id: 15,
     type: 'attack',
-    name: "Бомбардировщик",
+    name: names["Bomber"],
     linkCards: [], info: `
       <h3>В начале игры вы можете выбрать цель, в которой будет находиться
 бомба. Один раз за игру в конце любой ночи вы можете подать сигнал на
@@ -391,7 +416,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant16.png'),
     id: 16,
     type: 'info',
-    name: "Спиритуалист",
+    name: names.Spiritualist,
     linkCards: [], info: `
       <h3>Один раз за игру до конца любого дня вы можете
 раскрыть эту карту и назвать имя любого умершего игрока. Вы узнаете карты этого игрока конфиденциально.</h3>
@@ -417,7 +442,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant17.png'),
     id: 17,
     type: 'attack',
-    name: "Cтарый ублюдок",
+    name: names["(D.O.B.) Dirty Old Bastard"],
     linkCards: [], info: `
       <h3>Один раз за игру, когда объявляется о вашей смерти, вы можете убить
       цель.</h3>
@@ -438,7 +463,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant18.png'),
     id: 18,
     type: 'info',
-    name: "Сторож",
+    name: names["Watchman"],
     linkCards: [], info: `
    <h3> В конце первой ночи вы
 узнаете, кто такой случайный деревенский житель
@@ -462,7 +487,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant19.png'),
     id: 19,
     type: 'attack',
-    name: "Свободная пушка",
+    name: names["Loose Cannon"],
     linkCards: [], info: `
 <h3>До конца любого дня вы можете раскрыть эту карту. Пожертвуйте
 собой, чтобы закончить день и решить, кого повесить.</h3>
@@ -487,7 +512,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant20.png'),
     id: 20,
     type: 'info',
-    name: "Фанатик",
+    name: names["Fanatic"],
     linkCards: [12], info: `
       <h3> Всякий раз, когда Священник проверяет вас, вы тайно уведомляетесь и
       получаете дополнительную жизнь.
@@ -511,7 +536,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant21.png'),
     id: 21,
     type: 'holy',
-    name: "Послушник",
+    name: names["Acolyte"],
     linkCards: [12],
     info: `
       <h3>В начале игры вы узнаете, у кого есть персонаж Священника.</h3>
@@ -528,7 +553,7 @@ const cards = [
     ava: require('../assets/ava/Property 1=Variant22.png'),
     id: 22,
     type: 'guard',
-    name: "Эмиссар",
+    name: names["Emissary"],
     linkCards: [], info: `
       <h3>Первые три дня и ночи
 вы пользуетесь неограниченной защитой

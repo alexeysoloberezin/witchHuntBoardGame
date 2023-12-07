@@ -1,25 +1,41 @@
 <template>
-  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900 overflow-x-hidden" >
+  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900 overflow-x-hidden">
     <template v-if="!showRoles">
-      <Timer v-if="playersRoles" :voted-list="playersRoles" :key="JSON.stringify(playersRoles)"/>
+      <Timer
+          v-if="playersRoles"
+          ref="timerComponent"
+          :voted-list="playersRoles"
+      />
       <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
-        <CardPlayer
-            v-for="(card, i) in playersRoles"
-            :key="card.name"
-            :card="card"
-            :panelAction="panelAction"
-            :isNight="isNight"
-            :gamblerHaveShield="isNight && gamblerHaveShield(card.gamblerChoose)"
-            :cardTypes="cardTypes"
-            :shields="playersRoles[i].shield"
-            :hearts="playersRoles[i].heart"
-            @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
-            @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
-            @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
-            @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
-            @update:clickOnSkeleton="action(i)"
-            @update:foll="makeFoll"
-        />
+        <template v-if="false">
+          <CardPlayer
+              v-for="(card, i) in playersRoles"
+              :key="card.name"
+              :card="card"
+              :panelAction="panelAction"
+              :isNight="isNight"
+              :gamblerHaveShield="isNight && gamblerHaveShield(card.gamblerChoose)"
+              :cardTypes="cardTypes"
+              :shields="playersRoles[i].shield"
+              :hearts="playersRoles[i].heart"
+              @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
+              @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
+              @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
+              @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
+              @update:clickOnSkeleton="action(i)"
+              @update:foll="makeFoll"
+          />
+        </template>
+        <div v-else class="pl-3 pt-2">
+          <HistoryLine
+              :array="historyLine"
+              :activeStep="activeStep"
+              @update:clickNext="setNextActive"
+              @update:startTimer="startTimer"
+              @update:gamblerChoose="(choose) => setGamblerChoose(choose)"
+              :gamblerChooseClosed="gamblerChooseClosed"
+          ></HistoryLine>
+        </div>
       </div>
       <div v-else>
         <vs-button @click="handlerResetGame">
@@ -28,7 +44,8 @@
       </div>
     </template>
     <div v-else>
-      <CardSafe v-for="(card, i) in showRolesCards" :key="'showRoles-card-' + i" :card="card" :hide-image="false" class="mb-2"/>
+      <CardSafe v-for="(card, i) in showRolesCards" :key="'showRoles-card-' + i" :card="card" :hide-image="false"
+                class="mb-2"/>
       <vs-button @click="hideShowRoles">Закрыть роли</vs-button>
     </div>
 
@@ -211,7 +228,7 @@
       </div>
 
     </div>
-    <vs-button v-if="showRoles === false" @click="showRoles = true">
+    <vs-button v-if="showRoles === true" @click="showRoles = true">
       Показать роли
     </vs-button>
     <br><br><br><br><br><br><br><br><br><br>
@@ -221,141 +238,27 @@
 </template>
 
 <script>
-import cards, {getByNames} from "@/store/cards";
+import {getByNames, names} from "@/store/cards";
 import types from "@/js/types";
-import Timer from "@/components/Timer";
 import CardPlayer from "@/components/CardPlayer";
 import resetGame from "@/js/utils";
 import CardSafe from "@/components/Card";
+import GameMod from "@/js/GameMod";
+import {firstStep, historyLineData, nightSteps, nightStepsWelcome} from "@/js/GameModData";
+import HistoryLine from "@/components/Game/HistoryLine";
+import Timer from "@/components/Timer";
 
-const nightStepsWelcome = [
-  {
-    name: 'Ведьмы',
-    ifPlayerInGame: false,
-    text: `
-            Знакомятся. Отмечаем кто witcher.
-          `
-  },
-  {
-    name: 'Азартный игрок',
-    ifPlayerInGame: true,
-    text: `
-            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммунитет.
-            Чётным или нечетным.
-          `
-  },
-  {
-    name: 'Бомбардировщик',
-    ifPlayerInGame: true,
-    text: `
-            Выбирает кому дать бомбу.
-          `
-  },
-  {
-    name: 'Оракул',
-    ifPlayerInGame: true,
-    text: `
-            Узнает личность случайного мирного.
-          `
-  },
-  {
-    name: 'Ученик',
-    ifPlayerInGame: true,
-    text: (gravedigger, judge) => `
-            Выбирает могильщик(${gravedigger}) или судья(${judge}). Нужно показать кто сидит на выбранной роле.
-          `
-  },
-  {
-    name: 'Послушник',
-    ifPlayerInGame: true,
-    text: `
-            Узнает кто священник
-          `
-  },
-  {
-    name: 'Сторож',
-    ifPlayerInGame: true,
-    text: `
-            Узнает личность случайного мирного который не просыпался.
-          `
-  },
-]
-const nightSteps = [
-  {
-    name: 'Могильщик или ученик',
-    ifPlayerInGame: false,
-    text: `
-            Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков.
-          `
-  },
-  {
-    name: 'Демоны',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются демоны и выбирают каких двух жертв поменять ролями.
-          `
-  },
-  {
-    name: 'Ангелы',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются Ангелы и выбирают кого они хотят защитить этой ночью.
-          `
-  },
-  {
-    name: 'Ведьмы',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются Ведьмы.
-             Хотите ли вы сделать иллюзорное убийство?
-             Кого убивают ведьмы ?
-          `
-  },
-  {
-    name: 'Священник',
-    ifPlayerInGame: true,
-    text: `
-            Просыпаются Священник и делает свою проверку.(на ведьму).
-            Не забудь оведомить фанатика если его преверят. И дать доп жизнь
-          `
-  },
-  {
-    name: 'Фанатик',
-    ifPlayerInGame: true,
-    text: ` Просыпаются Фанатик. Проверяли ли вас?`
-  },
-  {
-    name: 'Инквизитор',
-    ifPlayerInGame: true,
-    text: `
-            Просыпаются Инквизитор и делает свою проверку по типу. (Информация, Атака...)
-          `
-  },
-  {
-    name: 'Бомбардировщик',
-    ifPlayerInGame: true,
-    text: `
-            Если бомба есть!!
-            Просыпаются Бомбардировщик и подает сигнал если хочет взорвать бомбу.
-          `
-  },
-  {
-    name: 'Охотник',
-    ifPlayerInGame: true,
-    text: `
-            Если предыдущей ночью выживал человек. Просыпается охотник. И убивает цель. Которая выжела.
-          `
-  },
-
-]
 
 export default {
-  name: "GameComming",
-  components: {CardSafe, CardPlayer, Timer},
+  name: "Game",
+  components: {Timer, HistoryLine, CardSafe, CardPlayer},
   data() {
     return {
+      activeStep: firstStep,
+
       showRoles: false,
       playersRoles: {},
+      historyLine: [],
       panelAction: null,
       isNight: false,
       log: false,
@@ -373,84 +276,60 @@ export default {
     }
   },
   computed: {
-    showRolesCards(){
-      const roles = Object.values(this.playersRoles).map(el => el.name)
-      const res = cards.filter(card => roles.map(el => el.toLowerCase()).includes(card.name.toLowerCase()))
-
-      for (let i = res.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [res[i], res[j]] = [res[j], res[i]];
-      }
-
-      return res;
+    showRolesCards() {
+      return GameMod.showRolesCards(this.playersRoles, true)
     },
     getNightPerson() {
       return this.nightSteps[this.activeNightStep]
     },
     getNightWelcomePerson() {
-      const person = this.nightStepsWelcome[this.activeNightStep]
-
-      const roles = Object.values(this.playersRoles)
-      console.log('playersRoles', this.playersRoles, this.playersRoles.length)
-      let gravedigger, judge;
-
-      roles.forEach(role => {
-        if(role.name === 'Могильщик'){
-          gravedigger = role.number
-        }else if(role.name === 'Судья'){
-          judge = role.number
-        }
-      })
-
-      if(person?.name === 'Ученик'){
-        return {
-          ...person,
-          text: person.text(gravedigger, judge)
-        }
-      }
-
-      return this.nightStepsWelcome[this.activeNightStep]
+      return GameMod.getNightWelcomePerson(this.playersRoles, this.activeNightStep, this.nightStepsWelcome)
     },
   },
   methods: {
-    hideShowRoles(){
+    startTimer(type){
+      if(type === 'start'){
+        this.$refs.timerComponent.startTimer();
+      }else{
+        this.$refs.timerComponent.stopTimer();
+      }
+    },
+    setNextActive: function () {
+      const find = this.historyLine.find(el => el.id === this.activeStep);
+
+      if (find) {
+        const currentIndex = this.historyLine.indexOf(find);
+        if (currentIndex !== -1 && currentIndex < this.historyLine.length - 1) {
+          const nextElement = this.historyLine[currentIndex + 1];
+          const nextElementId = nextElement.id;
+          console.log(nextElementId);
+          this.activeStep = nextElementId
+        }
+      }
+    },
+    hideShowRoles() {
       const enteredPassword = window.prompt('Please enter your password:');
 
       if (enteredPassword === '000' || enteredPassword === 'zzz' || enteredPassword === 'ZZZ' || enteredPassword === 'я' || enteredPassword === 'Z' || enteredPassword === 'z') {
         this.showRoles = false
       }
     },
-    gamblerShield(remove = false){
-      const find = this.playersRoles.find(player => player.name === 'Азартный игрок')
-      if(find){
-        if(find.killed){
-          return null;
-        }
-        if(this.gamblerHaveShield(find.gamblerChoose)){
-          if(remove){
-            find.shield = find.shield - 1
-          }else{
-            find.shield = find.shield + 1
-          }
-
-        }
-      }
+    gamblerShield() {
+      GameMod.gamblerShield.apply(this)
     },
-    startNight(){
-      // gambler shield
+    startNight() {
       this.gamblerShield()
 
       this.isNight = true
     },
-    makeFoll(index){
-      console.log('foll', index)
+    makeFoll(index) {
       const find = this.playersRoles.find(player => player.number === index)
 
-      if(find.foll >= 4){
+      if (find.foll >= 4) {
         find.foll = 0
-      }else{
+      } else {
         find.foll = find.foll + 1
-        this.$toast.success('Фол Игроку: ' +  index + `<br/> У вас ${find.foll} фола`)
+        this.$toast.success('Фол Игроку: ' + index + `<br/> У вас ${find.foll} фола`)
       }
 
       this.saveAll()
@@ -458,15 +337,8 @@ export default {
     handlerResetGame() {
       resetGame()
     },
-    setInGlobalLog(message){
-      let res =  localStorage.getItem('logList' )
-      if(res){
-        res = JSON.parse(res)
-        res = [...res, message]
-      }else{
-        res = [message]
-      }
-      localStorage.setItem('logList', JSON.stringify(res))
+    setInGlobalLog(message) {
+      GameMod.setInGlobalLog(message)
     },
     closeLog() {
       this.log = false
@@ -481,22 +353,16 @@ export default {
           player: this.playersRoles[index].number,
           type: 'Попытка убийства'
         })
-      }else{
+      } else {
         this.setInGlobalLog('Днем убавлена броня или жизнь Игрока: ' + index)
       }
     },
     gamblerHaveShield(choose) {
-      if (choose === 'четные') {
-        return this.nightVal % 2 === 0;
-      } else if (choose === 'нечетные') {
-        return this.nightVal % 2 !== 0;
-      }
-
-      return false
+      return GameMod.gamblerHaveShield(choose, this.nightVal)
     },
     setGamblerChoose(choose) {
       this.playersRoles = this.playersRoles.map(el => {
-        if (el.name === 'Азартный игрок') {
+        if (el.name === names.Gambler) {
           return {
             ...el,
             gamblerChoose: choose
@@ -509,12 +375,11 @@ export default {
       this.setInGlobalLog('Гамблер (Азартный игрок выбирает): ' + choose + ' ночи')
     },
     handleCloseNight() {
-      this.gamblerShield(true)
-
       this.playersRoles = this.playersRoles.map(el => {
         return {
           ...el,
           fakeKill: false,
+          shield: 0,
           chain: false,
         }
       })
@@ -532,7 +397,7 @@ export default {
     },
     action(indexPlayer) {
       if (this.panelAction === 'kill') {
-        if (this.playersRoles[indexPlayer].name === 'Эмиссар' && this.nightVal <= 3) {
+        if (this.playersRoles[indexPlayer].name === names.Emissary && this.nightVal <= 3) {
           alert('U cant kill him')
           this.setInGlobalLog('Попытка убийства Игрока: ' + indexPlayer)
           return;
@@ -557,13 +422,12 @@ export default {
         }
 
         let confirmedKill;
-        console.log(this.playersRoles[indexPlayer], 'this.playersRoles[indexPlayer]')
-        if((this.playersRoles[indexPlayer].heart > 1 || this.playersRoles[indexPlayer].shield > 0) && !this.playersRoles[indexPlayer].killed){
+        if ((this.playersRoles[indexPlayer].heart > 1 || this.playersRoles[indexPlayer].shield > 0) && !this.playersRoles[indexPlayer].killed) {
           confirmedKill = confirm(`Вы уверены что хотите убить игрока: ${this.playersRoles[indexPlayer].number}? У него 2 жизни или броня`);
           if (confirmedKill) {
             kill();
           }
-        }else {
+        } else {
           kill();
         }
       } else if (this.panelAction === 'fakeKill') {
@@ -590,6 +454,7 @@ export default {
         isNight: this.isNight,
         nightVal: this.nightVal,
         log: this.log,
+        activeStep: this.activeStep,
         nightHistory: this.nightHistory,
         dayLog: this.dayLog,
         activeNightStep: this.activeNightStep,
@@ -618,61 +483,55 @@ export default {
       }
 
       if (playersRoles) {
-        const playerNumber = Object.keys(playersRoles)
+        const players = Object.keys(playersRoles).map(el => ({
+          ...playersRoles[el],
+          number: el,
+        }))
+        const res = []
 
-        this.playersRoles = playerNumber.map(number => {
-          const card = getByNames([playersRoles[number]])
-          return {
-            number,
-            name: playersRoles[number],
+        players.forEach(el => {
+          const card = getByNames([el.name])
+
+          res.push({
+            number: el.number,
+            name: el.name,
             type: card[0].type,
             heart: card[0].id === 8 ? 2 : 1,
             foll: 0,
-            isGood: true,
+            isGood: el.type === 'mir',
             gamblerChoose: '',
             fakeKill: false,
             killed: false,
             chain: false,
             shield: 0,
-          }
+          })
         })
+
+        this.playersRoles = res
       } else {
         this.playersRoles = {}
       }
-
-
     },
   },
   mounted() {
     let playersRoles = localStorage.getItem('playersRoles')
-    if(playersRoles){
-      playersRoles = JSON.parse(playersRoles)
-      const roles = Object.values(playersRoles)
+    if (playersRoles) {
+      playersRoles = JSON.parse(playersRoles) || {}
+      const roles = Object.values(playersRoles).map(el => el.name)
 
-      this.nightStepsWelcome = nightStepsWelcome.filter((el) => {
-        if(el.ifPlayerInGame === false){
-          return true
-        }else{
-          return roles.includes(el.name)
-        }
-      })
-
-      console.log('nightSteps', nightSteps)
-      console.log('roles', roles)
-
-      this.nightSteps = nightSteps.filter((el) => {
-        if(el.ifPlayerInGame === false){
-          return true
-        }else{
-          return roles.includes(el.name)
-        }
-      })
-    }else{
+      this.nightStepsWelcome = GameMod.filterStepsPolesInGame(nightStepsWelcome, roles)
+      this.nightSteps = GameMod.filterStepsPolesInGame(nightSteps, roles)
+    } else {
       this.nightStepsWelcome = nightStepsWelcome
       this.nightSteps = nightSteps
     }
 
     this.loadData()
+
+
+    this.historyLine = historyLineData({
+      initialPlayers: this.playersRoles
+    })
 
     this.saveInterval = setInterval(() => {
       this.saveAll()

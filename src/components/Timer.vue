@@ -110,18 +110,17 @@
                 <div v-if="i === votedListItems.length - 1"   class="w-100">Оставшиеся: {{ votedListItemsFinalSum }}</div>
                 <vs-input v-else
                           v-model.number="votedListItemsFinal[person]"
-                          @change="addLastEl(person, i)"
                           type="number"
                           class="w-100"
                 ></vs-input>
               </div>
 
-              <div class="flex">
-                <vs-button @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
-                  Сбросить
-                </vs-button>
+              <div class="grid grid-cols-1 gap-2">
                 <vs-button @click="saveVoted">
                   Результаты верные сохранить.
+                </vs-button>
+                <vs-button  @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
+                  Сбросить
                 </vs-button>
               </div>
             </div>
@@ -276,11 +275,9 @@ export default {
       this.completedSteps = this.totalSteps;
 
       this.timer = setInterval(() => {
-        console.log('int')
         this.completedSteps -= 1;
 
         this.value -= (100 / this.duration);
-        console.log(this.value)
 
         if (this.value <= 0) {
           this.stopTimer()
