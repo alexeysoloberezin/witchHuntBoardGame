@@ -30,7 +30,7 @@ Vue.use(Vue2TouchEvents, {
 })
 Vue.use(Toast, {
     position: 'top-right',
-    duration: 1500,
+    duration: 0,
     className: ['my-toast'], // добавьте класс стилей, который вы определите в своем CSS
     styles: {
         color: 'white', // цвет текста

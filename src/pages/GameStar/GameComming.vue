@@ -45,10 +45,10 @@
         <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  max-h-screen  "
               style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
-            <img :src="require('../../assets/mir.png')" alt="">
+            <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 50px);">
           </div>
           <div @click="chooseType('witch')">
-            <img :src="require('../../assets/witch.png')" alt="">
+            <img :src="require('../../assets/witch.png')" alt="" style="max-height: calc(100vh - 50px);">
           </div>
 
         </div>
@@ -60,6 +60,11 @@
           @click="start"
       >
           Роли разданы, далее
+      </vs-button>
+      <vs-button
+          @click="random"
+      >
+        random
       </vs-button>
     </div>
     <div v-if="Object.keys(playersRoles).length !== roles.length" style="font-size: 12px" class="pl-2 pt-1 opacity-50">
@@ -106,6 +111,25 @@ export default {
     }
   },
   methods: {
+    random(){
+      let roles = localStorage.getItem('gameRoles')
+      console.log('playersRoles' ,roles)
+      if(roles){
+        roles = JSON.parse(roles)
+
+        const res = {}
+
+        roles.forEach((role, i) => {
+          res[i + 1] = {
+            type: i < 4 ? 'witch' : 'mir',
+            name: role
+          }
+        })
+
+        this.playersRoles = res
+        this.save()
+      }
+    },
     chooseType(type){
       this.$set(this.playersRoles, this.roleFor, {
         ...this.playersRoles[this.roleFor],

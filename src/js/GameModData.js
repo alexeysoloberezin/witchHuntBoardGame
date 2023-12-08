@@ -1,125 +1,17 @@
-import {names} from "@/store/cards";
+import {getByNames, names} from "@/store/cards";
 import GameMod from "@/js/GameMod";
 
-export const nightStepsWelcome = [
-  {
-    name: 'Ведьмы',
-    ifPlayerInGame: false,
-    text: `
-            Знакомятся. Отмечаем кто witcher.
-          `
-  },
-  {
-    name: 'Азартный игрок',
-    ifPlayerInGame: true,
-    text: `
-            Просыпается Азартный игрок. И выбирает по каким ночам у него будет иммунитет.
-            Чётным или нечетным.
-          `
-  },
-  {
-    name: 'Бомбардировщик',
-    ifPlayerInGame: true,
-    text: `
-            Выбирает кому дать бомбу.
-          `
-  },
-  {
-    name: 'Оракул',
-    ifPlayerInGame: true,
-    text: `
-            Узнает личность случайного мирного.
-          `
-  },
-  {
-    name: 'Ученик',
-    ifPlayerInGame: true,
-    text: (gravedigger, judge) => `
-            Выбирает могильщик(${gravedigger}) или судья(${judge}). Нужно показать кто сидит на выбранной роле.
-          `
-  },
-  {
-    name: 'Послушник',
-    ifPlayerInGame: true,
-    text: `
-            Узнает кто священник
-          `
-  },
-  {
-    name: 'Сторож',
-    ifPlayerInGame: true,
-    text: `
-            Узнает личность случайного мирного который не просыпался.
-          `
-  },
+export const dayPersonWhoHaveSkills = [
+  names.Assassin,
+  names.Nurse,
+  names.Spiritualist,
+  names['(D.O.B.) Dirty Old Bastard'],
+  names["Loose Cannon"],
 ]
-export const nightSteps = [
-  {
-    name: 'Могильщик или ученик',
-    ifPlayerInGame: false,
-    text: `
-            Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков.
-          `
-  },
-  {
-    name: 'Демоны',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются демоны и выбирают каких двух жертв поменять ролями.
-          `
-  },
-  {
-    name: 'Ангелы',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются Ангелы и выбирают кого они хотят защитить этой ночью.
-          `
-  },
-  {
-    name: 'Ведьмы',
-    ifPlayerInGame: false,
-    text: `
-            Просыпаются Ведьмы.
-             Хотите ли вы сделать иллюзорное убийство?
-             Кого убивают ведьмы ?
-          `
-  },
-  {
-    name: 'Священник',
-    ifPlayerInGame: true,
-    text: `
-            Просыпаются Священник и делает свою проверку.(на ведьму).
-            Не забудь оведомить фанатика если его преверят. И дать доп жизнь
-          `
-  },
-  {
-    name: 'Фанатик',
-    ifPlayerInGame: true,
-    text: ` Просыпаются Фанатик. Проверяли ли вас?`
-  },
-  {
-    name: 'Инквизитор',
-    ifPlayerInGame: true,
-    text: `
-            Просыпаются Инквизитор и делает свою проверку по типу. (Информация, Атака...)
-          `
-  },
-  {
-    name: 'Бомбардировщик',
-    ifPlayerInGame: true,
-    text: `
-            Если бомба есть!!
-            Просыпаются Бомбардировщик и подает сигнал если хочет взорвать бомбу.
-          `
-  },
-  {
-    name: 'Охотник',
-    ifPlayerInGame: true,
-    text: `
-            Если предыдущей ночью выживал человек. Просыпается охотник. И убивает цель. Которая выжела.
-          `
-  },
-]
+
+export const GET_dayPersonWhoHaveSkills = () => {
+  return getByNames(dayPersonWhoHaveSkills)
+}
 
 export const arrayStartGameTakeCards = (playersLength) => {
   const arr = []
@@ -135,9 +27,9 @@ export const arrayStartGameTakeCards = (playersLength) => {
 }
 
 export const firstStep = 21
-export const historyLineData = ({initialPlayers}) => {
+export const historyLineData = ({initialPlayers, nights = 0}) => {
   console.log('initialPlayers', initialPlayers)
-  if(!Array.isArray(initialPlayers) || initialPlayers.length < 4){
+  if (!Array.isArray(initialPlayers) || initialPlayers.length < 4) {
     return []
   }
 
@@ -151,6 +43,16 @@ export const historyLineData = ({initialPlayers}) => {
     .map(el => el.number)
     .join(' , ')
 
+  let generated = []
+
+  console.log('nights', nights)
+  for (let i = 0; i < nights + 1; i++) {
+    generated = [
+      ...generated,
+      ...generate(initialPlayers, i),
+    ]
+  }
+
   const dayList = [
     {
       id: firstStep,
@@ -162,6 +64,7 @@ export const historyLineData = ({initialPlayers}) => {
     {
       id: 22,
       title: 'Посыпается Азартный игрок.',
+      name: 'Азартный игрок',
       text: 'Азартный игрок выбирает четные или нечетные ночи в эти ночи у него будет иммунитет. Эта ночь нулевая.',
       ifPlayerInGame: true,
       type: 'night',
@@ -169,6 +72,7 @@ export const historyLineData = ({initialPlayers}) => {
     {
       id: 23,
       title: 'Просыпается Бомбардировщик ',
+      name: 'Бомбардировщик',
       ifPlayerInGame: true,
       type: 'night',
       text: `Выбирает кому дать бомбу. Покажите мне цифру я выдам бомбу этому игроку.`
@@ -176,6 +80,7 @@ export const historyLineData = ({initialPlayers}) => {
     {
       id: 24,
       title: 'Просыпается Оракул',
+      name: 'Оракул',
       ifPlayerInGame: true,
       type: 'night',
       text: `Узнает личность случайного мирного.Покажите одного из мирных:
@@ -192,6 +97,7 @@ export const historyLineData = ({initialPlayers}) => {
     {
       id: 26,
       title: 'Просыпается Послушник',
+      name: 'Послушник',
       text: 'Послушник узнает кто священник: покажите - ' + priest,
       type: 'night',
       ifPlayerInGame: true,
@@ -199,6 +105,7 @@ export const historyLineData = ({initialPlayers}) => {
     {
       id: 27,
       title: 'Просыпается Сторож',
+      name: 'Сторож',
       ifPlayerInGame: true,
       type: 'night',
       text: `
@@ -213,18 +120,149 @@ export const historyLineData = ({initialPlayers}) => {
       text: "Доброе утро",
       type: 'day'
     },
-    ...dayUsers({start: 29, users: initialPlayers}),
-    ...voted(29 + initialPlayers.length),
+    ...generated
   ]
 
   return GameMod.filterStepsPolesInGame(dayList, roles)
 }
 
-export const dayUsers = ({start, users}) => {
-  const res = users.map((user, index) => {
+export const generate = (initialPlayers, night) => {
+  let res = [
+    ...dayUsers({night, users: initialPlayers}),
+  ]
+
+  if(night > 0){
+    res = [...res, ...voted('voted-user-' + night)]
+  }
+
+  return [
+    ...res,
+    ...nigthStepNew(night, initialPlayers)
+  ]
+}
+
+export const nigthStepNew = (night = 0, users) => {
+  console.log('users', users)
+  let start = 'night-' + night + '-'
+
+  let hunterArr = []
+  const hunter = users.find(user => user.name === names.Hunter)
+
+  if (hunter && hunter?.hunterWakeUp.length > 0) {
+    const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]
+
+    if(hunterLast.night === night){
+      hunterArr = [{
+        id: start + 1,
+        title: 'Просыпается Охотник',
+        name: 'Охотник',
+        ifPlayerInGame: true,
+        type: 'night',
+        text: `
+            Т.к выживал Игрок - ${hunterLast.id}.  
+            Хотите ли вы добить его?
+          `
+      }]
+    }
+  }
+
+  return [
+    ...hunterArr,
+    {
+    id: start + 2,
+    title: 'Просыпается Могильщик',
+    name: 'Могильщик',
+    ifPlayerInGame: false,
+    type: 'night',
+    text: `
+    Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков. => 
+    ${users.filter(user => user.deadOnDay).map(el => el.number).join(' , ')}
+          `
+  },
+    {
+      id: start + 3,
+      title: 'Просыпаются Демоны',
+      name: 'Демоны',
+      ifPlayerInGame: false,
+      type: 'night',
+      text: `
+            Просыпаются демоны и выбирают каких двух жертв поменять ролями.
+          `
+    },
+    {
+      id: start + 4,
+      title: 'Просыпаются Ангелы',
+      name: 'Ангелы',
+      ifPlayerInGame: false,
+      type: 'night',
+      text: `
+            Просыпаются Ангелы и выбирают кого они хотят защитить этой ночью.
+          `
+    },
+    {
+      id: start + 5,
+      title: 'Просыпаются Ведьмы',
+      name: 'Ведьмы',
+      ifPlayerInGame: false,
+      type: 'night',
+      text: `
+            Просыпаются Ведьмы.
+             Хотите ли вы сделать иллюзорное убийство?
+             Кого убивают ведьмы ?
+          `
+    },
+    {
+      id: start + 6,
+      title: 'Священник',
+      name: 'Священник',
+      ifPlayerInGame: true,
+      type: 'night',
+      text: `
+            Просыпаются Священник и делает свою проверку.(на ведьму).
+            Не забудь оведомить фанатика если его преверят. И дать доп жизнь
+          `
+    },
+    {
+      id: start + 7,
+      title: 'Просыпается Фанатик',
+      name: 'Фанатик',
+      ifPlayerInGame: true,
+      type: 'night',
+      text: `
+       Просыпаются Фанатик. Проверяли ли вас? ==> 
+       ${users.find(el => el.name === names.Fanatic)?.fanaticCheck === 1 ? 'Да' : 'Нет'}
+      `
+    },
+    {
+      id: start + 8,
+      title: 'Инквизитор',
+      name: 'Инквизитор',
+      ifPlayerInGame: true,
+      type: 'night',
+      text: `
+            Просыпаются Инквизитор и делает свою проверку по типу. (Информация, Атака...)
+          `
+    },
+    {
+      id: start + 9,
+      title: 'Бомбардировщик',
+      name: 'Бомбардировщик',
+      ifPlayerInGame: true,
+      type: 'night',
+      text: `
+            Если бомба есть!!
+            Просыпаются Бомбардировщик и подает сигнал если хочет взорвать бомбу.
+          `
+    },
+  ]
+}
+
+export const dayUsers = ({night, users}) => {
+
+  const res = users.filter(user => !user.killed).map((user) => {
     return {
-      id: +start + index,
-      title: 'Речь игрока: ' + +user.number + ' ' +  user.name,
+      id: 'daySpeach-' + night + "-" + user.number,
+      title: 'Речь игрока: ' + +user.number + ' ' + user.name,
       ifPlayerInGame: false,
       text: "Дневная речь",
       type: 'day'
@@ -236,7 +274,7 @@ export const dayUsers = ({start, users}) => {
 
 export const voted = (prevId) => ([
   {
-    id: prevId + 1,
+    id: prevId,
     title: 'Голосование!',
     ifPlayerInGame: false,
     text: "Дневная речь",

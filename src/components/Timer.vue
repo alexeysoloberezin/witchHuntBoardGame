@@ -93,7 +93,7 @@
           <div :style="{transform: !votedModal ? 'translateX(200%)' : '', transition: '.5s', bottom: !lock ? '80px' : '15px'}"  class="fixed bg-gray-800 "
                style="z-index: 102;right: 10px;padding: 25px 15px 15px 15px;width: calc(100vw - 100px);box-shadow: 0 10px 125px rgba(11, 54, 87, 0.79); border: 1px solid rgba(255,255,255,0.13);border-radius: 12px">
 
-            <div v-if="!votedStart" class="grid">
+            <div v-if="!votedStart && Array.isArray(votedList)" class="grid">
               <vs-checkbox v-for="(person) in votedList.filter(el => !el.killed)" :key="'as' + person.number" :val="person.number"
                            v-model="votedListItems" @change="votedListItemsChanged">
                 Игрок: {{ person.number }}
