@@ -48,13 +48,8 @@ export default {
             "Failed to login. Please check connection and try again!"
           )
         );
-    } else {
-      this.$store.dispatch("autoLogin");
     }
-    this.$store.dispatch("setPreferedTheme");
   },
-  mounted() {
-    this.$store.dispatch("setState");
-  },
+
 };
 </script>
