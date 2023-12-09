@@ -63,7 +63,17 @@
 .vs-button--border:focus{
     background: transparent !important;
 }
+.vs-input__label{
+    color: rgba(255, 255, 255, 0.45);
+}
 
+.vs-avatar{
+    color: #fff;
+    background: rgba(42, 42, 42, 0.55);
+}
+.vs-component--primary .vs-avatar{
+    background: rgba(70,201,58);
+}
 .v-toast__item--success{
     border: 1px solid rgb(70,201,58) !important;
     background: #121317 !important;
@@ -86,4 +96,7 @@
     100% {
         transform: translateX(0px);
     }
+}
+.vs-dialog{
+    background: #121317;
 }

@@ -93,7 +93,7 @@
           <div :style="{transform: !votedModal ? 'translateX(200%)' : '', transition: '.5s', bottom: !lock ? '80px' : '15px'}"  class="fixed bg-gray-800 "
                style="z-index: 102;right: 10px;padding: 25px 15px 15px 15px;width: calc(100vw - 100px);box-shadow: 0 10px 125px rgba(11, 54, 87, 0.79); border: 1px solid rgba(255,255,255,0.13);border-radius: 12px">
 
-            <div v-if="!votedStart && votedListIsArray" class="grid">
+            <div v-if="!votedStart && Array.isArray(votedList)" class="grid">
               <vs-checkbox v-for="(person) in votedList.filter(el => !el.killed)" :key="'as' + person.number" :val="person.number"
                            v-model="votedListItems" @change="votedListItemsChanged">
                 Игрок: {{ person.number }}
@@ -115,12 +115,12 @@
                 ></vs-input>
               </div>
 
-              <div class="flex">
-                <vs-button @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
-                  Сбросить
-                </vs-button>
+              <div class="grid grid-cols-1 gap-2">
                 <vs-button @click="saveVoted">
                   Результаты верные сохранить.
+                </vs-button>
+                <vs-button  @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
+                  Сбросить
                 </vs-button>
               </div>
             </div>
@@ -157,12 +157,7 @@ export default {
   components: {
     RadialProgressBar
   },
-  props: {
-    votedList: {
-      type: Array,
-      default: () => []
-    }
-  },
+  props: ['votedList'],
   data() {
     return {
       votedListItems: [],
@@ -184,14 +179,7 @@ export default {
     }
   },
   computed: {
-    votedListIsArray(){
-      return Array.isArray(this.votedList)
-    },
     votedListItemsFinalSum(){
-      if(!this.votedListIsArray){
-        return 0
-      }
-
       const res = Object.values(this.votedListItemsFinal)
       const sum = res.reduce((acc, el) => +acc + +el, 0);
       const list = this.votedList.filter(el => !el.killed)
@@ -287,11 +275,9 @@ export default {
       this.completedSteps = this.totalSteps;
 
       this.timer = setInterval(() => {
-        console.log('int')
         this.completedSteps -= 1;
 
         this.value -= (100 / this.duration);
-        console.log(this.value)
 
         if (this.value <= 0) {
           this.stopTimer()

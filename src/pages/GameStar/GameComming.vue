@@ -1,106 +1,187 @@
 <template>
-  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900">
+  <div class="min-h-screen text-white p-3 bg-gray-200 dark:bg-gray-900">
     <router-link to="/GameStart" class="mb-1">
-      <vs-button >
-        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      <vs-button>
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>
+          arrow-left</title>
+          <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
+        </svg>
       </vs-button>
     </router-link>
 
-    <div v-if="Array.isArray(roles) && roles.length > 5" :key="JSON.stringify(playersRoles)">
-      <div v-for="(card, i) in getCards" :key="card.id" class="cardBox mb-2">
-        <div>
-          Игрок: {{ i + 1 }}
+    <div class="pl-4 pt-4">
+      <HistoryLine
+          :array="historyLine"
+          :active="pickedUsers"
+          @update:clickOnItem="makeRole"
+      />
+      <vs-dialog overflow-hidden full-screen v-model="showModalRoles">
+        <template #header>
+          <h4 class="not-margin text-white">
+            Выберите роль для игрока {{ roleFor }}
+          </h4>
+        </template>
+
+        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white  max-h-screen  "
+             style="padding-bottom: 100px">
+          <div v-for="(card) in getCards" :key="'takeRoles-card-' + card.name" class="cursor-pointer"
+               @click="chooseRole(card)">
+            <CardSafe
+                :card="card"
+                :hide-image="false"
+                class="mb-3"
+            />
+          </div>
+
         </div>
-        <select v-model="playersRoles[i + 1]" @change="checkErrors" style="height: 40px;min-height: 40px;" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg h-[40px] p-2 mt-2 block focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="role in roles" :label="role" :key="role" :value="role">{{ role }}</option>
-        </select>
-        <div v-if="errorList.includes(playersRoles[i + 1])" class="text-sm text-red-700 ml-2 mt-2">
-          Повторение
+      </vs-dialog>
+      <vs-dialog overflow-hidden full-screen v-model="showModalType">
+        <template #header>
+          <h4 class="not-margin text-white">
+            Выберите роль для игрока {{ roleFor }}
+          </h4>
+        </template>
+
+        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  max-h-screen  "
+              style="padding-bottom: 100px">
+          <div @click="chooseType('mir')">
+            <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 50px);">
+          </div>
+          <div @click="chooseType('witch')">
+            <img :src="require('../../assets/witch.png')" alt="" style="max-height: calc(100vh - 50px);">
+          </div>
+
         </div>
-      </div>
+      </vs-dialog>
     </div>
-    <div class="flex items-center gap-4">
-      <vs-button @click="save">
-        Сохранить
-      </vs-button>
-      <vs-button :active-disabled="errorList.length !== 0 || Object.keys(playersRoles).length !== roles.length || !saved">
-        <router-link to="/Game" >
+    <div  class="flex items-center gap-4">
+      <vs-button
+          :active-disabled="Object.keys(playersRoles).length !== roles.length"
+          @click="start"
+      >
           Роли разданы, далее
-        </router-link>
       </vs-button>
+      <vs-button
+          @click="random"
+      >
+        random
+      </vs-button>
+    </div>
+    <div v-if="Object.keys(playersRoles).length !== roles.length" style="font-size: 12px" class="pl-2 pt-1 opacity-50">
+      Что бы продолжить вам нужно заполнить все роли игроков.
     </div>
     <br><br><br><br><br><br><br><br><br><br>
     <br><br><br><br><br><br><br><br><br><br>
   </div>
 </template>
 
-<script >
+<script>
 import cards, {getByNames} from "@/store/cards";
+import HistoryLine from "@/components/Game/HistoryLine";
+import {arrayStartGameTakeCards} from "@/js/GameModData";
+import CardSafe from "@/components/Card";
 
 export default {
   name: "GameComming",
-  data(){
+  components: {CardSafe, HistoryLine},
+  data() {
     return {
       saved: false,
       playersRoles: {},
+
+      showModalRoles: false,
+      showModalType: false,
+      roleFor: null,
+      historyLine: [],
       roles: [],
       errorList: [],
       rolesItems: cards
     }
   },
   computed: {
-    getCards(){
-      return getByNames(this.roles)
+    getCards() {
+      let roles = this.roles.filter(role => !this.pickedCards.includes(role))
+      return getByNames(roles)
+    },
+    pickedCards(){
+      return Object.values(this.playersRoles).map(el => el.name)
+    },
+    pickedUsers(){
+      return Object.keys(this.playersRoles)
     }
   },
   methods: {
-    save(){
-      localStorage.setItem('playersRoles', JSON.stringify(this.playersRoles))
-      this.saved = true
-    },
-    checkErrors(){
-      this.saved = false
-      const roles = Object.values(this.playersRoles);
-      const errorSet = new Set();
+    random(){
+      let roles = localStorage.getItem('gameRoles')
+      console.log('playersRoles' ,roles)
+      if(roles){
+        roles = JSON.parse(roles)
 
-      roles.forEach((role, index, array) => {
-        // Проверяем, есть ли дубликаты после текущего элемента в массиве
-        if (array.slice(index + 1).includes(role)) {
-          // Если есть дубликат, добавляем ошибку в errorSet
-          errorSet.add(role);
-        }
+        const res = {}
+
+        roles.forEach((role, i) => {
+          res[i + 1] = {
+            type: i < 4 ? 'witch' : 'mir',
+            name: role
+          }
+        })
+
+        this.playersRoles = res
+        this.save()
+      }
+    },
+    chooseType(type){
+      this.$set(this.playersRoles, this.roleFor, {
+        ...this.playersRoles[this.roleFor],
+        type
+      });
+      this.save()
+    },
+    chooseRole(card) {
+      this.$set(this.playersRoles, this.roleFor, {
+        ...this.playersRoles[this.roleFor],
+        name: card.name
       });
 
-      const errorList = Array.from(errorSet);
-
-      this.errorList = errorList;
-
+      this.showModalRoles = null
+      this.showModalType = true
+    },
+    makeRole(id) {
+      this.roleFor = id
+      this.showModalRoles = true
+    },
+    start(){
       this.save()
+      localStorage.removeItem('gameRoles')
+      this.$router.push('/Game')
+    },
+    save() {
+      localStorage.setItem('playersRoles', JSON.stringify(this.playersRoles))
     },
   },
   mounted() {
     let roles = localStorage.getItem('gameRoles')
     let playersRoles = localStorage.getItem('playersRoles')
-    if(roles){
+    if (roles) {
       roles = JSON.parse(roles)
     }
-    if(playersRoles){
+    if (playersRoles) {
       playersRoles = JSON.parse(playersRoles)
     }
 
-    if(playersRoles) {
+    if (playersRoles) {
       this.playersRoles = playersRoles
-      // this.playersRoles = roles
-    }else{
+    } else {
       this.playersRoles = {}
     }
 
-    if(roles && Array.isArray(roles)) {
+    if (roles && Array.isArray(roles)) {
       this.roles = roles
-      // this.playersRoles = roles
-    }else{
+    } else {
       this.roles = []
     }
+
+    this.historyLine = arrayStartGameTakeCards(this.roles.length)
   },
 }
 </script>
