@@ -306,6 +306,10 @@ export default {
     this.checkVotedType()
   },
   mounted() {
+    if(this.$parent.scrollToActiveStep){
+      console.log('have')
+      this.$parent.scrollToActiveStep()
+    }
     this.checkVotedType()
   },
   methods: {
@@ -406,7 +410,7 @@ export default {
         return ''
       }
       if (!this.isActiveStep(id)) {
-        return 'opacity-50'
+        return 'opacity-25'
       }
       return ''
     },
@@ -422,13 +426,11 @@ export default {
       }
       return false
     },
-    emitClickNext(id) {
+    emitClickNext() {
       console.log('this.', this.isShow)
       this.emitStartTimer('stop')
       this.isShow = false
       this.$emit('update:clickNext');
-
-      this.scrollDown(id)
     },
     emitStartTimer(type) {
       this.isShow = true

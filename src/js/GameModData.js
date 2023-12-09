@@ -13,13 +13,14 @@ export const GET_dayPersonWhoHaveSkills = () => {
   return getByNames(dayPersonWhoHaveSkills)
 }
 
-export const arrayStartGameTakeCards = (playersLength) => {
+export const arrayStartGameTakeCards = (playersLength, players) => {
   const arr = []
   for (let i = 1; i < playersLength + 1; i++) {
+    const find = players[i]
     arr.push({
       id: i,
       title: `Посыпается Игрок ${i}`,
-      text: 'Ночная раздача карт',
+      text: `${find?.name || ''} -- ${find?.type || ''}`,
       type: 'night',
     })
   }
@@ -262,7 +263,7 @@ export const dayUsers = ({night, users, nightLog}) => {
   const res = users.filter(user => !user.killed).map((user) => {
     return {
       id: 'daySpeach-' + night + "-" + user.number,
-      title: 'Речь игрока: ' + +user.number + ' ' + user.name,
+      title: 'Речь игрока: ' + +user.number ,
       ifPlayerInGame: false,
       text: "Дневная речь",
       type: 'day'

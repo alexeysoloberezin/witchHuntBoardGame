@@ -62,6 +62,7 @@
           Роли разданы, далее
       </vs-button>
       <vs-button
+          v-if="false"
           @click="random"
       >
         random
@@ -97,6 +98,7 @@ export default {
       rolesItems: cards
     }
   },
+
   computed: {
     getCards() {
       let roles = this.roles.filter(role => !this.pickedCards.includes(role))
@@ -155,6 +157,7 @@ export default {
       this.$router.push('/Game')
     },
     save() {
+      this.historyLine = arrayStartGameTakeCards(this.roles.length, this.playersRoles)
       localStorage.setItem('playersRoles', JSON.stringify(this.playersRoles))
     },
   },
@@ -180,7 +183,13 @@ export default {
       this.roles = []
     }
 
-    this.historyLine = arrayStartGameTakeCards(this.roles.length)
+    this.historyLine = arrayStartGameTakeCards(this.roles.length, this.playersRoles)
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+      block: 'start',
+    });
   },
 }
 </script>

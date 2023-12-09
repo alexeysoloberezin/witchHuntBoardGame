@@ -92,7 +92,11 @@
               <button @click="toggleDetailMode" data-tooltip-target="tooltip-new" type="button"
 
                       class="inline-flex items-center outline-none justify-center w-10 h-10 font-medium  rounded-full  group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-                <svg class="opacity-50" style="width: 28px;" :fill="!detailMode ? '#fff' : 'green'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>auto-mode</title><path d="M19.8 5.67C21.05 7.19 21.82 9.04 22 11H19.94C19.74 9.57 19.16 8.22 18.26 7.1L19.8 5.67M13 2.05C14.96 2.24 16.81 3 18.33 4.26L16.9 5.69C15.77 4.8 14.42 4.24 13 4.05V2.05M11 2.06C9.04 2.26 7.19 3.03 5.67 4.27L7.1 5.69C8.23 4.81 9.58 4.24 11 4.06V2.06M4.26 5.67L5.63 7.06V7.1C4.75 8.23 4.18 9.58 4 11H2C2.21 9.04 3 7.18 4.26 5.67M2 14V19L3.6 17.4C5.38 20.17 8.47 22 12 22C16.82 22 20.87 18.55 21.8 14H19.75C18.86 17.45 15.72 20 12 20C9.05 20 6.39 18.39 5 16L7 14H2M12 17L13.56 13.58L17 12L13.56 10.44L12 7L10.43 10.44L7 12L10.43 13.58L12 17Z" /></svg>
+                <svg class="opacity-50" style="width: 28px;" :fill="!detailMode ? '#fff' : 'green'"
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>auto-mode</title>
+                  <path
+                      d="M19.8 5.67C21.05 7.19 21.82 9.04 22 11H19.94C19.74 9.57 19.16 8.22 18.26 7.1L19.8 5.67M13 2.05C14.96 2.24 16.81 3 18.33 4.26L16.9 5.69C15.77 4.8 14.42 4.24 13 4.05V2.05M11 2.06C9.04 2.26 7.19 3.03 5.67 4.27L7.1 5.69C8.23 4.81 9.58 4.24 11 4.06V2.06M4.26 5.67L5.63 7.06V7.1C4.75 8.23 4.18 9.58 4 11H2C2.21 9.04 3 7.18 4.26 5.67M2 14V19L3.6 17.4C5.38 20.17 8.47 22 12 22C16.82 22 20.87 18.55 21.8 14H19.75C18.86 17.45 15.72 20 12 20C9.05 20 6.39 18.39 5 16L7 14H2M12 17L13.56 13.58L17 12L13.56 10.44L12 7L10.43 10.44L7 12L10.43 13.58L12 17Z"/>
+                </svg>
                 <span class="sr-only">New item</span>
               </button>
               <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">
@@ -101,7 +105,7 @@
             </div>
           </div>
           <template v-if="detailMode">
-            <button  @click="setPanelAction('kill')" data-tooltip-target="tooltip-home" type="button"
+            <button @click="setPanelAction('kill')" data-tooltip-target="tooltip-home" type="button"
                     class="inline-flex outline-none flex-col items-center justify-center px-5 rounded-s-full  group">
               <svg style="width: 30px;" :fill="panelAction === 'kill' ?  'rgb(25,91,255)' : '#d5d6d7'"
                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>pistol</title>
@@ -134,7 +138,7 @@
               <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Ведьмы</div>
             </button>
 
-            <button  @click="setPanelAction('chain')" data-tooltip-target="tooltip-profile" type="button"
+            <button @click="setPanelAction('chain')" data-tooltip-target="tooltip-profile" type="button"
                     class="inline-flex flex-col items-center justify-center px-5 rounded-e-full  group">
               <svg style="width: 30px;" :fill="panelAction === 'chain' ?  'rgb(25,91,255)' : '#d5d6d7'"
                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>lock-pattern</title>
@@ -221,17 +225,17 @@ export default {
     }
   },
   methods: {
-    votedResultHandler(res){
+    votedResultHandler(res) {
       this.votedUsers(res)
     },
-    setChooseApprentice(choose){
+    setChooseApprentice(choose) {
       const apprentice = this.playersRoles.find(u => u.name === names.Apprentice)
       apprentice.isJodge = choose
     },
-    toggleDetailMode(){
+    toggleDetailMode() {
       this.detailMode = !this.detailMode
 
-      if(this.detailMode){
+      if (this.detailMode) {
         setTimeout(() => {
           window.scrollTo({
             top: 0,
@@ -239,30 +243,38 @@ export default {
             block: 'start',
           });
         }, 200)
-      }else{
-        const activeEl = this.$refs.historyList.$refs['list-el-' + this.activeStep];
-
-        if (Array.isArray(activeEl) && activeEl.length > 0) {
-          setTimeout(() => {
-            window.scrollTo({
-              top: activeEl[0].getBoundingClientRect().y - 80,
-              behavior: 'smooth',
-              block: 'start',
-            });
-          }, 250)
-        } else {
-          console.error('Реф не является DOM-элементом');
-        }
+      } else {
+        this.scrollToActiveStep()
       }
     },
-    changeHistoryItem(id){
+    scrollToActiveStep() {
+      const activeEl = this.$refs.historyList.$refs['list-el-' + this.activeStep];
+
+      if (Array.isArray(activeEl) && activeEl.length > 0) {
+        const offset = activeEl[0].getBoundingClientRect().y
+        const client = activeEl[0].getBoundingClientRect()
+        console.log('client', client)
+        console.log('offset', offset)
+
+        setTimeout(() => {
+          window.scrollTo({
+            top: offset - 80,
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 250)
+      } else {
+        console.error('Реф не является DOM-элементом');
+      }
+    },
+    changeHistoryItem(id) {
       const realy = confirm('Вы уверены? сейчас это не безопасно. Только если на несколько шагов назад. Без смены дня ночи.')
 
-      if(realy){
+      if (realy) {
         this.activeStep = id
       }
     },
-    skillAction(number, type){
+    skillAction(number, type) {
       this.action(number, type)
     },
     hunterWakeUp(val) {
@@ -273,7 +285,7 @@ export default {
     },
     hunterKill() {
       const hunterArr = this.hunter.hunterWakeUp
-      if(hunterArr.length === 0){
+      if (hunterArr.length === 0) {
         return null
       }
 
@@ -288,7 +300,7 @@ export default {
       }
     },
     witchFakeKill(id) {
-      if(!id){
+      if (!id) {
         this.$toast.error('Не полные данные..')
         return;
       }
@@ -333,7 +345,7 @@ export default {
       this.setNextActive()
     },
     witchKill(ids) {
-      if(ids.length === 0 || !Array.isArray(ids)){
+      if (ids.length === 0 || !Array.isArray(ids)) {
         this.$toast.error('Не полные данные для защиты..')
         return;
       }
@@ -344,7 +356,7 @@ export default {
       })
     },
     angelChoose(ids) {
-      if(ids.length === 0 || !Array.isArray(ids)){
+      if (ids.length === 0 || !Array.isArray(ids)) {
         this.$toast.error('Не полные данные защиты ангелов..')
         return;
       }
@@ -354,14 +366,14 @@ export default {
 
         const isBlock = this.blockHeal.indexOf(find.number)
 
-        if(isBlock !== -1){
+        if (isBlock !== -1) {
           this.$toast.success(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
             duration: 6000,
           })
           return null;
         }
 
-        if(find.chain){
+        if (find.chain) {
           this.blockHeal.push(find.number)
         }
 
@@ -377,7 +389,7 @@ export default {
       this.playersRoles.forEach(el => {
         el.chain = false
       })
-      if(ids.length < 2 || !Array.isArray(ids)){
+      if (ids.length < 2 || !Array.isArray(ids)) {
         this.$toast.error('Не полные данные замены демонов..')
         return;
       }
@@ -536,7 +548,7 @@ export default {
       }
     },
     gamblerHaveShield(choose) {
-      return GameMod.gamblerHaveShield(choose, this.countNight  )
+      return GameMod.gamblerHaveShield(choose, this.countNight)
     },
     setGamblerChoose(choose) {
       this.playersRoles = this.playersRoles.map(el => {
@@ -646,7 +658,7 @@ export default {
         this.playersRoles[indexPlayer].chain = !this.playersRoles[indexPlayer].chain
         this.setInGlobalLog('Выбрана связь: ' + indexPlayer)
         return;
-      }else if(typeAction === 'addHeart'){
+      } else if (typeAction === 'addHeart') {
         this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart + 1
         this.setInGlobalLog('Добавлена жизнь: ' + indexPlayer)
         this.$toast.success('Добавлена жизнь: ' + indexPlayer + ' Игроку')
@@ -741,6 +753,7 @@ export default {
     this.saveInterval = setInterval(() => {
       this.saveAll()
     }, 2000)
+
   },
   beforeDestroy() {
     clearInterval(this.saveInterval)
