@@ -203,15 +203,12 @@ export default {
       const maxNumber = Math.max(...values);
 
       const res = objs.filter(el => el.value === maxNumber)
-
       if (res.length === 1) {
-        alert(`Больше всего голосов у: ${res.map(el => el.number)} игрока - ${res.map(el => el.value)} голоса`)
+        console.log('123', res)
+        this.$emit('update:votedResult', {user1: res[0].number, isSiparete: false, user2: false})
       } else {
-        console.log();
-        alert(
-            `Больше всего голосов у: ${res.map(el => el.number).join(', ')} игроков - по ${res[0].value} голоса
-Просыпается судья и выбирает кого хочет судить: ${res.map(el => el.number).join(' или ')}
-        `)
+        console.log('222', res)
+        this.$emit('update:votedResult', {user1: res[0].number, isSiparete: true, user2: res[1].number})
       }
 
       this.votedStart = false;

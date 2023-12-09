@@ -4,6 +4,7 @@
       <Timer
           v-if="playersRoles"
           ref="timerComponent"
+          @update:votedResult="votedResultHandler"
           :voted-list="playersRoles"
       />
       <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
@@ -31,6 +32,7 @@
           <HistoryLine
               :array="historyLine"
               :activeStep="activeStep"
+              :blockHeal="blockHeal"
               :countNight="countNight"
               :users="playersRoles"
               @update:clickNext="setNextActive"
@@ -46,6 +48,7 @@
               @update:votedUsers="votedUsers"
               @update:gamblerChoose="(choose) => setGamblerChoose(choose)"
               :gamblerChooseClosed="gamblerChooseClosed"
+              ref="historyList"
           ></HistoryLine>
         </div>
       </div>
@@ -157,8 +160,8 @@
           </div>
         </div>
       </div>
-
     </div>
+
     <vs-button v-if="showRoles === true" @click="showRoles = true">
       Показать роли
     </vs-button>
@@ -218,6 +221,9 @@ export default {
     }
   },
   methods: {
+    votedResultHandler(res){
+      this.votedUsers(res)
+    },
     setChooseApprentice(choose){
       const apprentice = this.playersRoles.find(u => u.name === names.Apprentice)
       apprentice.isJodge = choose
@@ -233,6 +239,20 @@ export default {
             block: 'start',
           });
         }, 200)
+      }else{
+        const activeEl = this.$refs.historyList.$refs['list-el-' + this.activeStep];
+
+        if (Array.isArray(activeEl) && activeEl.length > 0) {
+          setTimeout(() => {
+            window.scrollTo({
+              top: activeEl[0].getBoundingClientRect().y - 80,
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }, 250)
+        } else {
+          console.error('Реф не является DOM-элементом');
+        }
       }
     },
     changeHistoryItem(id){
@@ -268,6 +288,11 @@ export default {
       }
     },
     witchFakeKill(id) {
+      if(!id){
+        this.$toast.error('Не полные данные..')
+        return;
+      }
+
       const index = this.playersRoles.findIndex(el => el.number === id);
       this.action(index, 'fakeKill')
       this.$toast.success(`Попытка убийства Игрока: ${id}`)
@@ -304,14 +329,26 @@ export default {
 
       console.log('isFanatic', isFanatic)
       alert(res)
+
+      this.setNextActive()
     },
     witchKill(ids) {
+      if(ids.length === 0 || !Array.isArray(ids)){
+        this.$toast.error('Не полные данные для защиты..')
+        return;
+      }
+
       ids.forEach(id => {
         const index = this.playersRoles.findIndex(el => el.number === id);
         this.action(index, 'kill')
       })
     },
     angelChoose(ids) {
+      if(ids.length === 0 || !Array.isArray(ids)){
+        this.$toast.error('Не полные данные защиты ангелов..')
+        return;
+      }
+
       ids.forEach(id => {
         const find = this.playersRoles.find(el => el.number === id);
 
@@ -334,11 +371,16 @@ export default {
         find.shield = find.shield + 1
       })
 
+      this.setNextActive()
     },
     demonChoose(ids) {
       this.playersRoles.forEach(el => {
         el.chain = false
       })
+      if(ids.length < 2 || !Array.isArray(ids)){
+        this.$toast.error('Не полные данные замены демонов..')
+        return;
+      }
 
       ids.forEach(id => {
         const index = this.playersRoles.findIndex(el => el.number === id);
@@ -347,6 +389,9 @@ export default {
       this.$toast.success(`Подмена ${ids[0]}/${ids[1]} принята`, {
         duration: 2000,
       })
+
+      this.setNextActive()
+
     },
     votedUsers({user2, user1, isSiparete}) {
       console.log('users', user1, user2)
@@ -383,6 +428,7 @@ export default {
         }
         this.refreshList()
         this.setNextActive()
+        this.setNextActive()
       }, 1000)
 
     },
@@ -396,7 +442,8 @@ export default {
     refreshList() {
       this.historyLine = historyLineData({
         initialPlayers: this.playersRoles,
-        nights: this.countNight
+        nights: this.countNight,
+        nightLog: this.nightHistory
       })
     },
     setNextActive: function () {
@@ -415,6 +462,7 @@ export default {
 
           if (find.type !== 'day' && nextElement.type === 'day') {
             this.handleCloseNight()
+            this.refreshList()
           }
 
           const nextElementId = nextElement.id;
@@ -428,6 +476,7 @@ export default {
             ...generate(
                 this.playersRoles,
                 this.countNight,
+                this.nightHistory
             )
           ]
           this.setNextActive()
@@ -447,6 +496,8 @@ export default {
     },
     startNight() {
       this.gamblerShield()
+      this.isNight = true
+      this.nightHistory = []
       this.countNight = this.countNight + 1
     },
     makeFoll(index) {
@@ -572,6 +623,13 @@ export default {
             id: this.playersRoles[indexPlayer].number
           }])
           this.setInGlobalLog('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+          if (this.isNight) {
+            this.nightHistory.push({
+              player: this.playersRoles[indexPlayer].number,
+              type: 'Попытка убийства'
+            })
+            this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
+          }
         } else {
           kill();
         }
@@ -676,7 +734,8 @@ export default {
 
     this.historyLine = historyLineData({
       initialPlayers: this.playersRoles,
-      nights: this.countNight
+      nights: this.countNight,
+      nightLog: this.nightHistory
     })
 
     this.saveInterval = setInterval(() => {

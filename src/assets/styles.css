@@ -50,6 +50,12 @@
 .cardBox-movieAction-l{
 
 }
+.vs-icon-close:after, .vs-icon-close:before{
+    background: #fff;
+}
+.vs-dialog__close i{
+    opacity: 0.9;
+}
 .vs-dialog--fullScreen .vs-dialog__content {
     max-height: calc(100vh - 90px);
     overflow: auto;

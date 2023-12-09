@@ -14,7 +14,6 @@
           <HistoryStatus
               :type="el.type"
               :active="isActive(el.id)"
-
           />
         </div>
 
@@ -97,8 +96,8 @@
           </vs-button>
           <vs-dialog width="300px" scroll blur full-screen auto-width v-model="apprenticeModal">
             <div class="con-content max-w-[280px]">
-              <div class="flex items-center justify-center mb-2">
-                <vs-switch v-model="apprenticeRole" @change="apprenticeShowNumber = false">
+              <div class="flex items-center justify-center mb-2 mt-4 gap-2">
+                <vs-switch v-model="apprenticeRole" @change="apprenticeShowNumber = false" square>
                   <template #on>
                     Судья
                   </template>
@@ -106,17 +105,25 @@
                     Могильщик
                   </template>
                 </vs-switch>
-                <vs-button size="small" @click="setChooseApprentice">
+                <vs-button @click="setChooseApprentice">
                   Подтвердить
                 </vs-button>
               </div>
               <div v-if="apprenticeRole" class="relative" style="max-height: 80vh;">
-                <img :src="require('../../assets/cards/v7.png')" style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s" :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
-                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">{{ getNumber(el.text) }}</div>
+                <img :src="require('../../assets/cards/v7.png')"
+                     style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s"
+                     :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
+                  {{ getNumber(el.text) }}
+                </div>
               </div>
               <div v-else class="relative" style="max-height: 80vh;">
-                <img :src="require('../../assets/cards/v2.png')" style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s" :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
-                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">{{ getNumber(el.text) }}</div>
+                <img :src="require('../../assets/cards/v2.png')"
+                     style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s"
+                     :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
+                  {{ getNumber(el.text) }}
+                </div>
               </div>
             </div>
           </vs-dialog>
@@ -138,6 +145,23 @@
               @update:clickReady="(ids) => angelChoose(ids)"
               :id="'angel-choose'"
           />
+        </div>
+        <div v-if="el.name === names['Bomber'] && countNight > 0" class="mt-3 mb-3">
+          <div style="pointer-events: none" class="mt-6">
+            <vs-input label="Игрок" v-model.trim="bomberChoose">
+            </vs-input>
+          </div>
+          <br/>
+
+          <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
+            <ChooseUser
+                :title="'Подрыв жопы игрока:'"
+                :users="users.filter(el => !el.killed)"
+                :multi="false"
+                @update:clickReady="(ids) => bomberKill(ids)"
+                :id="'boomberKill-choose'"
+            />
+          </div>
         </div>
 
 
@@ -225,7 +249,7 @@ import {roles} from "@/js/types";
 export default {
   name: "HistoryLine",
   components: {ChooseUser, UsersCheck, IconPointer, HistoryStatus},
-  props: ['array', 'active', 'showPointer', 'activeStep', 'gamblerChooseClosed', 'users', 'countNight'],
+  props: ['array', 'active', 'showPointer', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight'],
   computed: {
     hunterWakeUpInThisNight() {
       const hunter = this.hunter
@@ -264,6 +288,8 @@ export default {
       apprenticeRole: false,
       apprenticeShowNumber: false,
 
+      bomberChoose: null,
+
       inquisitorModal: false,
       inquisitorChoose: null,
 
@@ -283,17 +309,24 @@ export default {
     this.checkVotedType()
   },
   methods: {
-    inquisitorCheck(ids){
+    bomberKill(ids){
+      if(!Array.isArray(ids) || ids.length === 0){
+        this.$toast.error('Не правильное значение')
+        return;
+      }
+      this.$emit('update:witchKill', ids)
+    },
+    inquisitorCheck(ids) {
       console.log('d', ids)
-      if(Array.isArray(ids) && ids.length > 0){
+      if (Array.isArray(ids) && ids.length > 0) {
         this.inquisitorModal = true
         const find = this.users.find(u => u.number === ids[0])
         console.log('find', find)
 
-        if(find.name === names.Apprentice){
-          if(find.isJodge){
+        if (find.name === names.Apprentice) {
+          if (find.isJodge) {
             this.inquisitorChoose = 'attack'
-          }else{
+          } else {
             this.inquisitorChoose = 'info'
           }
           return;
@@ -302,22 +335,16 @@ export default {
         this.inquisitorChoose = find.type
       }
     },
-    setChooseApprentice(){
+    setChooseApprentice() {
       this.$emit('update:setChooseApprentice', this.apprenticeRole)
       this.apprenticeShowNumber = true
     },
-    getNumber(text){
+    getNumber(text) {
       return GameMod.getNumberFromText(text, this.apprenticeRole)
     },
-    scrollDown() {
-      window.scrollTo({
-        top: window.scrollY + 80,
-        behavior: 'smooth',
-        block: 'start',
-      });
-    },
     showNextBox() {
-      const element = this.$refs.nextBox;
+      const element = this.$refs.nextBox[0];
+      if (!element) return null;
       element.scrollIntoView({behavior: 'smooth'});
     },
     hunterKill() {
@@ -337,6 +364,19 @@ export default {
       this.$emit('update:demonChoose', ids)
     },
     angelChoose(ids) {
+      let errors = []
+
+      ids.forEach(id => {
+        const isBlock = this.blockHeal.indexOf(id)
+        if (isBlock !== -1) {
+          errors.push(id)
+        }
+      })
+
+      if(errors.length > 0){
+        return alert('Нельзя лечить:' + errors.join(', '));
+      }
+
       this.$emit('update:angelChoose', ids)
     },
     saveVoted() {

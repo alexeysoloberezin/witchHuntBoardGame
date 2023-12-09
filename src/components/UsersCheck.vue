@@ -37,12 +37,22 @@ export default {
   methods: {
     emitClickEl(el) {
       // Изменение значения внутренней переменной
+      if(this.userInput === el.number){
+        this.$emit('update:modelValue', null);
+        return;
+      }
+
       this.userInput = el.number;
       this.$emit('update:modelValue', el.number);
     },
     emitValue(val) {
       // Изменение значения внутренней переменной
       console.log('val', val)
+      if(this.userInput === val){
+        this.$emit('update:modelValue', null);
+        return;
+      }
+
       this.userInput = val;
       this.$emit('update:modelValue', val);
     }

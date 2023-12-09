@@ -27,7 +27,7 @@ export const arrayStartGameTakeCards = (playersLength) => {
 }
 
 export const firstStep = 21
-export const historyLineData = ({initialPlayers, nights = 0}) => {
+export const historyLineData = ({initialPlayers, nights = 0, nightLog}) => {
   console.log('initialPlayers', initialPlayers)
   if (!Array.isArray(initialPlayers) || initialPlayers.length < 4) {
     return []
@@ -49,7 +49,7 @@ export const historyLineData = ({initialPlayers, nights = 0}) => {
   for (let i = 0; i < nights + 1; i++) {
     generated = [
       ...generated,
-      ...generate(initialPlayers, i),
+      ...generate(initialPlayers, i, nightLog),
     ]
   }
 
@@ -126,12 +126,12 @@ export const historyLineData = ({initialPlayers, nights = 0}) => {
   return GameMod.filterStepsPolesInGame(dayList, roles)
 }
 
-export const generate = (initialPlayers, night) => {
+export const generate = (initialPlayers, night, nightLog) => {
   let res = [
-    ...dayUsers({night, users: initialPlayers}),
+    ...dayUsers({night, users: initialPlayers, nightLog}),
   ]
 
-  if(night > 0){
+  if (night > 0) {
     res = [...res, ...voted('voted-user-' + night)]
   }
 
@@ -151,7 +151,7 @@ export const nigthStepNew = (night = 0, users) => {
   if (hunter && hunter?.hunterWakeUp.length > 0) {
     const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]
 
-    if(hunterLast.night === night){
+    if (hunterLast.night === night) {
       hunterArr = [{
         id: start + 1,
         title: 'Просыпается Охотник',
@@ -169,16 +169,16 @@ export const nigthStepNew = (night = 0, users) => {
   return [
     ...hunterArr,
     {
-    id: start + 2,
-    title: 'Просыпается Могильщик',
-    name: 'Могильщик',
-    ifPlayerInGame: false,
-    type: 'night',
-    text: `
+      id: start + 2,
+      title: 'Просыпается Могильщик',
+      name: 'Могильщик',
+      ifPlayerInGame: false,
+      type: 'night',
+      text: `
     Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков. => 
     ${users.filter(user => user.deadOnDay).map(el => el.number).join(' , ')}
           `
-  },
+    },
     {
       id: start + 3,
       title: 'Просыпаются Демоны',
@@ -257,7 +257,7 @@ export const nigthStepNew = (night = 0, users) => {
   ]
 }
 
-export const dayUsers = ({night, users}) => {
+export const dayUsers = ({night, users, nightLog}) => {
 
   const res = users.filter(user => !user.killed).map((user) => {
     return {
@@ -269,7 +269,24 @@ export const dayUsers = ({night, users}) => {
     }
   })
 
-  return res
+  let speachDeadPerson = []
+
+  if (night > 0) {
+    speachDeadPerson = [
+      {
+        id: 'daySpeach-start-' + night,
+        title: 'Речь убитого если есть: ' + nightLog.map(el => `\n-->  ${el.type} ${el.player}`).join('\n'),
+        ifPlayerInGame: false,
+        text: "Дневная речь",
+        type: 'day'
+      }
+    ]
+  }
+
+  return [
+    ...speachDeadPerson,
+    ...res,
+  ]
 }
 
 export const voted = (prevId) => ([
@@ -279,7 +296,14 @@ export const voted = (prevId) => ([
     ifPlayerInGame: false,
     text: "Дневная речь",
     type: 'voted'
-  }
+  },
+  {
+    id: prevId + 1,
+    title: 'Речь заголосованного игрока.',
+    ifPlayerInGame: false,
+    text: "Последняя минута.",
+    type: 'voted-speek'
+  },
 ])
 
 const watchmanList = [

@@ -50,6 +50,14 @@ export default {
           this.active.push(number);
         }
       } else {
+        if(Array.isArray(this.active) && this.active > 0){
+          if(this.active[0] === number){
+            this.active = []
+            this.$emit('update:selectActive', this.active);
+            return;
+          }
+        }
+
         this.active = [number];
       }
       this.$emit('update:selectActive', this.active);

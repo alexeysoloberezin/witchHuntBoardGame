@@ -9,6 +9,7 @@
           <HistoryNightIcon v-else-if="type === 'night'"/>
           <HistoryDayIcon v-else-if="type === 'day'"/>
           <VotedIcon v-else-if="type === 'voted'"/>
+          <VotedIcon v-else-if="type === 'voted-speek'"/>
         </span>
     </span>
 </template>
