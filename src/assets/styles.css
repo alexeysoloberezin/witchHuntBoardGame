@@ -50,6 +50,45 @@
 .cardBox-movieAction-l{
 
 }
+.vs-dialog--fullScreen .vs-dialog__content {
+    max-height: calc(100vh - 90px);
+    overflow: auto;
+}
+.vs-switch{
+    background: #2c2b2b;
+    color: #fff;
+}
+.vs-switch:hover{
+    background: #282626;
+}
+.vs-switch__text{
+    color: #fff;
+}
+.Apprentice__choose{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    z-index: 5;
+    font-size: clamp(1rem, 70vw, 300px);
+    text-shadow: 0 5px 5px #0d0d6c;
+    color: #fff;
+    opacity: 0;
+    transition: .4s;
+    animation: ApprenticeChoose .4s forwards;
+    pointer-events: none;
+}
+
+@keyframes ApprenticeChoose {
+    0%{
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 0;
+    }
+    100%{
+        transform: translate(-50%,-50%) scale(1);
+        opacity: 1;
+    }
+}
 
 .vs-input, .vs-select__input, .vs-select__options{
     background: rgb(35, 35, 40) !important;

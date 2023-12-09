@@ -9,7 +9,7 @@
     <span class="sr-only">Profile</span>
     <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Дневная способность</div>
 
-    <vs-dialog width="500px" scroll blur auto-width v-model="showDaySkills">
+    <vs-dialog width="500px" scroll blur full-screen auto-width v-model="showDaySkills">
       <template #header>
         <h4 class="not-margin text-white">
           Дневная способность
@@ -26,7 +26,7 @@
       </div>
     </vs-dialog>
 
-    <vs-dialog width="500px" scroll blur auto-width
+    <vs-dialog width="500px" scroll full-screen blur auto-width
                v-model="showDaySkillsDetail"
     >
       <template #header>
@@ -259,7 +259,7 @@ export default {
   },
   computed: {
     activeUserCard() {
-      if (!this.activeUser) return null
+      if (!this.activeUser || !Array.isArray(this.users)) return null
 
       return this.users.find(user => user.number === this.activeUser)
     },

@@ -41,6 +41,7 @@
               @update:angelChoose="(ids) => angelChoose(ids)"
               @update:hunterKill="hunterKill"
               @update:witchKill="(ids) => witchKill(ids)"
+              @update:setChooseApprentice="(choose) => setChooseApprentice(choose)"
               @update:changeHistoryItem="changeHistoryItem"
               @update:votedUsers="votedUsers"
               @update:gamblerChoose="(choose) => setGamblerChoose(choose)"
@@ -85,7 +86,7 @@
         >
           <div class="flex items-center justify-center text-center">
             <div>
-              <button @click="detailMode = !detailMode" data-tooltip-target="tooltip-new" type="button"
+              <button @click="toggleDetailMode" data-tooltip-target="tooltip-new" type="button"
 
                       class="inline-flex items-center outline-none justify-center w-10 h-10 font-medium  rounded-full  group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
                 <svg class="opacity-50" style="width: 28px;" :fill="!detailMode ? '#fff' : 'green'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>auto-mode</title><path d="M19.8 5.67C21.05 7.19 21.82 9.04 22 11H19.94C19.74 9.57 19.16 8.22 18.26 7.1L19.8 5.67M13 2.05C14.96 2.24 16.81 3 18.33 4.26L16.9 5.69C15.77 4.8 14.42 4.24 13 4.05V2.05M11 2.06C9.04 2.26 7.19 3.03 5.67 4.27L7.1 5.69C8.23 4.81 9.58 4.24 11 4.06V2.06M4.26 5.67L5.63 7.06V7.1C4.75 8.23 4.18 9.58 4 11H2C2.21 9.04 3 7.18 4.26 5.67M2 14V19L3.6 17.4C5.38 20.17 8.47 22 12 22C16.82 22 20.87 18.55 21.8 14H19.75C18.86 17.45 15.72 20 12 20C9.05 20 6.39 18.39 5 16L7 14H2M12 17L13.56 13.58L17 12L13.56 10.44L12 7L10.43 10.44L7 12L10.43 13.58L12 17Z" /></svg>
@@ -186,6 +187,7 @@ export default {
     return {
       activeStep: firstStep,
       countNight: 0,
+      blockHeal: [],
 
       showRoles: false,
       detailMode: false,
@@ -216,8 +218,25 @@ export default {
     }
   },
   methods: {
+    setChooseApprentice(choose){
+      const apprentice = this.playersRoles.find(u => u.name === names.Apprentice)
+      apprentice.isJodge = choose
+    },
+    toggleDetailMode(){
+      this.detailMode = !this.detailMode
+
+      if(this.detailMode){
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 200)
+      }
+    },
     changeHistoryItem(id){
-      const realy = confirm('Вы уверены? сейчас это не безопасно. Только если на несколько эл. назад.')
+      const realy = confirm('Вы уверены? сейчас это не безопасно. Только если на несколько шагов назад. Без смены дня ночи.')
 
       if(realy){
         this.activeStep = id
@@ -295,11 +314,26 @@ export default {
     angelChoose(ids) {
       ids.forEach(id => {
         const find = this.playersRoles.find(el => el.number === id);
+
+        const isBlock = this.blockHeal.indexOf(find.number)
+
+        if(isBlock !== -1){
+          this.$toast.success(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
+            duration: 6000,
+          })
+          return null;
+        }
+
+        if(find.chain){
+          this.blockHeal.push(find.number)
+        }
+
+        this.$toast.success(`Защитна ангелов установлена на: ${id}`, {
+          duration: 2000,
+        })
         find.shield = find.shield + 1
       })
-      this.$toast.success(`Защитна ангелов установлена на:  ${ids.join(' , ')}`, {
-        duration: 2000,
-      })
+
     },
     demonChoose(ids) {
       this.playersRoles.forEach(el => {
@@ -409,7 +443,7 @@ export default {
       }
     },
     gamblerShield() {
-      GameMod.gamblerShield.apply(this)
+      GameMod.gamblerShield.apply(this, [this.countNight])
     },
     startNight() {
       this.gamblerShield()
@@ -571,6 +605,7 @@ export default {
         nightVal: this.nightVal,
         detailMode: this.detailMode,
         countNight: this.countNight,
+        blockHeal: this.blockHeal,
         log: this.log,
         activeStep: this.activeStep,
         nightHistory: this.nightHistory,
@@ -621,6 +656,7 @@ export default {
             fanaticCheck: 0,
             hunterWakeUp: [],
             deadOnDay: false,
+            isJodge: false,
             fakeKill: false,
             killed: false,
             chain: false,

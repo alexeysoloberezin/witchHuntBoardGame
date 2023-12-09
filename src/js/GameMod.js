@@ -28,13 +28,25 @@ class GameMod {
 
     return res;
   }
-  gamblerShield(){
+
+  getNumberFromText(text, type) {
+    const matches = text.match(/\((\d+)\)/g);
+
+    if (matches) {
+      const numbers = matches.map(match => parseInt(match.match(/\d+/)[0], 10));
+      return numbers[type ? 1 : 0];
+    } else {
+      return null; // Или любое другое значение по умолчанию, если скобки не найдены
+    }
+  }
+
+  gamblerShield(nightVal){
     const find = this.playersRoles.find(player => player.name === names.Gambler)
     if (find) {
       if (find.killed) {
         return null;
       }
-      if (this.gamblerHaveShield(find.gamblerChoose)) {
+      if (this.gamblerHaveShield(find.gamblerChoose, nightVal)) {
         find.shield = find.shield + 1
       }
     }

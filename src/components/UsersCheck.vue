@@ -10,8 +10,7 @@
       </vs-input>
     </div>
 
-    <div class="flex items-center gap-6 flex-wrap">
-
+    <div class="flex items-center gap-3 flex-wrap">
       <div v-for="user in getUsers" :key="'UsersCheck+' + user.number" @click="emitClickEl(user)">
         <vs-avatar v-if="userInput === user.number" badge size="50">
           <img :src="user.ava" alt="">

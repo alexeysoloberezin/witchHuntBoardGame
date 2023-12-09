@@ -15,7 +15,7 @@
           :active="pickedUsers"
           @update:clickOnItem="makeRole"
       />
-      <vs-dialog overflow-hidden full-screen v-model="showModalRoles">
+      <vs-dialog overflow-hidden  full-screen v-model="showModalRoles">
         <template #header>
           <h4 class="not-margin text-white">
             Выберите роль для игрока {{ roleFor }}
@@ -35,14 +35,14 @@
 
         </div>
       </vs-dialog>
-      <vs-dialog overflow-hidden full-screen v-model="showModalType">
+      <vs-dialog overflow-hidden scroll full-screen v-model="showModalType">
         <template #header>
           <h4 class="not-margin text-white">
             Выберите роль для игрока {{ roleFor }}
           </h4>
         </template>
 
-        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  max-h-screen  "
+        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
               style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
             <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 50px);">
@@ -70,7 +70,6 @@
     <div v-if="Object.keys(playersRoles).length !== roles.length" style="font-size: 12px" class="pl-2 pt-1 opacity-50">
       Что бы продолжить вам нужно заполнить все роли игроков.
     </div>
-    <br><br><br><br><br><br><br><br><br><br>
     <br><br><br><br><br><br><br><br><br><br>
   </div>
 </template>

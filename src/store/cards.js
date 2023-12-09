@@ -23,6 +23,8 @@ export const names = {
     "Emissary": "Эмиссар"
 }
 
+
+
 const cards = [
   {
     image: require('../assets/cards/v1.png'),

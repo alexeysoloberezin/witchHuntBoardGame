@@ -37,12 +37,12 @@
          :style="{bottom: !lock ? '80px' : '15px'}">
 
       <div class="flex flex-col items-center  mb-4 space-y-2" :class="!open ? 'hidden': ''">
-        <button @click="showLog" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
-                style="width: 50px;height: 50px;"
-                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-          <svg  class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>math-log</title><path d="M18 7C16.9 7 16 7.9 16 9V15C16 16.1 16.9 17 18 17H20C21.1 17 22 16.1 22 15V11H20V15H18V9H22V7H18M2 7V17H8V15H4V7H2M11 7C9.9 7 9 7.9 9 9V15C9 16.1 9.9 17 11 17H13C14.1 17 15 16.1 15 15V9C15 7.9 14.1 7 13 7H11M11 9H13V15H11V9Z" /></svg>
-          <span class="sr-only">Log</span>
-        </button>
+<!--        <button @click="showLog" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"-->
+<!--                style="width: 50px;height: 50px;"-->
+<!--                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">-->
+<!--          <svg  class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>math-log</title><path d="M18 7C16.9 7 16 7.9 16 9V15C16 16.1 16.9 17 18 17H20C21.1 17 22 16.1 22 15V11H20V15H18V9H22V7H18M2 7V17H8V15H4V7H2M11 7C9.9 7 9 7.9 9 9V15C9 16.1 9.9 17 11 17H13C14.1 17 15 16.1 15 15V9C15 7.9 14.1 7 13 7H11M11 9H13V15H11V9Z" /></svg>-->
+<!--          <span class="sr-only">Log</span>-->
+<!--        </button>-->
         <button @click="leaveGame" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
                 style="width: 50px;height: 50px;"
                 class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
@@ -69,16 +69,16 @@
           </svg>
           <span class="sr-only">stopTimer</span>
         </button>
-        <button @click="unlock" type="button" data-tooltip-target="tooltip-print" data-tooltip-placement="left"
-                style="width: 50px;height: 50px;"
-                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-          <svg class="w-6 opacity-75 block" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>
-            lock-alert-outline</title>
-            <path
-                d="M10 17C8.9 17 8 16.1 8 15C8 13.9 8.9 13 10 13C11.1 13 12 13.9 12 15S11.1 17 10 17M16 20V10H4V20H16M16 8C17.1 8 18 8.9 18 10V20C18 21.1 17.1 22 16 22H4C2.9 22 2 21.1 2 20V10C2 8.9 2.9 8 4 8H5V6C5 3.2 7.2 1 10 1S15 3.2 15 6V8H16M10 3C8.3 3 7 4.3 7 6V8H13V6C13 4.3 11.7 3 10 3M22 7H20V13H22V7M22 15H20V17H22V15Z"/>
-          </svg>
-          <span class="sr-only">Lock</span>
-        </button>
+<!--        <button @click="unlock" type="button" data-tooltip-target="tooltip-print" data-tooltip-placement="left"-->
+<!--                style="width: 50px;height: 50px;"-->
+<!--                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">-->
+<!--          <svg class="w-6 opacity-75 block" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>-->
+<!--            lock-alert-outline</title>-->
+<!--            <path-->
+<!--                d="M10 17C8.9 17 8 16.1 8 15C8 13.9 8.9 13 10 13C11.1 13 12 13.9 12 15S11.1 17 10 17M16 20V10H4V20H16M16 8C17.1 8 18 8.9 18 10V20C18 21.1 17.1 22 16 22H4C2.9 22 2 21.1 2 20V10C2 8.9 2.9 8 4 8H5V6C5 3.2 7.2 1 10 1S15 3.2 15 6V8H16M10 3C8.3 3 7 4.3 7 6V8H13V6C13 4.3 11.7 3 10 3M22 7H20V13H22V7M22 15H20V17H22V15Z"/>-->
+<!--          </svg>-->
+<!--          <span class="sr-only">Lock</span>-->
+<!--        </button>-->
         <div class="relative">
           <button @click="votedModal = !votedModal;loadVotedList()" type="button" data-tooltip-target="tooltip-print" data-tooltip-placement="left"
                   style="width: 50px;height: 50px;"

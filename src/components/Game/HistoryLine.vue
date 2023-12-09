@@ -1,5 +1,6 @@
 <template>
-  <ol class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400">
+  <ol class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400"
+  >
     <li v-for="el in array"
         :key="el.id"
         class="mb-10 cursor-pointer "
@@ -51,6 +52,21 @@
               :id="'priest-choose'"
           />
         </div>
+        <div v-if="el.name === names.Inquisitor" class="mt-3 mb-3">
+          <ChooseUser
+              :users="users"
+              @update:clickReady="(ids) => inquisitorCheck(ids)"
+              :id="'inqusitor-choose'"
+          />
+
+          <vs-dialog width="300px" scroll blur full-screen auto-width v-model="inquisitorModal">
+            <div class="con-content max-w-[280px]">
+              <div class="flex items-center justify-center mb-2" style="height: calc(100vh - 120px);">
+                <img :src="typeRoles[inquisitorChoose]" alt="" style="object-fit: contain">
+              </div>
+            </div>
+          </vs-dialog>
+        </div>
 
         <div v-if="el.name === 'Ведьмы'" class="mt-3 mb-3">
           <ChooseUser
@@ -75,6 +91,37 @@
           <hr class="opacity-50 my-3"/>
         </div>
 
+        <div v-if="el.name === names.Apprentice" class="mt-3 mb-3">
+          <vs-button @click="apprenticeModal = true">
+            Показать роли
+          </vs-button>
+          <vs-dialog width="300px" scroll blur full-screen auto-width v-model="apprenticeModal">
+            <div class="con-content max-w-[280px]">
+              <div class="flex items-center justify-center mb-2">
+                <vs-switch v-model="apprenticeRole" @change="apprenticeShowNumber = false">
+                  <template #on>
+                    Судья
+                  </template>
+                  <template #off>
+                    Могильщик
+                  </template>
+                </vs-switch>
+                <vs-button size="small" @click="setChooseApprentice">
+                  Подтвердить
+                </vs-button>
+              </div>
+              <div v-if="apprenticeRole" class="relative" style="max-height: 80vh;">
+                <img :src="require('../../assets/cards/v7.png')" style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s" :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">{{ getNumber(el.text) }}</div>
+              </div>
+              <div v-else class="relative" style="max-height: 80vh;">
+                <img :src="require('../../assets/cards/v2.png')" style="object-fit: contain;display: block;max-height:100vh;width: 100%;height: 100%;transition: .3s" :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">{{ getNumber(el.text) }}</div>
+              </div>
+            </div>
+          </vs-dialog>
+        </div>
+
         <div v-if="el.name === 'Демоны'" class="mt-3 mb-3">
           <ChooseUser
               :users="users.filter(el => !el.killed)"
@@ -96,7 +143,7 @@
 
         <template v-if="isActiveStep(el.id)">
           <div v-if="!isShow && el.type === 'day'" class="mt-2">
-            <vs-button  @click.stop="emitStartTimer('start')">
+            <vs-button @click.stop="emitStartTimer('start')">
               Старт таймера
             </vs-button>
           </div>
@@ -105,7 +152,7 @@
             <vs-button size="small" @click="votedModal = true">
               Казнь игрока/игроков
             </vs-button>
-            <vs-dialog width="300px" scroll blur not-close auto-width v-model="votedModal">
+            <vs-dialog width="300px" scroll blur full-screen auto-width v-model="votedModal">
               <template #header>
                 <h4 class="not-margin text-white">
                   {{ votedPersons.isSiparete ? 'Попил игроков' : 'Казнь игрока' }}
@@ -114,7 +161,7 @@
 
               <div class="con-content max-w-[280px]">
                 <div class="flex items-center mb-8">
-                  <vs-checkbox v-model="votedPersons.isSiparete"/>
+                  <vs-checkbox v-model="votedPersons.isSiparete" @change="showNextBox"/>
                   <div class="text-white text-sm ml-2 opacity-50">Попил двух игроков?</div>
                 </div>
                 <UsersCheck
@@ -128,7 +175,7 @@
                 />
 
                 <div v-if="votedPersons.isSiparete">
-                  <hr class="my-8 opacity-50"/>
+                  <hr class="my-8 opacity-50" ref="nextBox"/>
                   <UsersCheck
                       v-model="votedPersons.user2"
                       placeholder="Второй игрок попила"
@@ -156,7 +203,7 @@
           </div>
 
           <div v-if="nextBtnIsShow(el.id, el.type)" class="mt-3">
-            <vs-button  @click.stop="emitClickNext(el.id)" @keydown.down="emitClickNext(el.id)">
+            <vs-button @click.stop="emitClickNext(el.id)" @keydown.down="emitClickNext(el.id)">
               Далее
             </vs-button>
           </div>
@@ -172,6 +219,8 @@ import IconPointer from "@/components/icons/IconPointer";
 import UsersCheck from "@/components/UsersCheck";
 import {names} from "@/store/cards";
 import ChooseUser from "@/components/ChooseUser";
+import GameMod from "@/js/GameMod";
+import {roles} from "@/js/types";
 
 export default {
   name: "HistoryLine",
@@ -209,6 +258,15 @@ export default {
     return {
       names: names,
       isShow: false,
+      typeRoles: roles,
+
+      apprenticeModal: false,
+      apprenticeRole: false,
+      apprenticeShowNumber: false,
+
+      inquisitorModal: false,
+      inquisitorChoose: null,
+
       votedFinish: true,
       votedModal: false,
       votedPersons: {
@@ -225,12 +283,42 @@ export default {
     this.checkVotedType()
   },
   methods: {
+    inquisitorCheck(ids){
+      console.log('d', ids)
+      if(Array.isArray(ids) && ids.length > 0){
+        this.inquisitorModal = true
+        const find = this.users.find(u => u.number === ids[0])
+        console.log('find', find)
+
+        if(find.name === names.Apprentice){
+          if(find.isJodge){
+            this.inquisitorChoose = 'attack'
+          }else{
+            this.inquisitorChoose = 'info'
+          }
+          return;
+        }
+
+        this.inquisitorChoose = find.type
+      }
+    },
+    setChooseApprentice(){
+      this.$emit('update:setChooseApprentice', this.apprenticeRole)
+      this.apprenticeShowNumber = true
+    },
+    getNumber(text){
+      return GameMod.getNumberFromText(text, this.apprenticeRole)
+    },
     scrollDown() {
       window.scrollTo({
         top: window.scrollY + 80,
         behavior: 'smooth',
         block: 'start',
       });
+    },
+    showNextBox() {
+      const element = this.$refs.nextBox;
+      element.scrollIntoView({behavior: 'smooth'});
     },
     hunterKill() {
       this.$emit('update:hunterKill')
