@@ -29,7 +29,6 @@ export const arrayStartGameTakeCards = (playersLength, players) => {
 
 export const firstStep = 21
 export const historyLineData = ({initialPlayers, nights = 0, nightLog, dayLog}) => {
-  console.log('initialPlayers', initialPlayers)
   if (!Array.isArray(initialPlayers) || initialPlayers.length < 4) {
     return []
   }
@@ -46,7 +45,6 @@ export const historyLineData = ({initialPlayers, nights = 0, nightLog, dayLog}) 
 
   let generated = []
 
-  console.log('nights', nights)
   for (let i = 0; i < nights + 1; i++) {
     generated = [
       ...generated,
@@ -143,7 +141,6 @@ export const generate = (initialPlayers, night, nightLog, dayLog) => {
 }
 
 export const nigthStepNew = (night = 0, users, dayLog) => {
-  console.log('users', users)
   let start = 'night-' + night + '-'
 
   let hunterArr = []

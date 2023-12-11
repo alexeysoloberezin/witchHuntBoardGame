@@ -1,192 +1,213 @@
 <template>
   <div>
-    <div v-if="isHistoryLine" @click="showAll = !showAll" class="text-sky text-center text-sm opacity-50 mb-2 p-3 mb-4  cursor-pointer" style="background: rgba(255,255,255,0.08);border-radius: 8px">
+    <div v-if="isHistoryLine" @click="showAll = !showAll"
+         class="text-sky text-center text-sm opacity-50 mb-2 p-3 mb-4  cursor-pointer"
+         style="background: rgba(255,255,255,0.08);border-radius: 8px">
       {{ showAll ? 'Скрыть пройденые' : 'Показать всю историю' }}
     </div>
     <div class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400 historyLine"
+         ref="historyLine"
     >
-      <div v-for="el in array"
-           :key="el.id"
-           :ref="`list-el-${el.id}`"
-           v-touch:tap="touchHandler"
-      >
-        <div
-            v-if="alreadyFinish(el.id)"
-            class="mb-10 cursor-pointer "
-            :class="classes(el.id)"
-            @click="emitClickOnItem(el.id)"
+
+      <transition-group tag="ul" name="historyList">
+        <div v-for="el in arrayFinished"
+             :key="el.id"
+             :ref="`list-el-${el.id}`"
+             v-touch:tap="touchHandler"
         >
-          <div class="flex">
-            <div @click.stop="handleDoubleClick(el.id)"
-            >
-              <HistoryStatus
-                  :type="el.type"
-                  :active="isActive(el.id)"
-              />
-            </div>
+          <div
+              class="mb-10 cursor-pointer "
 
-            <div class="pl-8 ml-2" :class="!isActive(el.id) ? 'text-white' : 'text-green-600'">
-              <h3 class="font-medium leading-tight">{{ el.title }}</h3>
-              <p class="text-sm opacity-50">{{ el.text }}</p>
-            </div>
-            <div v-if="!isActive(el.id) && showPointer" class="ml-4">
-              <IconPointer/>
-            </div>
-          </div>
-
-          <div v-if="el.id === activeStep" class="pl-8 ml-1">
-            <div v-if="activeStep === 22 && el.id === 22">
-              <div v-if="!gamblerChooseClosed" class="flex items-center mt-2 gap-4">
-                <Button
-                    size="small"
-                    @click="setGamblerChoose('четные')"
-                >
-                  Четные ночи
-                </Button>
-                <Button
-                    size="small"
-                    @click="setGamblerChoose('нечетные')"
-                >
-                  Нечетные
-                </Button>
-              </div>
-            </div>
-
-            <div v-if="el.name === names.Priest" class="mt-3 mb-3">
-              <ChooseUser
-                  :users="users"
-                  @update:clickReady="(ids) => showPriestCheck(ids)"
-                  :id="'priest-choose'"
-              />
-            </div>
-            <div v-if="el.name === names.Inquisitor" class="mt-3 mb-3">
-              <ChooseUser
-                  :users="users"
-                  @update:clickReady="(ids) => inquisitorCheck(ids)"
-                  :id="'inqusitor-choose'"
-              />
-
-              <vs-dialog modal @update:visible="(v) => inquisitorModal = v" v-model="inquisitorModal">
-                <div class="con-content max-w-[280px]">
-                  <div class="flex items-center justify-center mb-2" style="height: calc(100vh - 120px);">
-                    <img :src="typeRoles[inquisitorChoose]" alt="" style="object-fit: contain">
-                  </div>
-                </div>
-              </vs-dialog>
-            </div>
-
-            <div v-if="el.name === 'Ведьмы'" class="mt-3 mb-3">
-              <ChooseUser
-                  :title="'Иллюзорное убийство'"
-                  :users="users.filter(el => !el.killed)"
-                  @update:clickReady="(ids) => witchFakeKill(ids)"
-                  :id="'fakeKill-choose'"
-                  class="mb-2"
-              />
-              <ChooseUser
-                  :title="'Убийство'"
-                  :multi="true"
-                  :users="users.filter(el => !el.killed)"
-                  @update:clickReady="(ids) => witchKill(ids)"
-                  :id="'witchKill-choose'"
-              />
-            </div>
-
-            <div v-if="el.name === names.Hunter" class="mt-3 mb-3">
-              <Button v-if="hunterWakeUpInThisNight" @click="hunterKill">
-                Добить
-              </Button>
-              <hr class="opacity-50 my-3"/>
-            </div>
-
-            <div v-if="el.name === names.Apprentice" class="mt-3 mb-3">
-              <Button @click="apprenticeModal = true" size="small">
-                Показать роли
-              </Button>
-              <vs-dialog modal :visible="apprenticeModal" @update:visible="(v) => apprenticeModal = v">
-                <template #header>
-                  <div class="flex items-center justify-center mb-2  gap-4 mt-3">
-                    <div>
-                      {{ !apprenticeRole ? 'Могильщик' : 'Судья' }}
-                    </div>
-                    <InputSwitch v-model="apprenticeRole" @change="apprenticeShowNumber = false"/>
-
-                    <Button @click="setChooseApprentice" size="small">
-                      Подтвердить
-                    </Button>
-                  </div>
-                </template>
-                <div v-if="apprenticeRole" class="relative" style="max-height: 70vh;">
-                  <img :src="imgCard7"
-                       style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
-                       :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
-                  <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
-                    {{ getNumber(el.text) }}
-                  </div>
-                </div>
-                <div v-else class="relative" style="max-height: 70vh;">
-                  <img :src="imgCard2"
-                       style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
-                       :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
-                  <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
-                    {{ getNumber(el.text) }}
-                  </div>
-                </div>
-              </vs-dialog>
-            </div>
-
-            <div v-if="el.name === 'Демоны'" class="mt-3 mb-3">
-              <ChooseUser
-                  :users="users.filter(el => !el.killed)"
-                  :multi="true"
-                  @update:clickReady="(ids) => demonChoose(ids)"
-                  :id="'demon-choose'"
-              />
-            </div>
-
-            <div v-if="el.name === 'Ангелы'" class="mt-3 mb-3">
-              <ChooseUser
-                  :users="users.filter(el => !el.killed)"
-                  :multi="true"
-                  @update:clickReady="(ids) => angelChoose(ids)"
-                  :id="'angel-choose'"
-              />
-            </div>
-            <div v-if="el.name === names['Bomber'] && countNight > 0" class="mt-3 mb-3">
-              <div style="pointer-events: none" class="mt-6">
-                <InputText placeholder="Игрок" v-model.trim="bomberChoose">
-                </InputText>
-              </div>
-              <br/>
-
-              <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
-                <ChooseUser
-                    :title="'Подрыв жопы игрока:'"
-                    :users="users.filter(el => !el.killed)"
-                    :multi="false"
-                    @update:clickReady="(ids) => bomberKill(ids)"
-                    :id="'boomberKill-choose'"
+              @click="emitClickOnItem(el.id)"
+          >
+            <div class="flex">
+              <div @click.stop="handleDoubleClick(el.id)"
+              >
+                <HistoryStatus
+                    :type="el.type"
+                    :active="isActive(el.id)"
                 />
               </div>
+
+              <div class="pl-8 ml-2" :class="classes(el.id), !isActive(el.id) ? 'text-white' : 'text-green-600'">
+                <h3 class="font-medium leading-tight">{{ el.title }}</h3>
+                <p class="text-sm opacity-50">{{ el.text }}</p>
+              </div>
+              <div v-if="!isActive(el.id) && showPointer" class="ml-4">
+                <IconPointer/>
+              </div>
             </div>
 
-
-            <template v-if="isActiveStep(el.id)">
-              <div v-if="!isShow && el.type === 'day'" class="mt-2">
-                <Button @click.stop="emitStartTimer('start')" size="small">
-                  Старт таймера
-                </Button>
+            <div v-if="el.id === activeStep" class="pl-8 ml-1">
+              <div v-if="activeStep === 22 && el.id === 22">
+                <div v-if="!gamblerChooseClosed" class="flex items-center mt-2 gap-4">
+                  <Button
+                      size="small"
+                      @click="setGamblerChoose('четные')"
+                  >
+                    Четные ночи
+                  </Button>
+                  <Button
+                      size="small"
+                      @click="setGamblerChoose('нечетные')"
+                  >
+                    Нечетные
+                  </Button>
+                </div>
               </div>
 
-              <div v-if="nextBtnIsShow(el.id, el.type)" class="mt-3">
-                <Button @click.stop="emitClickNext(el.id)" @keydown.down="emitClickNext(el.id)" size="small">
-                  Далее
-                </Button>
+              <div v-if="el.name === names.Priest" class="mt-3 mb-3">
+                <ChooseUser
+                    :users="users"
+                    @update:clickReady="(ids) => showPriestCheck(ids)"
+                    :id="'priest-choose'"
+                />
               </div>
-            </template>
+              <div v-if="el.name === names.Inquisitor" class="mt-3 mb-3">
+                <ChooseUser
+                    :users="users"
+                    @update:clickReady="(ids) => inquisitorCheck(ids)"
+                    :id="'inqusitor-choose'"
+                />
+
+                <vs-dialog modal @update:visible="(v) => inquisitorModal = v" v-model="inquisitorModal">
+                  <div class="con-content max-w-[280px]">
+                    <div class="flex items-center justify-center mb-2" style="height: calc(100vh - 120px);">
+                      <img :src="typeRoles[inquisitorChoose]" alt="" style="object-fit: contain">
+                    </div>
+                  </div>
+                </vs-dialog>
+              </div>
+
+              <div v-if="el.name === 'Ведьмы'" class="mt-3 mb-3">
+                <div>
+
+                </div>
+                <ToggleAccord>
+                  <template #toggleBtn>
+                    <Button size="small" outlined class="mb-2">Сделать иллюзорное убийство</Button>
+                  </template>
+
+                  <template #main>
+                    <ChooseUser
+                        :title="'Иллюзорное убийство'"
+                        :users="users.filter(el => !el.killed)"
+                        @update:clickReady="(ids) => witchFakeKill(ids)"
+                        :id="'fakeKill-choose'"
+                        class="mb-2"
+                    />
+                  </template>
+                </ToggleAccord>
+
+                <ChooseUser
+                    :title="'Убийство'"
+                    :multi="true"
+                    :users="users.filter(el => !el.killed)"
+                    @update:clickReady="(ids) => witchKill(ids)"
+                    :id="'witchKill-choose'"
+                />
+              </div>
+
+              <div v-if="el.name === names.Hunter" class="mt-3 mb-3">
+                <Button v-if="hunterWakeUpInThisNight" @click="hunterKill">
+                  Добить
+                </Button>
+                <hr class="opacity-50 my-3"/>
+              </div>
+
+              <div v-if="el.name === names.Apprentice" class="mt-3 mb-3">
+                <Button @click="apprenticeModal = true" size="small">
+                  Показать роли
+                </Button>
+                <vs-dialog modal :visible="apprenticeModal" @update:visible="(v) => apprenticeModal = v">
+                  <template #header>
+                    <div class="flex items-center justify-center mb-2  gap-4 mt-3">
+                      <div>
+                        {{ !apprenticeRole ? 'Могильщик' : 'Судья' }}
+                      </div>
+                      <InputSwitch v-model="apprenticeRole" @change="apprenticeShowNumber = false"/>
+
+                      <Button @click="setChooseApprentice" size="small">
+                        Подтвердить
+                      </Button>
+                    </div>
+                  </template>
+                  <div v-if="apprenticeRole" class="relative" style="max-height: 70vh;">
+                    <img :src="imgCard7"
+                         style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
+                         :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                    <div v-if="apprenticeShowNumber" class="Apprentice__choose"
+                         :class="apprenticeShowNumber && 'active'">
+                      {{ getNumber(el.text) }}
+                    </div>
+                  </div>
+                  <div v-else class="relative" style="max-height: 70vh;">
+                    <img :src="imgCard2"
+                         style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
+                         :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
+                    <div v-if="apprenticeShowNumber" class="Apprentice__choose"
+                         :class="apprenticeShowNumber && 'active'">
+                      {{ getNumber(el.text) }}
+                    </div>
+                  </div>
+                </vs-dialog>
+              </div>
+
+              <div v-if="el.name === 'Демоны'" class="mt-3 mb-3">
+                <ChooseUser
+                    :users="users.filter(el => !el.killed)"
+                    :multi="true"
+                    @update:clickReady="(ids) => demonChoose(ids)"
+                    :id="'demon-choose'"
+                />
+              </div>
+
+              <div v-if="el.name === 'Ангелы'" class="mt-3 mb-3">
+                <ChooseUser
+                    :users="users.filter(el => !el.killed)"
+                    :multi="true"
+                    @update:clickReady="(ids) => angelChoose(ids)"
+                    :id="'angel-choose'"
+                />
+              </div>
+
+              <div v-if="el.name === names['Bomber'] && countNight > 0" class="mt-3 mb-3">
+                <div style="pointer-events: none" class="mt-6">
+                  <InputText placeholder="Игрок" v-model.trim="bomberChoose">
+                  </InputText>
+                </div>
+                <br/>
+
+                <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
+                  <ChooseUser
+                      :title="'Подрыв жопы игрока:'"
+                      :users="users.filter(el => !el.killed)"
+                      :multi="false"
+                      @update:clickReady="(ids) => bomberKill(ids)"
+                      :id="'boomberKill-choose'"
+                  />
+                </div>
+              </div>
+
+
+              <template v-if="isActiveStep(el.id)">
+                <div v-if="!isShow && el.type === 'day'" class="mt-3">
+                  <Button @click.stop="emitStartTimer('start')" size="small">
+                    Старт таймера
+                  </Button>
+                </div>
+
+                <div v-if="nextBtnIsShow(el.id, el.type)" class="mt-3">
+                  <Button @click.stop="emitClickNext(el.id)" @keydown.down="emitClickNext(el.id)" size="small">
+                    Далее
+                  </Button>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
-      </div>
+      </transition-group>
+
     </div>
   </div>
 </template>
@@ -198,13 +219,14 @@ import {names} from "@/store/cards";
 import ChooseUser from "@/components/ChooseUser.vue";
 import GameMod from "@/js/GameMod";
 import {roles} from "@/js/types";
-import { toast } from 'vue3-toastify'
+import {toast} from 'vue3-toastify'
 import imgCard2 from '@/assets/cards/v2.png'
 import imgCard7 from '@/assets/cards/v7.png'
+import ToggleAccord from "@/components/ToggleAccord.vue";
 
 export default {
   name: "HistoryLine",
-  components: {ChooseUser, IconPointer, HistoryStatus},
+  components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus},
   props: ['array', 'active', 'showPointer', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
   computed: {
     hunterWakeUpInThisNight() {
@@ -233,6 +255,20 @@ export default {
     currentCard() {
       return this.users.find(user => user.name === this.currentEl.name)
     },
+    arrayFinished() {
+      if (this.showAll) {
+        return this.array
+      }
+
+      console.log(this.hiddenSteps, this.array, this.activeStep)
+      const res = this.array.filter(el => {
+        const refName = 'list-el-' + el.id
+        const inHiddenList = this.hiddenSteps.indexOf(refName)
+        return inHiddenList === -1
+      })
+
+      return res
+    }
   },
 
   data() {
@@ -269,26 +305,25 @@ export default {
   mounted() {
     this.checkVotedType()
 
-    if(this.isHistoryLine){
+    if (this.isHistoryLine) {
       this.updateFinisherList()
     }
   },
   methods: {
-    touchHandler(){
+    touchHandler() {
       this.block = this.block + 1
 
       setTimeout(() => {
         this.block = 0
       }, 200)
 
-      if(this.block > 1){
-        console.log('doble tap')
-        if(this.currentEl.type === 'day'){
+      if (this.block > 1) {
+        if (this.currentEl.type === 'day') {
           this.$emit('update:clickNext');
           this.isShow = true
           this.updateFinisherList()
           this.$emit('update:startTimer', 'start');
-        }else{
+        } else {
           this.$emit('update:startTimer', 'stop');
         }
       }
@@ -328,11 +363,9 @@ export default {
       this.$emit('update:witchKill', ids)
     },
     inquisitorCheck(ids) {
-      console.log('d', ids)
       if (Array.isArray(ids) && ids.length > 0) {
         this.inquisitorModal = true
         const find = this.users.find(u => u.number === ids[0])
-        console.log('find', find)
 
         if (find.name === names.Apprentice) {
           if (find.isJodge) {
@@ -429,17 +462,16 @@ export default {
       return false
     },
     emitClickNext() {
-      this.emitStartTimer('stop')
-      this.isShow = false
+      this.emitStartTimer('stop');
+      this.isShow = false;
       this.$emit('update:clickNext');
-      this.updateFinisherList()
+      this.updateFinisherList();
     },
     emitStartTimer(type) {
       this.isShow = true
       this.$emit('update:startTimer', type);
     },
     handleDoubleClick(id) {
-      console.log('id', id)
       this.$emit('update:changeHistoryItem', id)
     },
 

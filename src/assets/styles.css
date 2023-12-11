@@ -196,15 +196,23 @@
     color: #fff;
     font-size: 20px;
 }
-
-
-/*animate*/
-.list-enter-active,
-.list-leave-active {
-    transition: all 0.5s ease;
+.historyLine {
+    transition: transform 0.5s ease; /* Настройте время и функцию перехода по своему усмотрению */
 }
-.list-enter-from,
-.list-leave-to {
+
+
+.historyList-move,
+.historyList-enter-active,
+.historyList-leave-active {
+    transition: all 0.7s ease;
+}
+.historyList-enter-from,
+.historyList-leave-to {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(-35px);
 }
+.historyList-leave-active {
+    position: absolute;
+}
+
+

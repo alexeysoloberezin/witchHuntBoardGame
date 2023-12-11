@@ -29,6 +29,19 @@ class GameMod {
     return res;
   }
 
+  gamblerChoose(players, choose){
+    return players.map(el => {
+      if (el.name === names.Gambler) {
+        return {
+          ...el,
+          gamblerChoose: choose
+        }
+      } else {
+        return el
+      }
+    })
+  }
+
   getNumberFromText(text, type) {
     const matches = text.match(/\((\d+)\)/g);
 

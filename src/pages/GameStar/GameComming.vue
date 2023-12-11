@@ -116,7 +116,6 @@ export default {
   methods: {
     random(){
       let roles = localStorage.getItem('gameRoles')
-      console.log('playersRoles' ,roles)
       if(roles){
         roles = JSON.parse(roles)
 
@@ -138,7 +137,6 @@ export default {
         ...this.playersRoles[this.roleFor],
         type
       };
-      console.log('123')
       this.showModalType = false
       this.save();
     },

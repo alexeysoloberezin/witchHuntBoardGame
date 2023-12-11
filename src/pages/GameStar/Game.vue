@@ -68,21 +68,6 @@
 
 
     <div class="mobPanel">
-      <div class="nightPanel p-3" :key="log" :class="log ? 'active' : ''">
-        <div>
-          <div v-for="(item, i) in nightHistory" :key="i + item.type" class="mb-2 text-center">
-            {{ item.type }} Игрока {{ item.player }}
-          </div>
-        </div>
-        <div class="flex justify-center">
-          <Button
-              @click="closeLog"
-
-          >
-            Закрыть
-          </Button>
-        </div>
-      </div>
       <div style="height: 60px;left: 50%;transform: translateX(-50%);bottom: 10px"
            class="fixed z-50 w-screen h-18 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
         <div
@@ -319,7 +304,6 @@ export default {
         this.refreshList()
       }
 
-      console.log('isFanatic', isFanatic)
       alert(res)
 
       this.setNextActive()
@@ -391,8 +375,6 @@ export default {
 
     },
     votedUsers({user2, user1, isSiparete}) {
-      console.log('users', user1, user2)
-
       if (isSiparete && (!user1 || !user2)) {
         return alert('Не полные данные')
       }
@@ -452,8 +434,6 @@ export default {
         if (currentIndex !== -1 && currentIndex < this.historyLine.length - 1) {
           const nextElement = this.historyLine[currentIndex + 1];
 
-          console.log('find', find)
-          console.log('nextElement', nextElement)
           if (find.type !== 'night' && nextElement.type === 'night') {
             this.startNight()
           }
@@ -464,7 +444,6 @@ export default {
           }
 
           const nextElementId = nextElement.id;
-          console.log(nextElementId);
           this.activeStep = nextElementId
 
 
@@ -482,7 +461,6 @@ export default {
         }
       }
     },
-
     hideShowRoles() {
       const enteredPassword = window.prompt('Please enter your password:');
 
@@ -538,16 +516,7 @@ export default {
       return GameMod.gamblerHaveShield(choose, this.countNight)
     },
     setGamblerChoose(choose) {
-      this.playersRoles = this.playersRoles.map(el => {
-        if (el.name === names.Gambler) {
-          return {
-            ...el,
-            gamblerChoose: choose
-          }
-        } else {
-          return el
-        }
-      })
+      this.playersRoles = GameMod.gamblerChoose(this.playersRoles, choose)
       this.gamblerChooseClosed = true
       this.setInGlobalLog('Гамблер (Азартный игрок выбирает): ' + choose + ' ночи')
     },
@@ -603,6 +572,7 @@ export default {
             })
             this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
           }
+          this.refreshList()
         }
 
         if (typeAction === 'goodKill') {

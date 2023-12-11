@@ -218,8 +218,6 @@ export default {
 
           personNumber = person.number
 
-          console.log(personNumber, this.assassinKill)
-
           this.showDaySkillsDetail = false
           this.showDaySkills = false
 

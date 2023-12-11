@@ -60,8 +60,6 @@ export default {
       this.$emit('update:modelValue', el.number);
     },
     emitValue(val) {
-      // Изменение значения внутренней переменной
-      console.log('val', val)
       if(this.userInput === val){
         this.$emit('update:modelValue', null);
         return;

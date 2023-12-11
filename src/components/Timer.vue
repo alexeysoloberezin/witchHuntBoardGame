@@ -224,10 +224,8 @@ export default {
 
       const res = objs.filter(el => el.value === maxNumber)
       if (res.length === 1) {
-        console.log('123', res)
         this.$emit('update:votedResult', {user1: res[0].number, isSiparete: false, user2: false})
       } else {
-        console.log('222', res)
         this.$emit('update:votedResult', {user1: res[0].number, isSiparete: true, user2: res[1].number})
       }
 
@@ -247,7 +245,6 @@ export default {
       }
     },
     votedListItemsChanged(){
-      console.log('votedListItemsChanged', this.votedListItems)
       localStorage.setItem('votedListItems', JSON.stringify(this.votedListItems))
     },
     showLog(){
