@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
     <div class="cardBox mb-2 flex items-center justify-between relative"
-         v-touch:moving="movingHandler"
-         v-touch:end="movedHandler"
+         v-touch:drag="movingHandler"
+         v-touch:release="movedHandler"
          v-touch:tap="tapHandler"
          :style="{
               opacity: card.killed ? '.2' : '1',

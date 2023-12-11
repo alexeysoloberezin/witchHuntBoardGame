@@ -245,28 +245,6 @@ export default {
             block: 'start',
           });
         }, 200)
-      } else {
-        this.scrollToActiveStep()
-      }
-    },
-    scrollToActiveStep() {
-      const activeEl = this.$refs.historyList.$refs['list-el-' + this.activeStep];
-
-      if (Array.isArray(activeEl) && activeEl.length > 0) {
-        const offset = activeEl[0].getBoundingClientRect().y
-        const client = activeEl[0].getBoundingClientRect()
-        console.log('client', client)
-        console.log('offset', offset)
-
-        setTimeout(() => {
-          window.scrollTo({
-            top: offset - 80,
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 250)
-      } else {
-        console.error('Реф не является DOM-элементом');
       }
     },
     changeHistoryItem(id) {

@@ -5,10 +5,11 @@
     </div>
     <div class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400 historyLine"
     >
-
       <div v-for="el in array"
            :key="el.id"
-           :ref="`list-el-${el.id}`">
+           :ref="`list-el-${el.id}`"
+           v-touch:tap="touchHandler"
+      >
         <div
             v-if="alreadyFinish(el.id)"
             class="mb-10 cursor-pointer "
@@ -233,9 +234,7 @@ export default {
       return this.users.find(user => user.name === this.currentEl.name)
     },
   },
-  beforeUpdate() {
-    console.log('refst', this.$refs)
-  },
+
   data() {
     return {
       hiddenSteps: [],
@@ -259,7 +258,9 @@ export default {
         user1: null,
         user2: null,
         isSiparete: false
-      }
+      },
+
+      block: 0,
     }
   },
   updated() {
@@ -273,6 +274,24 @@ export default {
     }
   },
   methods: {
+    touchHandler(){
+      this.block = this.block + 1
+
+      setTimeout(() => {
+        this.block = 0
+      }, 200)
+
+      if(this.block > 1){
+        console.log('doble tap')
+        if(this.currentEl.type === 'day'){
+          this.$emit('update:clickNext');
+          this.isShow = true
+          this.$emit('update:startTimer', 'start');
+        }else{
+          this.$emit('update:startTimer', 'stop');
+        }
+      }
+    },
     updateFinisherList() {
       this.hiddenSteps = []
       const activeElRef = this.$refs['list-el-' + this.activeStep];
@@ -332,11 +351,6 @@ export default {
     },
     getNumber(text) {
       return GameMod.getNumberFromText(text, this.apprenticeRole)
-    },
-    showNextBox() {
-      const element = this.$refs.nextBox[0];
-      if (!element) return null;
-      element.scrollIntoView({behavior: 'smooth'});
     },
     hunterKill() {
       this.$emit('update:hunterKill')
@@ -422,7 +436,6 @@ export default {
     emitStartTimer(type) {
       this.isShow = true
       this.$emit('update:startTimer', type);
-
     },
     handleDoubleClick(id) {
       console.log('id', id)
