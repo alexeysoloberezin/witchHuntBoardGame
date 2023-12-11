@@ -18,7 +18,7 @@
          style="top: 0;left: 0;width: 100vw;height: 100vh;z-index: 101;">
 
       <img class="absolute top-0 left-0 w-screen h-screen pointer-events-none" style="opacity: .12;filter: grayscale(0)"
-           :src="require('../assets/stone-texture.jpg')" alt="">
+           :src="imgTexture" alt="">
 
       <radial-progress-bar :diameter="300"
                            :completed-steps="completedSteps"
@@ -166,8 +166,8 @@
 import RadialProgressBar from 'vue-radial-progress'
 import resetGame from '../js/utils'
 import {toast} from 'vue3-toastify'
-import Folls from "@/components/Folls";
-
+import Folls from "@/components/Folls.vue";
+import imgTexture from '../assets/stone-texture.jpg'
 export default {
   name: 'Timer',
   components: {

@@ -112,7 +112,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 import config from "@/config";
 import fetch from "@/utils/fetch";

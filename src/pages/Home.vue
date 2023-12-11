@@ -33,7 +33,7 @@
 <script>
 
 import cards from "@/store/cards";
-import CardSafe from "@/components/Card";
+import CardSafe from "@/components/Card.vue";
 
 export default {
   name: "DashboardHome",

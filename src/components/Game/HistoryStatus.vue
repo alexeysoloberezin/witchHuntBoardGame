@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import HistoryCheckIcon from "@/components/icons/HistotyCheck";
-import HistoryNightIcon from "@/components/icons/HistoryNightIcon";
-import HistoryDayIcon from "@/components/icons/HistoryDayIcon";
-import VotedIcon from "@/components/icons/VotedIcon";
+import HistoryCheckIcon from "@/components/icons/HistotyCheck.vue";
+import HistoryNightIcon from "@/components/icons/HistoryNightIcon.vue";
+import HistoryDayIcon from "@/components/icons/HistoryDayIcon.vue";
+import VotedIcon from "@/components/icons/VotedIcon.vue";
 
 export default {
   name: "HistoryStatus",

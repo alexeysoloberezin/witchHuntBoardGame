@@ -179,14 +179,14 @@
 <script>
 import {getByNames, names} from "@/store/cards";
 import types from "@/js/types";
-import CardPlayer from "@/components/CardPlayer";
+import CardPlayer from "@/components/CardPlayer.vue";
 import resetGame from "@/js/utils";
-import CardSafe from "@/components/Card";
+import CardSafe from "@/components/Card.vue";
 import GameMod from "@/js/GameMod";
 import {firstStep, generate, historyLineData} from "@/js/GameModData";
-import HistoryLine from "@/components/Game/HistoryLine";
-import Timer from "@/components/Timer";
-import DaySkillModal from "@/components/DaySkillsModal";
+import HistoryLine from "@/components/Game/HistoryLine.vue";
+import Timer from "@/components/Timer.vue";
+import DaySkillModal from "@/components/DaySkillsModal.vue";
 import { toast } from 'vue3-toastify';
 
 export default {

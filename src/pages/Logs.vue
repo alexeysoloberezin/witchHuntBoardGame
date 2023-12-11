@@ -100,7 +100,7 @@
 </style>
 
 <script>
-import Breadcrumbs from "@/components/Breadcrumbs";
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import fetch from "@/utils/fetch";
 import config from "@/config";
 import { mapState } from "vuex";

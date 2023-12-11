@@ -116,7 +116,7 @@
                   </div>
                 </template>
                 <div v-if="apprenticeRole" class="relative" style="max-height: 70vh;">
-                  <img :src="require('../../assets/cards/v7.png')"
+                  <img :src="imgCard7"
                        style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
                        :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
                   <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
@@ -124,7 +124,7 @@
                   </div>
                 </div>
                 <div v-else class="relative" style="max-height: 70vh;">
-                  <img :src="require('../../assets/cards/v2.png')"
+                  <img :src="imgCard2"
                        style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
                        :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
                   <div v-if="apprenticeShowNumber" class="Apprentice__choose" :class="apprenticeShowNumber && 'active'">
@@ -191,13 +191,15 @@
 </template>
 
 <script>
-import HistoryStatus from "@/components/Game/HistoryStatus";
-import IconPointer from "@/components/icons/IconPointer";
+import HistoryStatus from "@/components/Game/HistoryStatus.vue";
+import IconPointer from "@/components/icons/IconPointer.vue";
 import {names} from "@/store/cards";
-import ChooseUser from "@/components/ChooseUser";
+import ChooseUser from "@/components/ChooseUser.vue";
 import GameMod from "@/js/GameMod";
 import {roles} from "@/js/types";
 import { toast } from 'vue3-toastify'
+import imgCard2 from '@/assets/cards/v2.png'
+import imgCard7 from '@/assets/cards/v7.png'
 
 export default {
   name: "HistoryLine",

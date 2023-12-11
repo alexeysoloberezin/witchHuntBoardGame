@@ -45,10 +45,10 @@
         <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
               style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
-            <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 100px);">
+            <img :src="mirImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
           <div @click="chooseType('witch')">
-            <img :src="require('../../assets/witch.png')" alt="" style="max-height: calc(100vh - 100px);">
+            <img :src="witchImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
 
         </div>
@@ -77,9 +77,11 @@
 
 <script>
 import cards, {getByNames} from "@/store/cards";
-import HistoryLine from "@/components/Game/HistoryLine";
+import HistoryLine from "@/components/Game/HistoryLine.vue";
 import {arrayStartGameTakeCards} from "@/js/GameModData";
-import CardSafe from "@/components/Card";
+import CardSafe from "@/components/Card.vue";
+import mirImg from '@/assets/mir.png'
+import witchImg from '@/assets/witch.png'
 
 export default {
   name: "GameComming",

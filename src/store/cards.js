@@ -23,12 +23,57 @@ export const names = {
     "Emissary": "Эмиссар"
 }
 
+import img1Big from '../assets/cards/v1.png';
+import img1 from '../assets/ava/Property 1=Default.png';
 
+import img2Big from '../assets/cards/v2.png';
+import img2 from '../assets/ava/Property 1=Variant2.png';
+
+import img3Big from '../assets/cards/v3.png';
+import img3 from '../assets/ava/Property 1=Variant3.png';
+import img4Big from '../assets/cards/v4.png';
+import img4 from '../assets/ava/Property 1=Variant4.png';
+import img5Big from '../assets/cards/v5.png';
+import img5 from '../assets/ava/Property 1=Variant5.png';
+import img6Big from '../assets/cards/v6.png';
+import img6 from '../assets/ava/Property 1=Variant6.png';
+import img7Big from '../assets/cards/v7.png';
+import img7 from '../assets/ava/Property 1=Variant7.png';
+import img8Big from '../assets/cards/v8.png';
+import img8 from '../assets/ava/Property 1=Variant8.png';
+import img9Big from '../assets/cards/v9.png';
+import img9 from '../assets/ava/Property 1=Variant9.png';
+import img10Big from '../assets/cards/v10.png';
+import img10 from '../assets/ava/Property 1=Variant10.png';
+import img11Big from '../assets/cards/v11.png';
+import img11 from '../assets/ava/Property 1=Variant11.png';
+import img12Big from '../assets/cards/v12.png';
+import img12 from '../assets/ava/Property 1=Variant12.png';
+import img13Big from '../assets/cards/v13.png';
+import img13 from '../assets/ava/Property 1=Variant13.png';
+import img14Big from '../assets/cards/v14.png';
+import img14 from '../assets/ava/Property 1=Variant14.png';
+import img15Big from '../assets/cards/v16.png';
+import img15 from '../assets/ava/Property 1=Variant15.png';
+import img16Big from '../assets/cards/v18.png';
+import img16 from '../assets/ava/Property 1=Variant16.png';
+import img17Big from '../assets/cards/v19.png';
+import img17 from '../assets/ava/Property 1=Variant17.png';
+import img18Big from '../assets/cards/v20.png';
+import img18 from '../assets/ava/Property 1=Variant18.png';
+import img19Big from '../assets/cards/v21.png';
+import img19 from '../assets/ava/Property 1=Variant19.png';
+import img20Big from '../assets/cards/v22.png';
+import img20 from '../assets/ava/Property 1=Variant20.png';
+import img21Big from '../assets/cards/v23.png';
+import img21 from '../assets/ava/Property 1=Variant21.png';
+import img22Big from '../assets/cards/v24.png';
+import img22 from '../assets/ava/Property 1=Variant22.png';
 
 const cards = [
   {
-    image: require('../assets/cards/v1.png'),
-    ava: require('../assets/ava/Property 1=Default.png'),
+    image: img1Big,
+    ava: img1,
     type: 'guard',
     id: 1,
     name: names["Benevolent Old Dame"],
@@ -49,8 +94,8 @@ const cards = [
     `
   },
   {
-    image: require('../assets/cards/v2.png'),
-    ava: require('../assets/ava/Property 1=Variant2.png'),
+    image: img2Big,
+    ava: img2,
     id: 2,
     type: 'info',
     name: names["Gravedigger"],
@@ -65,14 +110,14 @@ const cards = [
       <b>Видит ли Могильщик обе карты: персонажа и команду?</b>
       <p>Да.</p>
      <b> Разве Могильщик не является приоритетной целью для ведьм?</b>
-      <p>Возможно, но часто они сосредоточены на устранении Священника. 
+      <p>Возможно, но часто они сосредоточены на устранении Священника.
       Могильщик также является очень легкой мишенью для защиты Ангелов,
       поскольку они видят Могильщика даже до своей первой защиты</p>
     `
   },
   {
-    image: require('../assets/cards/v3.png'),
-    ava: require('../assets/ava/Property 1=Variant3.png'),
+    image: img3Big,
+    ava: img3,
     id: 3,
     type: 'attack',
     name: names["Assassin"],
@@ -89,7 +134,7 @@ const cards = [
      <p> Нет.</p>
      <b> Сможет ли убийца когда-нибудь угадать снова, по той же или другой
       цели?</b>
-      
+
      <p> Нет, это происходит один раз за игру.</p>
       <b>Может ли Ассасин назвать Ведьму или жителя деревни?</b>
       <p>Ассасин выбирает конкретного персонажа —
@@ -110,8 +155,8 @@ const cards = [
     `
   },
   {
-    image: require('../assets/cards/v4.png'),
-    ava: require('../assets/ava/Property 1=Variant4.png'),
+    image: img4Big,
+    ava: img4,
     id: 4,
     type: 'attack',
     name: names["Hunter"],
@@ -134,34 +179,34 @@ const cards = [
     name_en: "Hunter"
   },
   {
-    image: require('../assets/cards/v5.png'),
-    ava: require('../assets/ava/Property 1=Variant5.png'),
+    image: img5Big,
+    ava: img5,
     id: 5,
     type: 'guard',
     name: names["Nurse"],
     linkCards: [],
     info: `
-      <h3>Один раз за игру до конца 
-      любого дня вы можете 
+      <h3>Один раз за игру до конца
+      любого дня вы можете
       раскрыть эту
       карту и назвать любого
-       несвятого персонажа. 
+       несвятого персонажа.
       Если игрок с таким
-      персонажем все еще жив, 
+      персонажем все еще жив,
       этот игрок получает дополнительную жизнь.<br/> Медсестра просто объявляет о своем официальном действии и
       просит модератора подтвердить его.</h3>
-      
+
       <b>
       Может ли медсестра активироваться по истечении дневного времени голосования или ночью?</b>
       <p>Нет.</p>
-      
+
       <b>Сможет ли медсестра когда-нибудь действовать снова, с той же или другой целью?</b>
       <p>Нет, это один раз за игру.</p>
-      
+
       <b>Может ли медсестра назвать Ведьму или жителя деревни?</b>
       <p>Медсестра выбирает конкретного персонажа (например, судью или медсестру), а не
       тип команды.</p>
-      
+
       <b>Подождите, может ли Медсестра назвать медсестру?</b>
         <p>Да — но никаких обещаний относительно того, как отреагирует Деревня!</p>
         <b>Может ли Медсестра дать дополнительную жизнь Священнику или послушнику?</b>
@@ -170,8 +215,8 @@ const cards = [
     name_en: "Nurse"
   },
   {
-    image: require('../assets/cards/v6.png'),
-    ava: require('../assets/ava/Property 1=Variant6.png'),
+    image: img6Big,
+    ava: img6,
     id: 6,
     type: 'guard',
     name: names["Gambler"],
@@ -190,8 +235,8 @@ const cards = [
     name_en: "Gambler"
   },
   {
-    image: require('../assets/cards/v7.png'),
-    ava: require('../assets/ava/Property 1=Variant7.png'),
+    image: img7Big,
+    ava: img7,
     id: 7,
     type: 'attack',
     name: names["Judge"],
@@ -208,7 +253,7 @@ const cards = [
       <p>Если Судьи нет (и нет Ученика, который преследует Судью), то
       никто не меняется. Это неотличимо от того факта, что живой судья
       сознательно решил никого не вешать.</p>
-      
+
       <hr class="mb-4"/>
       <p>Если большинство не будет достигнуто вовремя, в том числе при равенстве
       голосов или деревня согласится никого не убивать, судье предоставляется
@@ -226,8 +271,8 @@ const cards = [
     name_en: "Judge"
   },
   {
-    image: require('../assets/cards/v8.png'),
-    ava: require('../assets/ava/Property 1=Variant8.png'),
+    image: img8Big,
+    ava: img8,
     id: 8,
     type: 'guard',
     name: names["Survivalist"],
@@ -237,8 +282,8 @@ const cards = [
     name_en: "Survivalist"
   },
   {
-    image: require('../assets/cards/v9.png'),
-    ava: require('../assets/ava/Property 1=Variant9.png'),
+    image: img9Big,
+    ava: img9,
     id: 9,
     type: 'info',
     name: "Инквизитор",
@@ -256,8 +301,8 @@ const cards = [
     name_en: "Inquisitor"
   },
   {
-    image: require('../assets/cards/v10.png'),
-    ava: require('../assets/ava/Property 1=Variant10.png'),
+    image: img10Big,
+    ava: img10,
     id: 10,
     type: 'info',
     name: names["Peeping Tom"],
@@ -296,17 +341,17 @@ const cards = [
     name_en: "Peeping Tom"
   },
   {
-    image: require('../assets/cards/v11.png'),
-    ava: require('../assets/ava/Property 1=Variant11.png'),
+    image: img11Big,
+    ava: img11,
     id: 11,
     type: 'info',
     name: names["Oracle"],
     linkCards: [], info: `
       <h3>В начале игры вы узнаете личность
        случайного Деревенского крестьянина.</h3>
-      <b>То есть они просто узнают, что 
+      <b>То есть они просто узнают, что
       кто-то не ведьма?</b>
-      <p>Да, а также, что этот кто-то также 
+      <p>Да, а также, что этот кто-то также
       не является одним из деревенских священнослужителей.</p>
       <b>Разве Оракул не должен немедленно сообщать свою информацию?</b>
      <p> Не всегда. Подумайте, как это может повлиять на
@@ -318,8 +363,8 @@ const cards = [
     name_en: "Oracle"
   },
   {
-    image: require('../assets/cards/v12.png'),
-    ava: require('../assets/ava/Property 1=Variant12.png'),
+    image: img12Big,
+    ava: img12,
     id: 12,
     type: 'holy',
     name: names["Priest"],
@@ -334,8 +379,8 @@ const cards = [
     name_en: "Priest"
   },
   {
-    image: require('../assets/cards/v13.png'),
-    ava: require('../assets/ava/Property 1=Variant13.png'),
+    image: img13Big,
+    ava: img13,
     id: 13,
     type: 'attack|info',
     name: names["Apprentice"],
@@ -351,8 +396,8 @@ const cards = [
     name_en: "Apprentice"
   },
   {
-    image: require('../assets/cards/v14.png'),
-    ava: require('../assets/ava/Property 1=Variant14.png'),
+    image: img14Big,
+    ava: img14,
     id: 14,
     type: 'info',
     name: names["Fortune Teller"],
@@ -379,8 +424,8 @@ const cards = [
     name_en: "Fortune Teller"
   },
   {
-    image: require('../assets/cards/v16.png'),
-    ava: require('../assets/ava/Property 1=Variant15.png'),
+    image: img15Big,
+    ava: img15,
     id: 15,
     type: 'attack',
     name: names["Bomber"],
@@ -414,8 +459,8 @@ const cards = [
     name_en: "Bomber"
   },
   {
-    image: require('../assets/cards/v18.png'),
-    ava: require('../assets/ava/Property 1=Variant16.png'),
+    image: img16Big,
+    ava: img16,
     id: 16,
     type: 'info',
     name: names.Spiritualist,
@@ -440,8 +485,8 @@ const cards = [
     name_en: "Spiritualist"
   },
   {
-    image: require('../assets/cards/v19.png'),
-    ava: require('../assets/ava/Property 1=Variant17.png'),
+    image: img17Big,
+    ava: img17,
     id: 17,
     type: 'attack',
     name: names["(D.O.B.) Dirty Old Bastard"],
@@ -449,7 +494,7 @@ const cards = [
       <h3>Один раз за игру, когда объявляется о вашей смерти, вы можете убить
       цель.</h3>
      <b> Должен ли D.O.B. убивать цель?</b>
-     <p> Нет. Если они этого не сделают, 
+     <p> Нет. Если они этого не сделают,
       то умрут тихо (так, чтобы Деревня не
       узнала, что они были D.O.B.).</p>
       <b>Как быстро должен принять решение D.O.B.?</b>
@@ -461,8 +506,8 @@ const cards = [
     name_en: "(D.O.B.) Dirty Old Bastard"
   },
   {
-    image: require('../assets/cards/v20.png'),
-    ava: require('../assets/ava/Property 1=Variant18.png'),
+    image: img18Big,
+    ava: img18,
     id: 18,
     type: 'info',
     name: names["Watchman"],
@@ -485,8 +530,8 @@ const cards = [
     name_en: "Watchman"
   },
   {
-    image: require('../assets/cards/v21.png'),
-    ava: require('../assets/ava/Property 1=Variant19.png'),
+    image: img19Big,
+    ava: img19,
     id: 19,
     type: 'attack',
     name: names["Loose Cannon"],
@@ -510,8 +555,8 @@ const cards = [
     name_en: "Loose Cannon"
   },
   {
-    image: require('../assets/cards/v22.png'),
-    ava: require('../assets/ava/Property 1=Variant20.png'),
+    image: img20Big,
+    ava: img20,
     id: 20,
     type: 'info',
     name: names["Fanatic"],
@@ -525,17 +570,17 @@ const cards = [
       <b>Знает ли священник, что они проверили Фанатика? <br/>
       Узнает ли Фанатик, кто такой Священник?</b>
       <p>Нет и нет.</p>
-      <b>Что, если священник проверит Фанатика 
+      <b>Что, если священник проверит Фанатика
       еще раз?</b>
-      <p>Тогда Фанатик получит еще одну 
+      <p>Тогда Фанатик получит еще одну
       дополнительную жизнь, и все станет
       по-настоящему весело.</p>
     `,
     name_en: "Fanatic"
   },
   {
-    image: require('../assets/cards/v23.png'),
-    ava: require('../assets/ava/Property 1=Variant21.png'),
+    image: img21Big,
+    ava: img21,
     id: 21,
     type: 'holy',
     name: names["Acolyte"],
@@ -551,8 +596,8 @@ const cards = [
     name_en: "Acolyte"
   },
   {
-    image: require('../assets/cards/v24.png'),
-    ava: require('../assets/ava/Property 1=Variant22.png'),
+    image: img22Big,
+    ava: img22,
     id: 22,
     type: 'guard',
     name: names["Emissary"],

@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import Breadcrumbs from "@/components/Breadcrumbs";
-import Placeholder from "@/components/Placeholder";
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
+import Placeholder from "@/components/Placeholder.vue";
 
 export default {
   name: "Controls",

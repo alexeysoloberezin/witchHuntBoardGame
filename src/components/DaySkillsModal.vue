@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import ChooseUser from "@/components/ChooseUser";
+import ChooseUser from "@/components/ChooseUser.vue";
 import {dayPersonWhoHaveSkills} from "@/js/GameModData";
 import {names} from "@/store/cards";
 import { toast } from 'vue3-toastify';

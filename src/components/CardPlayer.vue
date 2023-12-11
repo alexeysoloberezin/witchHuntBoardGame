@@ -144,7 +144,7 @@ import HearIcon from "@/components/HearIcon.vue";
 import Skeleton from "@/components/Skeleton.vue";
 import ShieldIcon from "@/components/ShieldIcon.vue";
 import { toast } from 'vue3-toastify';
-import Folls from "@/components/Folls";
+import Folls from "@/components/Folls.vue";
 
 export default {
   name: 'CardPlayer',

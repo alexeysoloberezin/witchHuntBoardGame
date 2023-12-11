@@ -1,14 +1,12 @@
-//Common views
-import Landing from '@/pages/Landing';
+import Landing from '@/pages/Landing.vue';
 
-const CardZoom = () => import('@/pages/CardZoom');
-const Dashboard = () => import('@/layouts/Dashboard');
-const DashboardHome = () => import('@/pages/Home');
-// const NotFound = () => import('@/pages/NotFound');
-const GameStart  = () => import('@/pages/GameStar/GameStart')
-const GameComming  = () => import('@/pages/GameStar/GameComming')
-const Game  = () => import('@/pages/GameStar/Game')
-const DownloadPdf  = () => import('@/pages/DownloadPdf')
+const CardZoom = () => import('@/pages/CardZoom.vue');
+const Dashboard = () => import('@/layouts/Dashboard.vue');
+const DashboardHome = () => import('@/pages/Home.vue');
+const GameStart  = () => import('@/pages/GameStar/GameStart.vue')
+const GameComming  = () => import('@/pages/GameStar/GameComming.vue')
+const Game  = () => import('@/pages/GameStar/Game.vue')
+const DownloadPdf  = () => import('@/pages/DownloadPdf.vue')
 
 export default [
   {path: '/', name: 'Homepage', component: Landing},

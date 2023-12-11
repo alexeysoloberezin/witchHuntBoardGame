@@ -45,7 +45,7 @@
 <script>
 import {getCardById, getLinks} from "@/store/cards";
 import types from "@/js/types";
-import CardSafe from "@/components/Card";
+import CardSafe from "@/components/Card.vue";
 
 export default {
   name: "CardZoom",

@@ -325,8 +325,8 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import Breadcrumbs from "@/components/Breadcrumbs";
-import Modal from "@/components/Modal";
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
+import Modal from "@/components/Modal.vue";
 
 import config from "@/config";
 import fetch from "@/utils/fetch";

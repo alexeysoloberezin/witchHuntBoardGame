@@ -57,8 +57,8 @@
 <script>
 import { mapGetters } from "vuex";
 
-import Breadcrumbs from "@/components/Breadcrumbs";
-import Command from "@/components/Command";
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
+import Command from "@/components/Command.vue";
 
 import config from "@/config";
 import fetch from "@/utils/fetch";
