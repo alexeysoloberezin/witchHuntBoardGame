@@ -286,6 +286,7 @@ export default {
         if(this.currentEl.type === 'day'){
           this.$emit('update:clickNext');
           this.isShow = true
+          this.updateFinisherList()
           this.$emit('update:startTimer', 'start');
         }else{
           this.$emit('update:startTimer', 'stop');
