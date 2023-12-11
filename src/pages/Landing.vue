@@ -80,15 +80,13 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
 import queryString from "@/utils/queryString";
 import config from "@/config";
 
 export default {
   name: "Landing",
   computed: {
-    ...mapGetters({ auth: "ifAuthenticated" }),
-    ...mapState(["user", "stateParam"]),
+
     state() {
       return btoa(this.stateParam);
     },

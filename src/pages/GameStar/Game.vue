@@ -6,6 +6,7 @@
           ref="timerComponent"
           @update:votedResult="votedResultHandler"
           :voted-list="playersRoles"
+          @update:foll="makeFoll"
       />
       <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
         <template v-if="detailMode">
@@ -34,6 +35,7 @@
               :activeStep="activeStep"
               :blockHeal="blockHeal"
               :countNight="countNight"
+              :is-history-line="true"
               :users="playersRoles"
               @update:clickNext="setNextActive"
               @update:startTimer="startTimer"
@@ -53,15 +55,15 @@
         </div>
       </div>
       <div v-else>
-        <vs-button @click="handlerResetGame">
+        <Button @click="handlerResetGame">
           Сбросить игру
-        </vs-button>
+        </Button>
       </div>
     </template>
     <div v-else>
       <CardSafe v-for="(card, i) in showRolesCards" :key="'showRoles-card-' + i" :card="card" :hide-image="false"
                 class="mb-2"/>
-      <vs-button @click="hideShowRoles">Закрыть роли</vs-button>
+      <Button @click="hideShowRoles">Закрыть роли</Button>
     </div>
 
 
@@ -73,12 +75,12 @@
           </div>
         </div>
         <div class="flex justify-center">
-          <vs-button
+          <Button
               @click="closeLog"
 
           >
             Закрыть
-          </vs-button>
+          </Button>
         </div>
       </div>
       <div style="height: 60px;left: 50%;transform: translateX(-50%);bottom: 10px"
@@ -166,9 +168,9 @@
       </div>
     </div>
 
-    <vs-button v-if="showRoles === true" @click="showRoles = true">
+    <Button v-if="showRoles === true" @click="showRoles = true">
       Показать роли
-    </vs-button>
+    </Button>
     <br><br><br><br><br><br><br><br><br><br>
 
   </div>
@@ -185,7 +187,7 @@ import {firstStep, generate, historyLineData} from "@/js/GameModData";
 import HistoryLine from "@/components/Game/HistoryLine";
 import Timer from "@/components/Timer";
 import DaySkillModal from "@/components/DaySkillsModal";
-
+import { toast } from 'vue3-toastify';
 
 export default {
   name: "Game",
@@ -301,13 +303,13 @@ export default {
     },
     witchFakeKill(id) {
       if (!id) {
-        this.$toast.error('Не полные данные..')
+        toast.error('Не полные данные..')
         return;
       }
 
       const index = this.playersRoles.findIndex(el => el.number === id);
       this.action(index, 'fakeKill')
-      this.$toast.success(`Попытка убийства Игрока: ${id}`)
+      toast.success(`Попытка убийства Игрока: ${id}`)
       this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
             id
@@ -346,7 +348,12 @@ export default {
     },
     witchKill(ids) {
       if (ids.length === 0 || !Array.isArray(ids)) {
-        this.$toast.error('Не полные данные для защиты..')
+        toast.error('Не полные данные для защиты..')
+        return;
+      }
+
+      if (ids.length > 2) {
+        toast.error('Ведьмы не могут убивать больше 2')
         return;
       }
 
@@ -357,7 +364,7 @@ export default {
     },
     angelChoose(ids) {
       if (ids.length === 0 || !Array.isArray(ids)) {
-        this.$toast.error('Не полные данные защиты ангелов..')
+        toast.error('Не полные данные защиты ангелов..')
         return;
       }
 
@@ -367,7 +374,7 @@ export default {
         const isBlock = this.blockHeal.indexOf(find.number)
 
         if (isBlock !== -1) {
-          this.$toast.success(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
+          toast.success(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
             duration: 6000,
           })
           return null;
@@ -377,7 +384,7 @@ export default {
           this.blockHeal.push(find.number)
         }
 
-        this.$toast.success(`Защитна ангелов установлена на: ${id}`, {
+        toast.success(`Защитна ангелов установлена на: ${id}`, {
           duration: 2000,
         })
         find.shield = find.shield + 1
@@ -390,7 +397,7 @@ export default {
         el.chain = false
       })
       if (ids.length < 2 || !Array.isArray(ids)) {
-        this.$toast.error('Не полные данные замены демонов..')
+        toast.error('Не полные данные замены демонов..')
         return;
       }
 
@@ -398,7 +405,7 @@ export default {
         const index = this.playersRoles.findIndex(el => el.number === id);
         this.action(index, 'chain')
       })
-      this.$toast.success(`Подмена ${ids[0]}/${ids[1]} принята`, {
+      toast.success(`Подмена ${ids[0]}/${ids[1]} принята`, {
         duration: 2000,
       })
 
@@ -455,7 +462,8 @@ export default {
       this.historyLine = historyLineData({
         initialPlayers: this.playersRoles,
         nights: this.countNight,
-        nightLog: this.nightHistory
+        nightLog: this.nightHistory,
+        dayLog: this.dayLog
       })
     },
     setNextActive: function () {
@@ -488,7 +496,8 @@ export default {
             ...generate(
                 this.playersRoles,
                 this.countNight,
-                this.nightHistory
+                this.nightHistory,
+                this.dayLog
             )
           ]
           this.setNextActive()
@@ -519,7 +528,7 @@ export default {
         find.foll = 0
       } else {
         find.foll = find.foll + 1
-        this.$toast.success('Фол Игроку: ' + index + `<br/> У вас ${find.foll} фола`)
+        toast.success('Фол Игроку: ' + index +  `. У вас ${find.foll} фола`)
       }
 
       this.saveAll()
@@ -574,6 +583,7 @@ export default {
         }
       })
       this.isNight = false
+      this.dayLog = []
       this.nightVal = ++this.nightVal
       this.activeNightStep = 0
     },
@@ -585,12 +595,11 @@ export default {
       this.panelAction = action
     },
     action(indexPlayer, type) {
-      const _t = this
       const typeAction = type || this.panelAction
 
       if (typeAction === 'kill' || typeAction === 'goodKill') {
         if (this.playersRoles[indexPlayer].name === names.Emissary && this.nightVal <= 3) {
-          _t.$toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+          toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
           this.setInGlobalLog('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
@@ -601,7 +610,7 @@ export default {
 
         const kill = () => {
           this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
-          _t.$toast.success('Игрок: ' + this.playersRoles[indexPlayer].number + ' убит')
+          toast.success('Игрок: ' + this.playersRoles[indexPlayer].number + ' убит')
 
           if (this.isNight) {
             this.nightHistory.push({
@@ -629,7 +638,7 @@ export default {
           } else {
             this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart - 1
           }
-          _t.$toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+          toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
             id: this.playersRoles[indexPlayer].number
@@ -661,7 +670,7 @@ export default {
       } else if (typeAction === 'addHeart') {
         this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart + 1
         this.setInGlobalLog('Добавлена жизнь: ' + indexPlayer)
-        this.$toast.success('Добавлена жизнь: ' + indexPlayer + ' Игроку')
+        toast.success('Добавлена жизнь: ' + indexPlayer + ' Игроку')
         return;
       }
 
@@ -747,7 +756,8 @@ export default {
     this.historyLine = historyLineData({
       initialPlayers: this.playersRoles,
       nights: this.countNight,
-      nightLog: this.nightHistory
+      nightLog: this.nightHistory,
+      dayLog: this.dayLog
     })
 
     this.saveInterval = setInterval(() => {

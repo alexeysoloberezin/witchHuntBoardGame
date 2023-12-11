@@ -28,7 +28,7 @@ export const arrayStartGameTakeCards = (playersLength, players) => {
 }
 
 export const firstStep = 21
-export const historyLineData = ({initialPlayers, nights = 0, nightLog}) => {
+export const historyLineData = ({initialPlayers, nights = 0, nightLog, dayLog}) => {
   console.log('initialPlayers', initialPlayers)
   if (!Array.isArray(initialPlayers) || initialPlayers.length < 4) {
     return []
@@ -50,7 +50,7 @@ export const historyLineData = ({initialPlayers, nights = 0, nightLog}) => {
   for (let i = 0; i < nights + 1; i++) {
     generated = [
       ...generated,
-      ...generate(initialPlayers, i, nightLog),
+      ...generate(initialPlayers, i, nightLog, dayLog),
     ]
   }
 
@@ -127,7 +127,7 @@ export const historyLineData = ({initialPlayers, nights = 0, nightLog}) => {
   return GameMod.filterStepsPolesInGame(dayList, roles)
 }
 
-export const generate = (initialPlayers, night, nightLog) => {
+export const generate = (initialPlayers, night, nightLog, dayLog) => {
   let res = [
     ...dayUsers({night, users: initialPlayers, nightLog}),
   ]
@@ -138,11 +138,11 @@ export const generate = (initialPlayers, night, nightLog) => {
 
   return [
     ...res,
-    ...nigthStepNew(night, initialPlayers)
+    ...nigthStepNew(night, initialPlayers, dayLog)
   ]
 }
 
-export const nigthStepNew = (night = 0, users) => {
+export const nigthStepNew = (night = 0, users, dayLog) => {
   console.log('users', users)
   let start = 'night-' + night + '-'
 
@@ -167,39 +167,47 @@ export const nigthStepNew = (night = 0, users) => {
     }
   }
 
-  return [
-    ...hunterArr,
-    {
-      id: start + 2,
-      title: 'Просыпается Могильщик',
-      name: 'Могильщик',
-      ifPlayerInGame: false,
-      type: 'night',
-      text: `
+  let res = []
+
+  if(night !== 0){
+    res = [
+      {
+        id: start + 2,
+        title: 'Просыпается Могильщик',
+        name: 'Могильщик',
+        ifPlayerInGame: false,
+        type: 'night',
+        text: `
     Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков. => 
-    ${users.filter(user => user.deadOnDay).map(el => el.number).join(' , ')}
+    ${dayLog.map(el => el.player).join(' , ')}
           `
-    },
-    {
-      id: start + 3,
-      title: 'Просыпаются Демоны',
-      name: 'Демоны',
-      ifPlayerInGame: false,
-      type: 'night',
-      text: `
+      },
+      {
+        id: start + 3,
+        title: 'Просыпаются Демоны',
+        name: 'Демоны',
+        ifPlayerInGame: false,
+        type: 'night',
+        text: `
             Просыпаются демоны и выбирают каких двух жертв поменять ролями.
           `
-    },
-    {
-      id: start + 4,
-      title: 'Просыпаются Ангелы',
-      name: 'Ангелы',
-      ifPlayerInGame: false,
-      type: 'night',
-      text: `
+      },
+      {
+        id: start + 4,
+        title: 'Просыпаются Ангелы',
+        name: 'Ангелы',
+        ifPlayerInGame: false,
+        type: 'night',
+        text: `
             Просыпаются Ангелы и выбирают кого они хотят защитить этой ночью.
           `
-    },
+      },
+    ]
+  }
+
+  return [
+    ...hunterArr,
+    ...res,
     {
       id: start + 5,
       title: 'Просыпаются Ведьмы',
@@ -259,18 +267,29 @@ export const nigthStepNew = (night = 0, users) => {
 }
 
 export const dayUsers = ({night, users, nightLog}) => {
+  const calcShiftUser = (number, users) => {
+    const aliveUsers = users.filter(u => !u.killed);
+    const userLength = aliveUsers.length;
+  };
 
-  const res = users.filter(user => !user.killed).map((user) => {
+  const shiftArray = (arr, shift) => {
+    const length = arr.length;
+    const index = shift % length;
+    return arr.slice(index).concat(arr.slice(0, index));
+  };
+
+  const res = shiftArray(users, night).filter(user => !user.killed).map(user => {
     return {
-      id: 'daySpeach-' + night + "-" + user.number,
-      title: 'Речь игрока: ' + +user.number ,
+      id: 'daySpeach-' + night + '-' + user.number,
+      title: 'Речь игрока: ' + (+user.number ),
       ifPlayerInGame: false,
-      text: "Дневная речь",
+      text: 'Дневная речь',
       type: 'day'
-    }
-  })
+    };
+  });
 
   let speachDeadPerson = []
+  let firstPlayer30Sec = []
 
   if (night > 0) {
     speachDeadPerson = [
@@ -282,11 +301,22 @@ export const dayUsers = ({night, users, nightLog}) => {
         type: 'day'
       }
     ]
+  }else{
+    firstPlayer30Sec = [
+      {
+        id: 'daySpeach-end-' + night,
+        title: 'Речь игрока 1: 30 сек',
+        ifPlayerInGame: false,
+        text: "Дневная речь",
+        type: 'day'
+      }
+    ]
   }
 
   return [
     ...speachDeadPerson,
     ...res,
+    ...firstPlayer30Sec,
   ]
 }
 

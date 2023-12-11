@@ -2,27 +2,26 @@
   <div id="home">
     <div class="mb-4 mt-2">
 
-      <vs-input v-model.trim="search" label="Фильтр по персонажам">
-
-      </vs-input>
-      <div class="mt-1"></div>
-      <vs-checkbox v-model="ghostMode" @change="changeMode">
-        Сейф мод, без картинок
-      </vs-checkbox>
-      <vs-checkbox v-show="!ghostMode" v-model="imageGrid" @change="changeMode">
-        Сетка картинок
-      </vs-checkbox>
+      <InputText v-model.trim="search" placeholder="Поиск по персонажам"></InputText>
+      <div class="flex my-3">
+        <Checkbox v-model="ghostMode" binary @update:page="changeMode" label="" />
+        <label for="ingredient2" class="ml-2"> Сейф мод, без картинок </label>
+      </div>
+      <div v-show="!ghostMode" class="flex">
+        <Checkbox  v-model="imageGrid" binary @change="changeMode"  />
+        <label for="ingredient2" class="ml-2"> Сетка картинок </label>
+      </div>
     </div>
 
     <transition-group name="list" tag="div" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div v-for="(card, index) in getCardsItems" :key="index" class="cursor-pointer">
-          <router-link :to="`/main/cards/${card.id}`">
-            <img v-if="imageGrid" :src="card.image" alt=""/>
-            <div v-else>
-              <CardSafe :card="card" :hideImage="!ghostMode"/>
-            </div>
-          </router-link>
-        </div>
+      <div v-for="(card, index) in getCardsItems" :key="index" class="cursor-pointer">
+        <router-link :to="`/main/cards/${card.id}`">
+          <img v-if="imageGrid" :src="card.image" alt=""/>
+          <div v-else>
+            <CardSafe :card="card" :hideImage="!ghostMode"/>
+          </div>
+        </router-link>
+      </div>
     </transition-group>
     <br><br><br><br><br>
   </div>
@@ -32,7 +31,6 @@
 </style>
 
 <script>
-import {mapState} from "vuex";
 
 import cards from "@/store/cards";
 import CardSafe from "@/components/Card";
@@ -43,7 +41,6 @@ export default {
     CardSafe,
   },
   computed: {
-    ...mapState([]),
     getCardsItems() {
       const search = this.search.toLowerCase()
       if (search) {

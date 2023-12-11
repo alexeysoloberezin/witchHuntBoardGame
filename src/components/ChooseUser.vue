@@ -7,25 +7,18 @@
     <div class="flex items-center gap-3 flex-wrap mb-3">
       <vs-avatar v-for="user in users"
                  :key="id + user.number"
-                 :primary="isActive(user.number)"
-                 :badge="imageMode"
-                 badge-color="primary"
-                 size="50"
+                 :style="{backgroundColor: isActive(user.number) ? '#6366F1' : ''}"
+                 v-badge="imageMode ? user.number : null"
+                 size="large"
+                 :label="!imageMode && user.number"
+                 :image="imageMode ? user.ava : null"
                  @click="toggleActive(user.number)"
       >
-        <template v-if="!imageMode" #text>
-          {{ user.number }}
-        </template>
-
-        <img v-if="imageMode" :src="user.ava" alt="">
-        <template v-if="imageMode" #badge>
-          {{ user.number }}
-        </template>
       </vs-avatar>
     </div>
-    <vs-button @click="emitReady">
+    <Button @click="emitReady">
       Подтвердить
-    </vs-button>
+    </Button>
   </div>
 </template>
 

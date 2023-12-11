@@ -1,12 +1,12 @@
 <template>
   <div class="min-h-screen text-white p-3 bg-gray-200 dark:bg-gray-900">
     <router-link to="/GameStart" class="mb-1">
-      <vs-button>
+      <Button>
         <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>
           arrow-left</title>
           <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
         </svg>
-      </vs-button>
+      </Button>
     </router-link>
 
     <div class="pl-4 pt-4">
@@ -15,7 +15,7 @@
           :active="pickedUsers"
           @update:clickOnItem="makeRole"
       />
-      <vs-dialog overflow-hidden  full-screen v-model="showModalRoles">
+      <vs-dialog modal :visible="showModalRoles" @update:visible="(v) => showModalRoles = v" >
         <template #header>
           <h4 class="not-margin text-white">
             Выберите роль для игрока {{ roleFor }}
@@ -35,38 +35,38 @@
 
         </div>
       </vs-dialog>
-      <vs-dialog overflow-hidden scroll full-screen v-model="showModalType">
-        <template #header>
-          <h4 class="not-margin text-white">
-            Выберите роль для игрока {{ roleFor }}
-          </h4>
-        </template>
+      <vs-dialog modal  :visible="showModalType" @update:visible="(v) => showModalType = v">
+<!--        <template #header>-->
+<!--          <h4 class="not-margin text-white">-->
+<!--            Выберите роль для игрока {{ roleFor }}-->
+<!--          </h4>-->
+<!--        </template>-->
 
         <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
               style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
-            <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 50px);">
+            <img :src="require('../../assets/mir.png')" alt="" style="max-height: calc(100vh - 100px);">
           </div>
           <div @click="chooseType('witch')">
-            <img :src="require('../../assets/witch.png')" alt="" style="max-height: calc(100vh - 50px);">
+            <img :src="require('../../assets/witch.png')" alt="" style="max-height: calc(100vh - 100px);">
           </div>
 
         </div>
       </vs-dialog>
     </div>
     <div  class="flex items-center gap-4">
-      <vs-button
-          :active-disabled="Object.keys(playersRoles).length !== roles.length"
+      <Button
+          :disabled="Object.keys(playersRoles).length !== roles.length"
           @click="start"
       >
           Роли разданы, далее
-      </vs-button>
-      <vs-button
-          v-if="false"
+      </Button>
+      <Button
+          v-if="true"
           @click="random"
       >
         random
-      </vs-button>
+      </Button>
     </div>
     <div v-if="Object.keys(playersRoles).length !== roles.length" style="font-size: 12px" class="pl-2 pt-1 opacity-50">
       Что бы продолжить вам нужно заполнить все роли игроков.
@@ -131,22 +131,26 @@ export default {
         this.save()
       }
     },
-    chooseType(type){
-      this.$set(this.playersRoles, this.roleFor, {
+    chooseType(type) {
+      this.playersRoles[this.roleFor] = {
         ...this.playersRoles[this.roleFor],
         type
-      });
-      this.save()
+      };
+      console.log('123')
+      this.showModalType = false
+      this.save();
     },
+
     chooseRole(card) {
-      this.$set(this.playersRoles, this.roleFor, {
+      this.playersRoles[this.roleFor] = {
         ...this.playersRoles[this.roleFor],
         name: card.name
-      });
+      };
 
-      this.showModalRoles = null
-      this.showModalType = true
+      this.showModalRoles = null;
+      this.showModalType = true;
     },
+
     makeRole(id) {
       this.roleFor = id
       this.showModalRoles = true

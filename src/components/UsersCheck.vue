@@ -12,17 +12,31 @@
 
     <div class="flex items-center gap-3 flex-wrap">
       <div v-for="user in getUsers" :key="'UsersCheck+' + user.number" @click="emitClickEl(user)">
-        <vs-avatar v-if="userInput === user.number" badge size="50">
-          <img :src="user.ava" alt="">
-          <template #badge>
-            {{ user.number }}
-          </template>
-        </vs-avatar>
-        <vs-avatar v-else size="50"
+<!--        <vs-avatar v-if="userInput === user.number" badge size="50">-->
+<!--          <img :src="user.ava" alt="">-->
+<!--          <template #badge>-->
+<!--            {{ user.number }}-->
+<!--          </template>-->
+<!--        </vs-avatar>-->
+<!--        <vs-avatar v-else size="50"-->
+<!--        >-->
+<!--          <template #text>-->
+<!--            {{ user.number }}-->
+<!--          </template>-->
+<!--        </vs-avatar>-->
+
+        <vs-avatar
+             v-if="userInput === user.number"
+             v-badge="user.number"
+             size="large"
+             :image="user.ava"
         >
-          <template #text>
-            {{ user.number }}
-          </template>
+        </vs-avatar>
+        <vs-avatar
+            v-else
+            size="large"
+            :label="user.number"
+        >
         </vs-avatar>
       </div>
     </div>

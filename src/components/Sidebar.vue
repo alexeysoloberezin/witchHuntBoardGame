@@ -21,7 +21,6 @@
           </div>
 
           <div class="mb-4 px-4 text-sm font-semibold">
-            <p class="pl-4 mb-1">{{ $t("sidebar.main") }}</p>
             <router-link
                 tag="div"
                 :to="{ path: '/main/home' }"
@@ -120,17 +119,11 @@
 </style>
 
 <script>
-import {mapState, mapGetters} from "vuex";
 
 import config from "@/config";
 
 export default {
   name: "Sidebar",
- 
-  computed: {
-    ...mapState(["sideBarOpen", "currentGuild", "guilds"]),
-    ...mapGetters({auth: "ifAuthenticated"}),
-  },
   data() {
     return {
       cdn: config.discordCdn,

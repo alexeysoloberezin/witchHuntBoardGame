@@ -9,7 +9,8 @@
     <span class="sr-only">Profile</span>
     <div class="" style="font-size: 10px;line-height: 1.1;opacity: .5">Дневная способность</div>
 
-    <vs-dialog width="500px" scroll blur full-screen auto-width v-model="showDaySkills">
+    <vs-dialog  modal  :visible="showDaySkills" @update:visible="(v) => showDaySkills = v"
+    >
       <template #header>
         <h4 class="not-margin text-white">
           Дневная способность
@@ -26,8 +27,7 @@
       </div>
     </vs-dialog>
 
-    <vs-dialog width="500px" scroll full-screen blur auto-width
-               v-model="showDaySkillsDetail"
+    <vs-dialog modal  :visible="showDaySkillsDetail" @update:visible="(v) => showDaySkillsDetail = v"
     >
       <template #header>
         <h4 class=" text-white">
@@ -37,104 +37,82 @@
 
       <div class="con-content ">
         <div v-if="activeUserCard">
-          <vs-avatar
-              badge
-              badge-color="primary"
-              size="100"
-          >
-
-            <img :src="activeUserCard.ava" alt="">
-            <template #badge>
-              {{ activeUser }}
-            </template>
-          </vs-avatar>
+          <img :src="activeUserCard.ava" style="width: 100%;max-width: 120px" alt="">
           <hr class="opacity-50 my-3"/>
           <div style="max-width: calc(100% - 20px);">
             <template v-if="activeUserCard.name === names.Assassin">
-              <br/>
-              <vs-input label="Номер игрока" v-model.trim="assassinKill">
-              </vs-input>
+              <InputText placeholder="Номер игрока" v-model.trim="assassinKill">
+              </InputText>
 
-              <br/>
-              <div style="pointer-events: none">
-                <vs-input label="Роль" v-model="assassinKillRole">
-                </vs-input>
+              <div style="pointer-events: none" class="mt-2">
+                <InputText placeholder="Роль" v-model="assassinKillRole">
+                </InputText>
               </div>
-              <br/>
 
-              <div class="text-sm text-white mb-2">Выберите роль кликнув на иконку</div>
+              <div class="text-sm text-white mb-2 mt-2">Выберите роль кликнув на иконку</div>
               <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
-                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'assasinKill-' + user.number" size="55"
-                           @click="assassinKillRole = user.name">
-                  <img :src="user.ava" alt="">
+                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'assasinKill-' + user.number" size="large"
+                           @click="assassinKillRole = user.name"
+                  :image="user.ava"
+                >
                 </vs-avatar>
               </div>
 
               <br/>
-              <vs-button @click="action('assassin')">
+              <Button @click="action('assassin')">
                 Сопоставить и узнать результат
-              </vs-button>
+              </Button>
             </template>
 
             <template v-if="activeUserCard.name === names['Loose Cannon']">
               <br/>
               <div style="pointer-events: none">
-                <vs-input label="Роль" v-model.trim="looseCannon">
-                </vs-input>
+                <InputText placeholder="Роль" v-model.trim="looseCannon" />
               </div>
               <br/>
 
               <div class="text-sm text-white mb-2">Выберите роль кликнув на иконку</div>
               <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
-                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'looseCannonKill-' + user.number" size="55"
-                           @click="looseCannon = user.name">
-                  <img :src="user.ava" alt="">
+                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'looseCannonKill-' + user.number" size="large"
+                           @click="looseCannon = user.name" :image="user.ava">
                 </vs-avatar>
               </div>
 
               <br/>
-              <vs-button @click="action('looseCannon')">
+              <Button @click="action('looseCannon')">
                Убить
-              </vs-button>
+              </Button>
             </template>
 
             <template v-if="activeUserCard.name === names['(D.O.B.) Dirty Old Bastard']">
               <br/>
-              <vs-input label="Убить игрока:" v-model.trim="DOBtarget">
-              </vs-input>
+              <InputText placeholder="Убить игрока:" v-model.trim="DOBtarget">
+              </InputText>
 
               <div class="text-sm text-white mb-2">Выберите игрока кликнув на иконку</div>
               <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
-                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'DOBKill-' + user.number" badge-color="primary" badge size="55"
-                           @click="DOBtarget = user.number">
-                  <img :src="user.ava" alt="">
-                  <template #badge>
-                    {{ user.number }}
-                  </template>
+                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'DOBKill-' + user.number" badge-color="primary" badge size="large"
+                           @click="DOBtarget = user.number" :image="user.ava" v-badge="user.number">
                 </vs-avatar>
               </div>
 
               <br/>
-              <vs-button v-if="DOBtarget" @click="action('dob')">
+              <Button v-if="DOBtarget" @click="action('dob')">
                 Убить: {{ DOBtarget }} Игрока
-              </vs-button>
+              </Button>
             </template>
 
             <template v-if="activeUserCard && activeUserCard.name === names.Nurse">
               <div class="text-sm text-white mb-2">Выберите роль кликнув на иконку</div>
-              <vs-input v-model="nurseChoose">
-
-              </vs-input>
-              <br/>
-              <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3 mb-3">
-                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'assasinKill-' + user.number" size="55"
-                           @click="nurseChoose = user.name">
-                  <img :src="user.ava" alt="">
+              <InputText v-model="nurseChoose"></InputText>
+              <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3 mb-3 mt-2">
+                <vs-avatar v-for="user in users.filter(u => !u.killed)" :key="'assasinKill-' + user.number" size="large"
+                           @click="nurseChoose = user.name" :image="user.ava">
                 </vs-avatar>
               </div>
-              <vs-button v-if="nurseChoose" @click="action('nurse')">
+              <Button v-if="nurseChoose" @click="action('nurse')">
                 Добавить жизнь - {{ nurseChoose }}
-              </vs-button>
+              </Button>
             </template>
 
 
@@ -150,6 +128,8 @@
 import ChooseUser from "@/components/ChooseUser";
 import {dayPersonWhoHaveSkills} from "@/js/GameModData";
 import {names} from "@/store/cards";
+import { toast } from 'vue3-toastify';
+
 
 export default {
   name: 'DaySkillModal',
@@ -245,11 +225,11 @@ export default {
 
           setTimeout(() => {
             if (personNumber === this.assassinKill) {
-              this.$toast.success(`Ассасин угадал, игрок ${personNumber} - ${this.assassinKillRole}`)
+              toast.success(`Ассасин угадал, игрок ${personNumber} - ${this.assassinKillRole}`)
               personIndex = this.users.findIndex(user => user.name === this.assassinKillRole)
               this.$emit('update:action', personIndex, 'kill')
             } else {
-              this.$toast.error('Ассасин не угадал, он убит')
+              toast.error('Ассасин не угадал, он убит')
               this.$emit('update:action', assassin, 'kill')
             }
           }, 500)

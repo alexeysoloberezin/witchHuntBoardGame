@@ -39,11 +39,12 @@
                   card.number
                 }}:</span>
             <div class="flex items-center">
+            <Folls :folls="card.foll" :card-number="card.number" :key-id="'cardPlayer'"/>
             <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
-            <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)"
-                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path
-                d="M10 3H14V14H10V3M10 21V17H14V21H10Z"/></svg>
-          </span>
+              <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)"
+                   xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path
+                  d="M10 3H14V14H10V3M10 21V17H14V21H10Z"/></svg>
+            </span>
             </div>
           </div>
           <div :style="{color: card.killed ? 'rgb(255,71,87)' : 'rgb(25,91,255)'}">{{ card.name }}</div>
@@ -56,7 +57,7 @@
       <div class="flex-shrink-0 flex-grow-1 flex items-center"
            :style="{pointerEvents: card.killed ? 'none' : '', opacity: card.killed ? '.5' : '1'}">
         <div v-if="card.chain">
-          <vs-button
+          <Button
               border
               size="small"
               style="pointer-events: none"
@@ -66,46 +67,54 @@
               <path
                   d="M7,3A4,4 0 0,1 11,7C11,8.86 9.73,10.43 8,10.87V13.13C8.37,13.22 8.72,13.37 9.04,13.56L13.56,9.04C13.2,8.44 13,7.75 13,7A4,4 0 0,1 17,3A4,4 0 0,1 21,7A4,4 0 0,1 17,11C16.26,11 15.57,10.8 15,10.45L10.45,15C10.8,15.57 11,16.26 11,17A4,4 0 0,1 7,21A4,4 0 0,1 3,17C3,15.14 4.27,13.57 6,13.13V10.87C4.27,10.43 3,8.86 3,7A4,4 0 0,1 7,3M17,13A4,4 0 0,1 21,17A4,4 0 0,1 17,21A4,4 0 0,1 13,17A4,4 0 0,1 17,13M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15Z"/>
             </svg>
-          </vs-button>
+          </Button>
         </div>
-        <div class="ml-2 opacity-75 flex flex-col"
+        <div class="ml-2 opacity-75 flex flex-col gap-2"
         >
-          <vs-button
-              border
+          <Button
+              outlined
+              rounded
+              size="small"
               @click="handleShieldPlus(index)"
           >
             <ShieldIcon>+</ShieldIcon>
-          </vs-button>
-          <vs-button
+          </Button>
+          <Button
               v-if="shields !== 0"
-              border
+              outlined
+              rounded
+              size="small"
               @click="handleShieldMinus(index)"
           >
             <ShieldIcon>-</ShieldIcon>
-          </vs-button>
+          </Button>
         </div>
-        <div class="ml-2 opacity-75 flex flex-col"
+        <div class="ml-2 opacity-75 flex flex-col gap-2"
         >
-          <vs-button
-              danger
-              border
+          <Button
+              outlined
+              rounded
+              size="small"
+              severity="danger"
               @click="handleHeartPlus(index)"
           >
             <HearIcon>+</HearIcon>
-          </vs-button>
-          <vs-button
+          </Button>
+          <Button
               v-if="hearts > 1"
-              danger
-              border
+              outlined
+              severity="danger"
+              size="small"
+              rounded
               @click="handleHeartMinus(index)"
           >
             <HearIcon>-</HearIcon>
-          </vs-button>
+          </Button>
         </div>
       </div>
 
       <div v-if="panelAction" class="absolute top-0 left-0 h-full w-full" @click="handleClickOnSkeleton(index)">
-        <Skeleton/>
+        <Skeleton />
       </div>
     </div>
 
@@ -134,10 +143,12 @@
 import HearIcon from "@/components/HearIcon.vue";
 import Skeleton from "@/components/Skeleton.vue";
 import ShieldIcon from "@/components/ShieldIcon.vue";
+import { toast } from 'vue3-toastify';
+import Folls from "@/components/Folls";
 
 export default {
   name: 'CardPlayer',
-  components: {HearIcon, Skeleton, ShieldIcon},
+  components: {Folls, HearIcon, Skeleton, ShieldIcon},
   props: {
     panelAction: String,
     gamblerHaveShield: Boolean,
@@ -200,9 +211,9 @@ export default {
           votedListItems.add(this.card.number);
           localStorage.setItem('votedListItems', JSON.stringify(Array.from(votedListItems)));
 
-          this.$toast.success('Игрок: ' + this.card.number + ' выставлен на голосование')
+          toast.success('Игрок: ' + this.card.number + ' выставлен на голосование')
         } else {
-          this.$toast.success('Поддержано')
+          toast.success('Поддержано')
         }
       } else if (position < -85) {
         this.$emit('update:foll', this.card.number)

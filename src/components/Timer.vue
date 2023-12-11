@@ -91,37 +91,51 @@
             <span class="sr-only">Lock</span>
           </button>
           <div :style="{transform: !votedModal ? 'translateX(200%)' : '', transition: '.5s', bottom: !lock ? '80px' : '15px'}"  class="fixed bg-gray-800 "
-               style="z-index: 102;right: 10px;padding: 25px 15px 15px 15px;width: calc(100vw - 100px);box-shadow: 0 10px 125px rgba(11, 54, 87, 0.79); border: 1px solid rgba(255,255,255,0.13);border-radius: 12px">
+               style="z-index: 102;right: 10px;padding: 25px 15px 15px 15px;width: 210px;box-shadow: 0 10px 125px rgba(11, 54, 87, 0.79); border: 1px solid rgba(255,255,255,0.13);border-radius: 12px">
 
-            <div v-if="!votedStart && Array.isArray(votedList)" class="grid">
-              <vs-checkbox v-for="(person) in votedList.filter(el => !el.killed)" :key="'as' + person.number" :val="person.number"
-                           v-model="votedListItems" @change="votedListItemsChanged">
-                Игрок: {{ person.number }}
-              </vs-checkbox>
+            <div v-if="!votedStart && Array.isArray(votedList)" class="grid " style="grid-column-gap: 15px">
+              <div class="flex  mb-2" v-for="(person) in votedList.filter(el => !el.killed)" :key="'as' + person.number" style="justify-content: space-between">
+                <div class="flex items-center">
+                  <Checkbox :value="person.number"
+                            :input-id="'votedEl-' + person.number"
+                            v-model="votedListItems" @change="votedListItemsChanged" />
+                  <label :for="'votedEl-' + person.number" class="ml-2 text-sm">Игрок: {{ person.number }}</label>
+                  <Folls
+                    :key-id="'votedFalls'"
+                    :card-number="person.number"
+                    :folls="person.foll"
+                  />
+                </div>
+                <div>
+                  <Button size="small" outlined  rounded @click="makeFoll(person.number)">
+                    Фолл
+                  </Button>
+                </div>
+              </div>
 
-              <vs-button @click="votedStart = true">
+              <Button @click="votedStart = true">
                 Начать
-              </vs-button>
+              </Button>
             </div>
             <div v-else>
               <div v-for="(person, i) in votedListItems" :key="'ite' + person" class="grid grid-cols-2 mb-2 items-center">
-                <div>Игрок: {{ person }} </div>
+                <div class="text-sm">Игрок: {{ person }} </div>
 
-                <div v-if="i === votedListItems.length - 1"   class="w-100">Оставшиеся: {{ votedListItemsFinalSum }}</div>
-                <vs-input v-else
+                <div v-if="i === votedListItems.length - 1"   class="w-100 text-sm">Ост.: {{ votedListItemsFinalSum }}</div>
+                <InputText v-else
                           v-model.number="votedListItemsFinal[person]"
                           type="number"
                           class="w-100"
-                ></vs-input>
+                ></InputText>
               </div>
 
               <div class="grid grid-cols-1 gap-2">
-                <vs-button @click="saveVoted">
-                  Результаты верные сохранить.
-                </vs-button>
-                <vs-button  @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
+                <Button @click="saveVoted">
+                  Верно, сохранить.
+                </Button>
+                <Button outlined  @click="votedStart = false;votedListItems = [];votedListItemsFinal={};resetVotedList()">
                   Сбросить
-                </vs-button>
+                </Button>
               </div>
             </div>
 
@@ -151,10 +165,13 @@
 <script>
 import RadialProgressBar from 'vue-radial-progress'
 import resetGame from '../js/utils'
+import {toast} from 'vue3-toastify'
+import Folls from "@/components/Folls";
 
 export default {
   name: 'Timer',
   components: {
+    Folls,
     RadialProgressBar
   },
   props: ['votedList'],
@@ -188,6 +205,9 @@ export default {
   },
 
   methods: {
+    makeFoll(id){
+      this.$emit('update:foll', id)
+    },
     saveVoted(){
       const copyArr = JSON.parse(JSON.stringify(this.votedListItems))
       const lastEl = copyArr[copyArr.length - 1]
@@ -279,7 +299,7 @@ export default {
         if (this.value <= 0) {
           this.stopTimer()
         } else if (this.completedSteps < 11 && !b) {
-          this.$toast.warning('Осталось менее 10 секунд!');
+          toast.warning('Осталось менее 10 секунд!');
           b = true
         }
       }, 1000);
