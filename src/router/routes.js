@@ -22,7 +22,6 @@ export default [
     ]
   },
   {path: '/Game/connectUsers', name: 'connectUsers', component: GameConnectUsers},
-  {path: '/pdf', name: 'downloadPdf', component: DownloadPdf},
   {path: '/GameStart', name: 'GameStart', component: GameStart},
   {path: '/GameComming', name: 'GameComming', component: GameComming},
   {path: '/Game', name: 'Game', component: Game},

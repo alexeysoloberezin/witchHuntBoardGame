@@ -58,10 +58,10 @@
               </svg>
               <span>Старт игры</span>
             </router-link>
-            <router-link to="/pdf"   class="w-full flex items-center h-10 pl-2 hover:text-red-400 rounded-lg cursor-pointer">
-              <svg style="width: 30px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-pdf-box</title><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9.5 11.5C9.5 12.3 8.8 13 8 13H7V15H5.5V9H8C8.8 9 9.5 9.7 9.5 10.5V11.5M14.5 13.5C14.5 14.3 13.8 15 13 15H10.5V9H13C13.8 9 14.5 9.7 14.5 10.5V13.5M18.5 10.5H17V11.5H18.5V13H17V15H15.5V9H18.5V10.5M12 10.5H13V13.5H12V10.5M7 10.5H8V11.5H7V10.5Z" /></svg>
-              <div  class="ml-1">Правила PDF</div>
-            </router-link>
+<!--            <router-link to="/pdf"   class="w-full flex items-center h-10 pl-2 hover:text-red-400 rounded-lg cursor-pointer">-->
+<!--              <svg style="width: 30px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-pdf-box</title><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9.5 11.5C9.5 12.3 8.8 13 8 13H7V15H5.5V9H8C8.8 9 9.5 9.7 9.5 10.5V11.5M14.5 13.5C14.5 14.3 13.8 15 13 15H10.5V9H13C13.8 9 14.5 9.7 14.5 10.5V13.5M18.5 10.5H17V11.5H18.5V13H17V15H15.5V9H18.5V10.5M12 10.5H13V13.5H12V10.5M7 10.5H8V11.5H7V10.5Z" /></svg>-->
+<!--              <div  class="ml-1">Правила PDF</div>-->
+<!--            </router-link>-->
 
             <router-link to="/Game" :style="{pointerEvents: haveActiveGame ? '' : 'none', opacity: haveActiveGame ? '.5' : '.25'}"  class="w-full flex items-center h-10 pl-2 hover:text-red-400 rounded-lg cursor-pointer">
               <svg style="width: 31px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>clock-start</title><path d="M12,1C8.14,1 5,4.14 5,8A7,7 0 0,0 12,15C15.86,15 19,11.87 19,8C19,4.14 15.86,1 12,1M12,3.15C14.67,3.15 16.85,5.32 16.85,8C16.85,10.68 14.67,12.85 12,12.85A4.85,4.85 0 0,1 7.15,8A4.85,4.85 0 0,1 12,3.15M11,5V8.69L14.19,10.53L14.94,9.23L12.5,7.82V5M4,16V24H6V21H18V24L22,20L18,16V19H6V16" /></svg>
@@ -75,7 +75,7 @@
     <div  id="main-mobal-nav" class="">
       <div style="height: 65px;left: 50%;transform: translateX(-50%);bottom: 10px"
            class="fixed z-50 w-screen h-18 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600">
-        <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
+        <div class="grid h-full max-w-lg grid-cols-3 mx-auto">
           <router-link to="/main/home/" class="inline-flex outline-none flex-col items-center justify-center pl-2 rounded-s-full  group">
               <svg style="width: 30px;"  class="mr-2" xmlns="http://www.w3.org/2000/svg"  fill="#d5d6d7"
                    viewBox="0 0 24 24"><title>cards-outline</title>
@@ -90,10 +90,10 @@
               <div class="" style="font-size: 11px" >Начать игру</div>
           </router-link>
 
-          <router-link to="/pdf"   class="inline-flex opacity-50 flex-col items-center outline-none justify-center px-1  group">
-            <svg style="width: 30px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-pdf-box</title><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9.5 11.5C9.5 12.3 8.8 13 8 13H7V15H5.5V9H8C8.8 9 9.5 9.7 9.5 10.5V11.5M14.5 13.5C14.5 14.3 13.8 15 13 15H10.5V9H13C13.8 9 14.5 9.7 14.5 10.5V13.5M18.5 10.5H17V11.5H18.5V13H17V15H15.5V9H18.5V10.5M12 10.5H13V13.5H12V10.5M7 10.5H8V11.5H7V10.5Z" /></svg>
-            <div class="" style="font-size: 11px" >Правила PDF</div>
-          </router-link>
+<!--          <router-link to="/pdf"   class="inline-flex opacity-50 flex-col items-center outline-none justify-center px-1  group">-->
+<!--            <svg style="width: 30px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>file-pdf-box</title><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M9.5 11.5C9.5 12.3 8.8 13 8 13H7V15H5.5V9H8C8.8 9 9.5 9.7 9.5 10.5V11.5M14.5 13.5C14.5 14.3 13.8 15 13 15H10.5V9H13C13.8 9 14.5 9.7 14.5 10.5V13.5M18.5 10.5H17V11.5H18.5V13H17V15H15.5V9H18.5V10.5M12 10.5H13V13.5H12V10.5M7 10.5H8V11.5H7V10.5Z" /></svg>-->
+<!--            <div class="" style="font-size: 11px" >Правила PDF</div>-->
+<!--          </router-link>-->
 
           <router-link to="/Game" :style="{pointerEvents: haveActiveGame ? '' : 'none', opacity: haveActiveGame ? '.5' : '.15'}"  class="justify-center text-center inline-flex opacity-50 flex-col items-center outline-none justify-center pr-2  group">
             <svg style="width: 31px;" class="" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>clock-start</title><path d="M12,1C8.14,1 5,4.14 5,8A7,7 0 0,0 12,15C15.86,15 19,11.87 19,8C19,4.14 15.86,1 12,1M12,3.15C14.67,3.15 16.85,5.32 16.85,8C16.85,10.68 14.67,12.85 12,12.85A4.85,4.85 0 0,1 7.15,8A4.85,4.85 0 0,1 12,3.15M11,5V8.69L14.19,10.53L14.94,9.23L12.5,7.82V5M4,16V24H6V21H18V24L22,20L18,16V19H6V16" /></svg>

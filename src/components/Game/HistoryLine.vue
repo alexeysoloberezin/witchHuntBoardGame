@@ -201,7 +201,7 @@
         </div>
       </transition-group>
 
-      <div v-if="!currentEl">
+      <div v-if="!currentEl && !!this.activeStep">
         <Button @click="reload">Dont worry.. Refresh</Button>
       </div>
     </div>
