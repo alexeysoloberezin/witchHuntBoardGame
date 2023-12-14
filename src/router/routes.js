@@ -7,6 +7,7 @@ const GameStart  = () => import('@/pages/GameStar/GameStart.vue')
 const GameComming  = () => import('@/pages/GameStar/GameComming.vue')
 const Game  = () => import('@/pages/GameStar/Game.vue')
 const DownloadPdf  = () => import('@/pages/DownloadPdf.vue')
+const GameConnectUsers  = () => import('@/pages/GameStar/GameConnectUsers.vue')
 
 export default [
   {path: '/', name: 'Homepage', component: Landing},
@@ -20,6 +21,7 @@ export default [
       {path: "cards/:id", name: 'CardZoom', component: CardZoom},
     ]
   },
+  {path: '/Game/connectUsers', name: 'connectUsers', component: GameConnectUsers},
   {path: '/pdf', name: 'downloadPdf', component: DownloadPdf},
   {path: '/GameStart', name: 'GameStart', component: GameStart},
   {path: '/GameComming', name: 'GameComming', component: GameComming},

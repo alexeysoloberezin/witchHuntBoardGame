@@ -143,26 +143,39 @@ export const generate = (initialPlayers, night, nightLog, dayLog) => {
 export const nigthStepNew = (night = 0, users, dayLog) => {
   let start = 'night-' + night + '-'
 
-  let hunterArr = []
   const hunter = users.find(user => user.name === names.Hunter)
-
-  if (hunter && hunter?.hunterWakeUp.length > 0) {
-    const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]
-
-    if (hunterLast.night === night) {
-      hunterArr = [{
-        id: start + 1,
-        title: 'Просыпается Охотник',
-        name: 'Охотник',
-        ifPlayerInGame: true,
-        type: 'night',
-        text: `
-            Т.к выживал Игрок - ${hunterLast.id}.  
-            Хотите ли вы добить его?
-          `
-      }]
+  const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]?.id || ''
+  let hunterArr = [{
+    id: start + 1,
+    title: 'Просыпается Охотник',
+    name: 'Охотник',
+    ifPlayerInGame: true,
+    type: 'night',
+    text: `
+        ${hunterLast ?
+      'Т.к выживал Игрок -' + hunterLast + '. Хотите ли вы добить его?'
+      : 'Скип'
     }
-  }
+          `
+  }]
+
+  // if (hunter && hunter?.hunterWakeUp.length > 0) {
+  //   const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]
+  //
+  //   if (hunterLast.night === night) {
+  //     hunterArr = [{
+  //       id: start + 1,
+  //       title: 'Просыпается Охотник',
+  //       name: 'Охотник',
+  //       ifPlayerInGame: true,
+  //       type: 'night',
+  //       text: `
+  //           Т.к выживал Игрок - ${hunterLast.id}.
+  //           Хотите ли вы добить его?
+  //         `
+  //     }]
+  //   }
+  // }
 
   let res = []
 
@@ -203,8 +216,8 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
   }
 
   return [
-    ...hunterArr,
     ...res,
+    ...hunterArr,
     {
       id: start + 5,
       title: 'Просыпаются Ведьмы',

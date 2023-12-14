@@ -17,7 +17,6 @@
         >
           <div
               class="mb-10 cursor-pointer "
-
               @click="emitClickOnItem(el.id)"
           >
             <div class="flex">
@@ -70,7 +69,7 @@
                     :id="'inqusitor-choose'"
                 />
 
-                <vs-dialog modal @update:visible="(v) => inquisitorModal = v" v-model="inquisitorModal">
+                <vs-dialog modal  @update:visible="(v) => inquisitorModal = v" :visible="inquisitorModal">
                   <div class="con-content max-w-[280px]">
                     <div class="flex items-center justify-center mb-2" style="height: calc(100vh - 120px);">
                       <img :src="typeRoles[inquisitorChoose]" alt="" style="object-fit: contain">
@@ -133,7 +132,7 @@
                     </div>
                   </template>
                   <div v-if="apprenticeRole" class="relative" style="max-height: 70vh;">
-                    <img :src="imgCard7"
+                    <img :src="imgs.imgCard7"
                          style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
                          :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
                     <div v-if="apprenticeShowNumber" class="Apprentice__choose"
@@ -142,7 +141,7 @@
                     </div>
                   </div>
                   <div v-else class="relative" style="max-height: 70vh;">
-                    <img :src="imgCard2"
+                    <img :src="imgs.imgCard2"
                          style="object-fit: contain;display: block;max-height:70vh;width: 100%;height: 100%;transition: .3s"
                          :style="{opacity: !apprenticeShowNumber ? '1' : '0.35'}" alt="">
                     <div v-if="apprenticeShowNumber" class="Apprentice__choose"
@@ -172,12 +171,6 @@
               </div>
 
               <div v-if="el.name === names['Bomber'] && countNight > 0" class="mt-3 mb-3">
-                <div style="pointer-events: none" class="mt-6">
-                  <InputText placeholder="Игрок" v-model.trim="bomberChoose">
-                  </InputText>
-                </div>
-                <br/>
-
                 <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3">
                   <ChooseUser
                       :title="'Подрыв жопы игрока:'"
@@ -208,6 +201,9 @@
         </div>
       </transition-group>
 
+      <div v-if="!currentEl">
+        <Button @click="reload">Dont worry.. Refresh</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -250,7 +246,11 @@ export default {
       return this.users.find(user => user.name === names.Hunter)
     },
     currentEl() {
-      return this.array.find(el => el.id === this.activeStep)
+      const find = this.array.find(el => el.id === this.activeStep)
+      if(!find){
+        console.log('find', find)
+      }
+      return find
     },
     currentCard() {
       return this.users.find(user => user.name === this.currentEl.name)
@@ -260,7 +260,6 @@ export default {
         return this.array
       }
 
-      console.log(this.hiddenSteps, this.array, this.activeStep)
       const res = this.array.filter(el => {
         const refName = 'list-el-' + el.id
         const inHiddenList = this.hiddenSteps.indexOf(refName)
@@ -273,6 +272,10 @@ export default {
 
   data() {
     return {
+      imgs: {
+        'imgCard7': imgCard7,
+        'imgCard2': imgCard2
+      },
       hiddenSteps: [],
       showAll: false,
       names: names,
@@ -310,6 +313,9 @@ export default {
     }
   },
   methods: {
+    reload(){
+      location.reload()
+    },
     touchHandler() {
       this.block = this.block + 1
 
@@ -450,6 +456,7 @@ export default {
       return ''
     },
     isActiveStep(id) {
+      console.log('id === this.activeStep', id === this.activeStep, this.activeStep)
       return id === this.activeStep
     },
     setGamblerChoose(choose) {

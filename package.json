@@ -17,6 +17,7 @@
     "primevue": "^3.43.0",
     "promise-polyfill": "^8.2.0",
     "register-service-worker": "^1.7.1",
+    "socket.io-client": "^4.7.2",
     "underscore": "^1.12.0",
     "vue": "^3.2.0",
     "vue-chartjs": "^3.5.0",

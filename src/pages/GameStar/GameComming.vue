@@ -45,10 +45,10 @@
         <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
               style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
-            <img :src="mirImg" alt="" style="max-height: calc(100vh - 100px);">
+            <img :src="imgs.mirImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
           <div @click="chooseType('witch')">
-            <img :src="witchImg" alt="" style="max-height: calc(100vh - 100px);">
+            <img :src="imgs.witchImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
 
         </div>
@@ -88,6 +88,10 @@ export default {
   components: {CardSafe, HistoryLine},
   data() {
     return {
+      imgs: {
+        'mirImg': mirImg,
+        'witchImg': witchImg,
+      },
       saved: false,
       playersRoles: {},
 
