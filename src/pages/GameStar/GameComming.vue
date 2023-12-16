@@ -156,6 +156,16 @@ export default {
     },
 
     makeRole(id) {
+      // if(this.playersRoles[this.roleFor]?.name && !this.playersRoles[this.roleFor]?.type){
+      //   if(this.playersRoles[id]?.name === this.playersRoles[this.roleFor]?.name){
+      //     console.log('this,', this.playersRoles[id])
+      //     this.roleFor = id
+      //     this.showModalRoles = null;
+      //     this.showModalType = true;
+      //     return null;
+      //   }
+      // }
+
       this.roleFor = id
       this.showModalRoles = true
     },

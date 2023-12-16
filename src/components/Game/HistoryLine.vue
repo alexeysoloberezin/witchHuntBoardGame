@@ -483,10 +483,10 @@ export default {
     },
 
     emitClickOnItem(itemId) {
-      if (this.isActive(itemId)) {
-        // alert('')
-        return null;
-      }
+      // if (this.isActive(itemId)) {
+      //   // alert('')
+      //   return null;
+      // }
       this.$emit('update:clickOnItem', itemId);
     }
   }

@@ -67,9 +67,9 @@ class GameMod {
 
   gamblerHaveShield(choose, nightVal) {
     if (choose === 'четные') {
-      return nightVal % 2 === 0;
-    } else if (choose === 'нечетные') {
       return nightVal % 2 !== 0;
+    } else if (choose === 'нечетные') {
+      return nightVal % 2 === 0;
     }
     return false
   }
