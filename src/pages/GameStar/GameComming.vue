@@ -15,14 +15,14 @@
           :active="pickedUsers"
           @update:clickOnItem="makeRole"
       />
-      <vs-dialog modal :visible="showModalRoles" @update:visible="(v) => showModalRoles = v" >
+      <vs-dialog modal :visible="showModalRoles" @update:visible="(v) => showModalRoles = v">
         <template #header>
           <h4 class="not-margin text-white">
             Выберите роль для игрока {{ roleFor }}
           </h4>
         </template>
 
-        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white  max-h-screen  "
+        <div :key="JSON.stringify(playersRoles) + roleFor" class=" text-white  max-h-screen  "
              style="padding-bottom: 100px">
           <div v-for="(card) in getCards" :key="'takeRoles-card-' + card.name" class="cursor-pointer"
                @click="chooseRole(card)">
@@ -32,18 +32,18 @@
                 class="mb-3"
             />
           </div>
-
+          <Button @click="nextModal">Изменить команду</Button>
         </div>
       </vs-dialog>
-      <vs-dialog modal  :visible="showModalType" @update:visible="(v) => showModalType = v">
-<!--        <template #header>-->
-<!--          <h4 class="not-margin text-white">-->
-<!--            Выберите роль для игрока {{ roleFor }}-->
-<!--          </h4>-->
-<!--        </template>-->
+      <vs-dialog modal :visible="showModalType" @update:visible="(v) => showModalType = v">
+        <!--        <template #header>-->
+        <!--          <h4 class="not-margin text-white">-->
+        <!--            Выберите роль для игрока {{ roleFor }}-->
+        <!--          </h4>-->
+        <!--        </template>-->
 
-        <div  :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
-              style="padding-bottom: 100px">
+        <div :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
+             style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
             <img :src="imgs.mirImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
@@ -54,12 +54,12 @@
         </div>
       </vs-dialog>
     </div>
-    <div  class="flex items-center gap-4">
+    <div class="flex items-center gap-4">
       <Button
           :disabled="Object.keys(playersRoles).length !== roles.length"
           @click="start"
       >
-          Роли разданы, далее
+        Роли разданы, далее
       </Button>
       <Button
           v-if="true"
@@ -110,17 +110,23 @@ export default {
       let roles = this.roles.filter(role => !this.pickedCards.includes(role))
       return getByNames(roles)
     },
-    pickedCards(){
+    pickedCards() {
       return Object.values(this.playersRoles).map(el => el.name)
     },
-    pickedUsers(){
-      return Object.keys(this.playersRoles)
+    pickedUsers() {
+      return Object.entries(this.playersRoles)
+          .filter(([n, el]) => (!!el?.type && !!el?.name))
+          .map(([number]) => number)
     }
   },
   methods: {
-    random(){
+    nextModal(){
+      this.showModalRoles = null;
+      this.showModalType = true;
+    },
+    random() {
       let roles = localStorage.getItem('gameRoles')
-      if(roles){
+      if (roles) {
         roles = JSON.parse(roles)
 
         const res = {}
@@ -156,20 +162,19 @@ export default {
     },
 
     makeRole(id) {
-      // if(this.playersRoles[this.roleFor]?.name && !this.playersRoles[this.roleFor]?.type){
-      //   if(this.playersRoles[id]?.name === this.playersRoles[this.roleFor]?.name){
-      //     console.log('this,', this.playersRoles[id])
-      //     this.roleFor = id
-      //     this.showModalRoles = null;
-      //     this.showModalType = true;
-      //     return null;
-      //   }
-      // }
+      const find = this.playersRoles[id]
 
       this.roleFor = id
-      this.showModalRoles = true
+
+      if (!find || (!!find?.name && !!find?.type)) {
+        this.showModalRoles = true
+        return null;
+      }
+
+      this.showModalRoles = null;
+      this.showModalType = true;
     },
-    start(){
+    start() {
       this.save()
       localStorage.removeItem('gameRoles')
       this.$router.push('/Game')
