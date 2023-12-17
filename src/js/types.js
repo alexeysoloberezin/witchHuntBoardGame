@@ -19,4 +19,10 @@ export const roles = {
   'attack|info': null
 }
 
+export const logType = {
+  'tryKill': "Попытка убийства",
+  'dayKill': "Казнь",
+  'kill': "Убийство",
+}
+
 export default types

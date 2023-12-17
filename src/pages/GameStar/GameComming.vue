@@ -36,12 +36,9 @@
         </div>
       </vs-dialog>
       <vs-dialog modal :visible="showModalType" @update:visible="(v) => showModalType = v">
-        <!--        <template #header>-->
-        <!--          <h4 class="not-margin text-white">-->
-        <!--            Выберите роль для игрока {{ roleFor }}-->
-        <!--          </h4>-->
-        <!--        </template>-->
-
+        <template #header>
+          <Button @click="prevModal">Изменить роль</Button>
+        </template>
         <div :key="JSON.stringify(playersRoles) + roleFor" class=" text-white grid grid-cols-2  "
              style="padding-bottom: 100px">
           <div @click="chooseType('mir')">
@@ -50,7 +47,6 @@
           <div @click="chooseType('witch')">
             <img :src="imgs.witchImg" alt="" style="max-height: calc(100vh - 100px);">
           </div>
-
         </div>
       </vs-dialog>
     </div>
@@ -111,7 +107,9 @@ export default {
       return getByNames(roles)
     },
     pickedCards() {
-      return Object.values(this.playersRoles).map(el => el.name)
+      return Object.entries(this.playersRoles)
+          .filter(([n, el]) => (!!el?.type && !!el?.name))
+          .map(([n, el]) => el.name)
     },
     pickedUsers() {
       return Object.entries(this.playersRoles)
@@ -120,6 +118,10 @@ export default {
     }
   },
   methods: {
+    prevModal(){
+      this.showModalRoles = true;
+      this.showModalType = false;
+    },
     nextModal(){
       this.showModalRoles = null;
       this.showModalType = true;
@@ -159,6 +161,7 @@ export default {
 
       this.showModalRoles = null;
       this.showModalType = true;
+      this.save();
     },
 
     makeRole(id) {
@@ -168,12 +171,15 @@ export default {
 
       if (!find || (!!find?.name && !!find?.type)) {
         this.showModalRoles = true
+        this.save()
         return null;
       }
 
       this.showModalRoles = null;
       this.showModalType = true;
+      this.save()
     },
+
     start() {
       this.save()
       localStorage.removeItem('gameRoles')

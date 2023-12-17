@@ -34,6 +34,7 @@
               :array="historyLine"
               :activeStep="activeStep"
               :blockHeal="blockHeal"
+              :hunter-list="hunterList"
               :countNight="countNight"
               :is-history-line="true"
               :users="playersRoles"
@@ -163,7 +164,7 @@
 
 <script>
 import {getByNames, names} from "@/store/cards";
-import types from "@/js/types";
+import types, {logType} from "@/js/types";
 import CardPlayer from "@/components/CardPlayer.vue";
 import resetGame from "@/js/utils";
 import CardSafe from "@/components/Card.vue";
@@ -203,6 +204,9 @@ export default {
     }
   },
   computed: {
+    hunterList(){
+      return this.dayLog.filter(el => el.type === logType.tryKill)
+    },
     showRolesCards() {
       return GameMod.showRolesCards(this.playersRoles, true)
     },
@@ -248,20 +252,18 @@ export default {
         this.refreshList()
       }
     },
-    hunterKill() {
-      const hunterArr = this.hunter.hunterWakeUp
-      if (hunterArr.length === 0) {
-        return null
+    hunterKill(id) {
+      if(!id){
+        toast.error('Не корректный id')
       }
 
-      const target = hunterArr[hunterArr.length - 1]
-      const index = this.playersRoles.findIndex(el => el.number == target.id);
+      const index = this.playersRoles.findIndex(el => el.number == id);
 
       if (index !== -1) {
         this.action(index, 'kill')
         this.setNextActive()
       } else {
-        console.log('not found', target)
+        console.log('not found', id)
       }
     },
     witchFakeKill(id) {
@@ -425,7 +427,9 @@ export default {
         nightLog: this.nightHistory,
         dayLog: this.dayLog
       })
+      this.saveAll()
     },
+
     setNextActive: function () {
       const find = this.historyLine.find(el => el.id === this.activeStep);
 
@@ -436,6 +440,7 @@ export default {
 
           if (find.type !== 'night' && nextElement.type === 'night') {
             this.startNight()
+            this.refreshList()
           }
 
           if (find.type !== 'day' && nextElement.type === 'day') {
@@ -460,13 +465,11 @@ export default {
           this.setNextActive()
         }
       }
+
+      this.saveAll()
     },
     hideShowRoles() {
-      const enteredPassword = window.prompt('Please enter your password:');
-
-      if (enteredPassword === '000' || enteredPassword === 'zzz' || enteredPassword === 'ZZZ' || enteredPassword === 'я' || enteredPassword === 'Z' || enteredPassword === 'z') {
-        this.showRoles = false
-      }
+      this.showRoles = false
     },
     gamblerShield() {
       GameMod.gamblerShield.apply(this, [this.countNight])
@@ -474,6 +477,10 @@ export default {
     startNight() {
       this.gamblerShield()
       this.isNight = true
+      const nightTryKills = this.nightHistory.filter(el => el.type === logType.tryKill)
+
+      this.dayLog = this.dayLog.concat(nightTryKills)
+
       this.nightHistory = []
       this.countNight = this.countNight + 1
     },
@@ -495,22 +502,8 @@ export default {
     setInGlobalLog(message) {
       GameMod.setInGlobalLog(message)
     },
-    closeLog() {
-      this.log = false
-      this.nightHistory = []
-      this.dayLog = []
-    },
     handlerWithShieldOrHeart(index) {
-      if (this.isNight) {
-        this.setInGlobalLog('Ночью убавлена броня или жизнь Игрока: ' + index)
-
-        this.nightHistory.push({
-          player: this.playersRoles[index].number,
-          type: 'Попытка убийства'
-        })
-      } else {
-        this.setInGlobalLog('Днем убавлена броня или жизнь Игрока: ' + index)
-      }
+      this.setTryKillLog(index)
     },
     gamblerHaveShield(choose) {
       return GameMod.gamblerHaveShield(choose, this.countNight)
@@ -541,6 +534,34 @@ export default {
       }
       this.panelAction = action
     },
+    setKillLog(indexPlayer){
+      if (this.isNight) {
+        this.nightHistory.push({
+          player: this.playersRoles[indexPlayer].number,
+          type: logType.kill
+        })
+        this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
+      } else {
+        this.dayLog.push({
+          player: this.playersRoles[indexPlayer].number,
+          type: logType.dayKill
+        })
+        this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
+      }
+    },
+    setTryKillLog(indexPlayer){
+      if (this.isNight) {
+        this.nightHistory.push({
+          player: this.playersRoles[indexPlayer].number,
+          type: logType.tryKill
+        })
+      }else{
+        this.dayLog.push({
+          player: this.playersRoles[indexPlayer].number,
+          type: logType.tryKill
+        })
+      }
+    },
     action(indexPlayer, type) {
       const typeAction = type || this.panelAction
 
@@ -552,6 +573,7 @@ export default {
             night: this.countNight,
             id: this.playersRoles[indexPlayer].number
           }])
+          this.saveAll()
           return;
         }
 
@@ -559,19 +581,7 @@ export default {
           this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
           toast.success('Игрок: ' + this.playersRoles[indexPlayer].number + ' убит')
 
-          if (this.isNight) {
-            this.nightHistory.push({
-              player: this.playersRoles[indexPlayer].number,
-              type: 'Убийство'
-            })
-            this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
-          } else {
-            this.dayLog.push({
-              player: this.playersRoles[indexPlayer].number,
-              type: 'Казнь'
-            })
-            this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
-          }
+          this.setKillLog(indexPlayer)
           this.refreshList()
         }
 
@@ -587,26 +597,22 @@ export default {
             this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart - 1
           }
           toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+          this.setTryKillLog(indexPlayer)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
             id: this.playersRoles[indexPlayer].number
           }])
           this.setInGlobalLog('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
-          if (this.isNight) {
-            this.nightHistory.push({
-              player: this.playersRoles[indexPlayer].number,
-              type: 'Попытка убийства'
-            })
-            this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
-          }
         } else {
           kill();
         }
       } else if (typeAction === 'fakeKill') {
-        this.handlerWithShieldOrHeart(indexPlayer)
+        // this.handlerWithShieldOrHeart(indexPlayer)
         this.setInGlobalLog('Фейковое Убийство Игрока: ' + indexPlayer)
 
         this.playersRoles[indexPlayer].fakeKill = !this.playersRoles[indexPlayer].fakeKill
+        this.setTryKillLog(indexPlayer)
+
       } else if (typeAction === 'makeWitch') {
         this.playersRoles[indexPlayer].isGood = !this.playersRoles[indexPlayer].isGood
         this.setInGlobalLog('Выбрана ведьма: ' + indexPlayer)
@@ -708,14 +714,8 @@ export default {
       dayLog: this.dayLog
     })
 
-    this.saveInterval = setInterval(() => {
-      this.saveAll()
-    }, 2000)
-
+    setTimeout(() => this.saveAll(), 1000)
   },
-  beforeDestroy() {
-    clearInterval(this.saveInterval)
-  }
 }
 </script>
 

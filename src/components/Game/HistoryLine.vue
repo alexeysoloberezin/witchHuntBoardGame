@@ -69,7 +69,7 @@
                     :id="'inqusitor-choose'"
                 />
 
-                <vs-dialog modal  @update:visible="(v) => inquisitorModal = v" :visible="inquisitorModal">
+                <vs-dialog modal @update:visible="(v) => inquisitorModal = v" :visible="inquisitorModal">
                   <div class="con-content max-w-[280px]">
                     <div class="flex items-center justify-center mb-2" style="height: calc(100vh - 120px);">
                       <img :src="typeRoles[inquisitorChoose]" alt="" style="object-fit: contain">
@@ -108,9 +108,17 @@
               </div>
 
               <div v-if="el.name === names.Hunter" class="mt-3 mb-3">
-                <Button v-if="hunterWakeUpInThisNight" @click="hunterKill">
-                  Добить
-                </Button>
+                <temaplte v-if="currentCard.killed">
+                  <h2 class="text-white">Охотник убит!</h2>
+                </temaplte>
+                <div v-if="hunterList.length" class="flex d-flex gap-3 mt-2">
+                  <div v-for="el in hunterList" class="ma-2">
+                    <Button @click="hunterKill(el.player)">
+                      Добить игрока {{ el.player }}
+                    </Button>
+                  </div>
+                </div>
+
                 <hr class="opacity-50 my-3"/>
               </div>
 
@@ -223,7 +231,7 @@ import ToggleAccord from "@/components/ToggleAccord.vue";
 export default {
   name: "HistoryLine",
   components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus},
-  props: ['array', 'active', 'showPointer', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
+  props: ['array', 'active', 'showPointer', 'hunterList', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
   computed: {
     hunterWakeUpInThisNight() {
       const hunter = this.hunter
@@ -247,7 +255,7 @@ export default {
     },
     currentEl() {
       const find = this.array.find(el => el.id === this.activeStep)
-      if(!find){
+      if (!find) {
         console.log('find', find)
       }
       return find
@@ -313,7 +321,7 @@ export default {
     }
   },
   methods: {
-    reload(){
+    reload() {
       location.reload()
     },
     touchHandler() {
@@ -392,8 +400,8 @@ export default {
     getNumber(text) {
       return GameMod.getNumberFromText(text, this.apprenticeRole)
     },
-    hunterKill() {
-      this.$emit('update:hunterKill')
+    hunterKill(id) {
+      this.$emit('update:hunterKill', id)
     },
     witchFakeKill(ids) {
       const id = ids[0] || null

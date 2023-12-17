@@ -1,5 +1,6 @@
 import {getByNames, names} from "@/store/cards";
 import GameMod from "@/js/GameMod";
+import {logType} from "@/js/types";
 
 export const dayPersonWhoHaveSkills = [
   names.Assassin,
@@ -143,8 +144,7 @@ export const generate = (initialPlayers, night, nightLog, dayLog) => {
 export const nigthStepNew = (night = 0, users, dayLog) => {
   let start = 'night-' + night + '-'
 
-  const hunter = users.find(user => user.name === names.Hunter)
-  const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]?.id || ''
+  const hunterList = dayLog.filter(el => el.type === logType.tryKill).map(e => e.player).join(' , ')
   let hunterArr = [{
     id: start + 1,
     title: 'Просыпается Охотник',
@@ -152,32 +152,16 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
     ifPlayerInGame: true,
     type: 'night',
     text: `
-        ${hunterLast ?
-      'Т.к выживал Игрок -' + hunterLast + '. Хотите ли вы добить его?'
+        ${hunterList ?
+      'Выживали игроки -' + hunterList + '.'
       : 'Скип'
     }
           `
   }]
 
-  // if (hunter && hunter?.hunterWakeUp.length > 0) {
-  //   const hunterLast = hunter?.hunterWakeUp[hunter?.hunterWakeUp.length - 1]
-  //
-  //   if (hunterLast.night === night) {
-  //     hunterArr = [{
-  //       id: start + 1,
-  //       title: 'Просыпается Охотник',
-  //       name: 'Охотник',
-  //       ifPlayerInGame: true,
-  //       type: 'night',
-  //       text: `
-  //           Т.к выживал Игрок - ${hunterLast.id}.
-  //           Хотите ли вы добить его?
-  //         `
-  //     }]
-  //   }
-  // }
-
   let res = []
+
+  const dayLogGravedigger = dayLog.filter(el => el.type === logType.dayKill || el.type === logType.kill)
 
   if(night !== 0){
     res = [
@@ -189,7 +173,7 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
         type: 'night',
         text: `
     Просыпается Могильщик. И узнает карты (обе) всех умерших днем игроков. => 
-    ${dayLog.map(el => el.player).join(' , ')}
+    ${dayLogGravedigger.map(el => el.player).join(' , ')}
           `
       },
       {
@@ -277,11 +261,6 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
 }
 
 export const dayUsers = ({night, users, nightLog}) => {
-  const calcShiftUser = (number, users) => {
-    const aliveUsers = users.filter(u => !u.killed);
-    const userLength = aliveUsers.length;
-  };
-
   const shiftArray = (arr, shift) => {
     const length = arr.length;
     const index = shift % length;
