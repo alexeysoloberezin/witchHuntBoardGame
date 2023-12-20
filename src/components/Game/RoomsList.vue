@@ -15,6 +15,7 @@ onMounted(() => {
 
 <template>
   <div class="border-gray-800 border p-4 grid gap-3 lg:grid-cols-4 sm:grid-cols-2">
+    rooms: {{ rooms }}
     <RoomItem v-for="room in rooms" :room="room"/>
   </div>
 </template>

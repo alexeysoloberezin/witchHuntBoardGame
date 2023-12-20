@@ -93,12 +93,19 @@ export const useRoomsStore = defineStore('rooms', () => {
   };
 
   const getRoomsList = () => {
-    socket.value?.emit("getRoomsList", (roomsList) => {
-      rooms.value = roomsList || [];
-    });
+    console.log('getRoomsList')
+
+    setInterval(() => {
+      console.log(rooms.value)
+    }, 1000)
 
     socket.value?.on('roomCreated', (data) => {
+      console.log('data roomCreated: ', data)
       rooms.value = data.rooms;
+    });
+
+    socket.value?.emit("getRoomsList", (roomsList) => {
+      rooms.value = roomsList || [];
     });
   };
 
