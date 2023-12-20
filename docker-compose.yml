@@ -1,7 +1,6 @@
 version: '3'
 services:
   vite-app:
-    build:
-      context: ./path/to/vite/app  # Путь к Vite-приложению
+    build: .
     ports:
       - "3000:3000"
