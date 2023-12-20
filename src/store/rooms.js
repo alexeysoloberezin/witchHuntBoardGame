@@ -14,7 +14,7 @@ export const useRoomsStore = defineStore('rooms', () => {
   const roomUserStore = useRoomUserStore()
 
   const createConnection = async () => {
-    socket.value = await io('http://83.222.9.67:3000/');
+    socket.value = await io('http://83.222.9.67:3000/sockets');
     // socket.value = io('http://localhost:5222/');
 
     socket.value.on('connect', () => {
