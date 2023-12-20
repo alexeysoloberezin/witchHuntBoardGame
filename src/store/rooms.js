@@ -15,9 +15,9 @@ export const useRoomsStore = defineStore('rooms', () => {
   const roomUserStore = useRoomUserStore()
 
   const createConnection = async () => {
-    socket.value = await io('/nest/');
+    socket.value = await io('/');
 
-     axios.get('/nest/users')
+     axios.get('/users')
        .then(res => console.log('user:', res))
        .catch(err => console.log('userErr', err))
     // socket.value = io('http://localhost:5222/');
