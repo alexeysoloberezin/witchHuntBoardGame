@@ -21,6 +21,8 @@ export const useRoomsStore = defineStore('rooms', () => {
 
 
   const createConnection = async () => {
+    console.log('socketUrl.value + socketPORT.value', socketUrl.value + socketPORT.value)
+    debugger
     socket.value = await io(socketUrl.value + socketPORT.value);
 
     socket.value.on('connect', () => {

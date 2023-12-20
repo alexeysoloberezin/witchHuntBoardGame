@@ -17,7 +17,7 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
-const thisLink = computed(() => window.location.origin + route.fullPath);
+const thisLink = computed(() => window.location);
 
 const connect = () => {
   router.push('/GameRoom/connectInRoom/' + route.params?.id)
