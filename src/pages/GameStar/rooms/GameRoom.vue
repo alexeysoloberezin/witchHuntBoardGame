@@ -25,7 +25,6 @@ onBeforeMount(() => {
     clients: []
   })
 
-  roomsStore.listenRoom()
   roomsStore.getClients(activeRoom)
 })
 

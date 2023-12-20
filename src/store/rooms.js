@@ -15,25 +15,13 @@ export const useRoomsStore = defineStore('rooms', () => {
   const roomUserStore = useRoomUserStore()
 
   const createConnection = async () => {
-    console.log(window.location)
-    console.log(window.location.host)
-    console.log(window.location.href)
-
     socket.value = await io(window.location.host + ':3333');
-
-     axios.get('/users')
-       .then(res => console.log('user:', res))
-       .catch(err => console.log('userErr', err))
-    // socket.value = io('http://localhost:5222/');
 
     socket.value.on('connect', () => {
       console.log('connect');
       isActive.value = true
 
-      socket.value?.on('roomCreated', (data) => {
-        console.log('data roomCreated: ', data)
-        rooms.value = data.rooms;
-      });
+      initListeners()
     });
 
     socket.value.on('disconnect', async (e) => {
@@ -45,20 +33,25 @@ export const useRoomsStore = defineStore('rooms', () => {
     });
   };
 
-  const deleteAllRooms = () => {
-    socket.value?.emit('deleteAllRooms', () => {
-      rooms.value = []
-      clients.value = []
-    })
-  }
+  const initListeners = () => {
+    socket.value?.on('roomCreated', (data) => {
+      console.log('data roomCreated: ', data)
+      rooms.value = data.rooms;
+    });
 
-  const listenRoom = () => {
     socket.value?.on('roomChanged', (data) => {
       if (Array.isArray(data)) {
         clients.value = data
       } else {
         clients.value = data.clients
       }
+    })
+  }
+
+  const deleteAllRooms = () => {
+    socket.value?.emit('deleteAllRooms', () => {
+      rooms.value = []
+      clients.value = []
     })
   }
 
@@ -117,7 +110,6 @@ export const useRoomsStore = defineStore('rooms', () => {
     deleteAllRooms,
     getRoomsList,
     getClients,
-    listenRoom,
     createRoom,
     createConnection,
     leaveRoom,
