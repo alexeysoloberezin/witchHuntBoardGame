@@ -4,7 +4,6 @@ import App from './App.vue';
 import router from './router';
 
 import '@/assets/css/tailwind.css';
-
 import './assets/styles.css';
 import './registerServiceWorker';
 
@@ -22,9 +21,13 @@ import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import InputSwitch from 'primevue/inputswitch';
 import Avatar from 'primevue/avatar';
+import {createPinia} from "pinia";
 const app = createApp(App);
+const pinia = createPinia()
 
 app.use(router);
+
+app.use(pinia);
 
 app.use(PrimeVue);
 app.component('vs-dialog', Dialog);
