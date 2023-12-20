@@ -1,0 +1,10 @@
+version: '3'
+services:
+  vite-app:
+    image: node:14
+    working_dir: /usr/src/app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: ["npm", "run", "dev"]
