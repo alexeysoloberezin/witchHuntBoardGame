@@ -15,7 +15,7 @@ export const useRoomsStore = defineStore('rooms', () => {
   const roomUserStore = useRoomUserStore()
 
   const createConnection = async () => {
-    socket.value = await io('/nest/socket');
+    socket.value = await io('/nest/');
 
      axios.get('/nest/users')
        .then(res => console.log('user:', res))
