@@ -2,7 +2,7 @@
 FROM node:18
 
   # Установите рабочую директорию внутри контейнера
-WORKDIR /usr/src/app
+WORKDIR /usr/src/vue
 
   # Копируйте зависимости для улучшения кэширования
 COPY package*.json ./

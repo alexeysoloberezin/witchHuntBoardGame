@@ -1,10 +1,7 @@
 version: '3'
 services:
   vite-app:
-    image: node:18
-    working_dir: /usr/src/app
+    build:
+      context: ./path/to/vite/app  # Путь к Vite-приложению
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
-    command: ["npm", "run", "dev"]
