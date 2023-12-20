@@ -7,7 +7,11 @@ const GameStart  = () => import('@/pages/GameStar/GameStart.vue')
 const GameComming  = () => import('@/pages/GameStar/GameComming.vue')
 const Game  = () => import('@/pages/GameStar/Game.vue')
 const DownloadPdf  = () => import('@/pages/DownloadPdf.vue')
-const GameConnectUsers  = () => import('@/pages/GameStar/GameConnectUsers.vue')
+const RoomLayout  = () => import('@/pages/GameStar/rooms/RoomLayout.vue')
+const GameCreateRoom  = () => import('@/pages/GameStar/rooms/GameCreateRoom.vue')
+const GameConnectInRoom  = () => import('@/pages/GameStar/rooms/GameConnectInRoom.vue')
+const GameRoom  = () => import('@/pages/GameStar/rooms/GameRoom.vue')
+const GameRooms  = () => import('@/pages/GameStar/rooms/GameRooms.vue')
 
 export default [
   {path: '/', name: 'Homepage', component: Landing},
@@ -21,7 +25,16 @@ export default [
       {path: "cards/:id", name: 'CardZoom', component: CardZoom},
     ]
   },
-  {path: '/Game/connectUsers', name: 'connectUsers', component: GameConnectUsers},
+  {
+    path: "/GameRoom",
+    component: RoomLayout,
+    children: [
+      {path: 'createRoom', name: 'createRoom', component: GameCreateRoom},
+      {path: 'room/:id', name: 'room', component: GameRoom},
+      {path: 'rooms', name: 'rooms', component: GameRooms},
+      {path: 'connectInRoom/:id', name: 'connectInRoom', component: GameConnectInRoom},
+    ],
+  },
   {path: '/GameStart', name: 'GameStart', component: GameStart},
   {path: '/GameComming', name: 'GameComming', component: GameComming},
   {path: '/Game', name: 'Game', component: Game},

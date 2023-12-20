@@ -573,6 +573,7 @@ export default {
             night: this.countNight,
             id: this.playersRoles[indexPlayer].number
           }])
+          this.setTryKillLog(indexPlayer)
           this.saveAll()
           return;
         }
