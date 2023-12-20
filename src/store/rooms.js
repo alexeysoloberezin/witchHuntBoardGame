@@ -19,7 +19,7 @@ export const useRoomsStore = defineStore('rooms', () => {
     console.log(window.location.host)
     console.log(window.location.href)
 
-    socket.value = await io('/');
+    socket.value = await io(window.location.host + ':3333');
 
      axios.get('/users')
        .then(res => console.log('user:', res))
