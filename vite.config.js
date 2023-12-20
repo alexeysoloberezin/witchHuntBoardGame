@@ -6,6 +6,9 @@ import path from 'path';
 export default defineConfig({
   base: '/vue/',
   plugins: [vue()],
+  server: {
+    port: 3000
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'), // Укажите путь к вашей папке src

@@ -4,6 +4,7 @@ import {defineStore} from "pinia";
 import {useRouter} from "vue-router";
 import {useRoomUserStore} from "@/store/roomUser";
 import {toast} from "vue3-toastify";
+import axios from 'axios';
 
 export const useRoomsStore = defineStore('rooms', () => {
   const socket = ref(null);
@@ -14,7 +15,11 @@ export const useRoomsStore = defineStore('rooms', () => {
   const roomUserStore = useRoomUserStore()
 
   const createConnection = async () => {
-    socket.value = await io('http://83.222.9.67:3000/');
+    socket.value = await io('/nest/socket');
+
+     axios.get('/nest/users')
+       .then(res => console.log('user:', res))
+       .catch(err => console.log('userErr', err))
     // socket.value = io('http://localhost:5222/');
 
     socket.value.on('connect', () => {
