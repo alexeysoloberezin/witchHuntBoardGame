@@ -35,7 +35,7 @@ export const useRoomsStore = defineStore('rooms', () => {
       console.log('disconnect', e);
       rooms.value = []
       clients.value = []
-      isActive.value = true
+      isActive.value = false
       await router.push('/GameRoom/rooms')
     });
   };
