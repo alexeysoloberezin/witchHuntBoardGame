@@ -1,7 +1,7 @@
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {io} from "socket.io-client";
 import {defineStore} from "pinia";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {useRoomUserStore} from "@/store/roomUser";
 import {toast} from "vue3-toastify";
 
@@ -14,22 +14,20 @@ export const useRoomsStore = defineStore('rooms', () => {
   const clients = ref([])
   const isActive = ref(false)
   const router = useRouter()
+  const route = useRoute()
+  const loading = ref(false)
   const roomUserStore = useRoomUserStore()
+  
 
 
   const createConnection = async () => {
-    console.log(socketUrl.value + socketPORT.value)
     socket.value = await io(socketUrl.value + socketPORT.value);
 
     socket.value.on('connect', () => {
-      console.log('connect');
       isActive.value = true
-
-      initListeners()
     });
 
     socket.value.on('disconnect', async (e) => {
-      console.log('disconnect', e);
       rooms.value = []
       clients.value = []
       isActive.value = false
@@ -37,10 +35,19 @@ export const useRoomsStore = defineStore('rooms', () => {
     });
   };
 
+  watch(
+    () => socket.value,
+    (newSocket, oldSocket) => {
+      if (newSocket) {
+        initListeners();
+      }
+    }
+  );
+
   const initListeners = () => {
     socket.value?.on('roomCreated', (data) => {
-      console.log('data roomCreated: ', data)
       rooms.value = data.rooms;
+      loading.value = false
     });
 
     socket.value?.on('roomChanged', (data) => {
@@ -50,6 +57,9 @@ export const useRoomsStore = defineStore('rooms', () => {
         clients.value = data.clients
       }
     })
+
+    getRoomsList()
+    getClients(route.params?.id)
   }
 
   const deleteAllRooms = () => {
@@ -66,6 +76,7 @@ export const useRoomsStore = defineStore('rooms', () => {
   }
 
   const createRoom = (room) => {
+    loading.value = true
     socket.value?.emit('createRoom', {room});
   };
 
@@ -82,7 +93,10 @@ export const useRoomsStore = defineStore('rooms', () => {
       socket.value?.emit('joinRoom', {roomId, subtitle, userName}, (data) => {
         if (userName === data.userName) {
           roomUserStore.$patch({
-            user: userName,
+            user: {
+              userName,
+              subtitle
+            },
             loading: false
           })
         }
@@ -94,12 +108,6 @@ export const useRoomsStore = defineStore('rooms', () => {
   };
 
   const getRoomsList = () => {
-    console.log('getRoomsList')
-
-    setInterval(() => {
-      console.log(rooms.value)
-    }, 1000)
-
     socket.value?.emit("getRoomsList", (roomsList) => {
       rooms.value = roomsList || [];
     });
@@ -110,6 +118,7 @@ export const useRoomsStore = defineStore('rooms', () => {
     isActive,
     rooms,
     clients,
+    loading,
     deleteAllRooms,
     getRoomsList,
     getClients,

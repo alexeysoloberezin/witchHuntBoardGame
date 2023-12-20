@@ -4,6 +4,10 @@ const props = defineProps({
     type: Object,
     required: true
   },
+  active: {
+    type: Boolean,
+    default: false
+  }
 })
 </script>
 
@@ -19,11 +23,15 @@ const props = defineProps({
              alt="Neil image">
       </div>
       <div class="flex-1 min-w-0 ms-4">
-        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-          {{ user?.name }}
+        <p class="text-sm font-medium text-gray-900 truncate"
+           :class="active ? 'text-green-500' : 'text-white'"
+        >
+          Вы: {{ user?.name }}
         </p>
       </div>
-      <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+      <div class="inline-flex items-center text-base font-semibold "
+           :class="active ? 'text-green-500' : 'text-white'"
+      >
         Active
       </div>
     </div>

@@ -1,12 +1,11 @@
 <script setup>
-import {Form, Field, ErrorMessage} from 'vee-validate';
+import {Form} from 'vee-validate';
 import * as yup from 'yup';
 import {useRoute, useRouter} from "vue-router";
 import FormInput from "@/components/FormInput.vue";
 import {useRoomUserStore} from "@/store/roomUser";
 import {computed, onMounted, ref} from "vue";
 import {useRoomsStore} from "@/store/rooms";
-import {toast} from "vue3-toastify";
 
 const route = useRoute()
 const router = useRouter();
@@ -30,7 +29,7 @@ const onSubmit = (fields) => {
 const goBack = () => router.go(-1);
 
 const goToRoom = () => {
-  roomsStore.joinRoom(roomId, user.value)
+  roomsStore.joinRoom(roomId, user.value.subtitle, user.value.userName)
 }
 
 
@@ -47,10 +46,10 @@ const goToRoom = () => {
       </div>
     </div>
 
-    <div v-if="user"
+    <div v-if="user?.userName && user?.subtitle"
          class="userBox p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex items-center gap-4 mb-4">
       <h1>
-        <span class="opacity-50">Войти как:</span> <b>{{ user }}</b>
+        <span class="opacity-50">Войти как:</span> <b>{{ user.userName }}</b>
       </h1>
       <Button size="small" :loading="loading" @click="goToRoom">
         {{ loading ? 'Loading' : 'Войти' }}

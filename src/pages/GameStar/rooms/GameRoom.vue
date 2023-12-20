@@ -4,15 +4,18 @@ import {useRoomsStore} from "@/store/rooms";
 import {useRoute, useRouter} from "vue-router";
 import {toast} from "vue3-toastify";
 import RoomUserList from "@/components/Game/RoomUserList.vue";
+import {useRoomUserStore} from "@/store/roomUser";
 
 const props = defineProps([])
 
 const roomsStore = useRoomsStore()
+const userRoom = useRoomUserStore()
 const router = useRouter()
 const route = useRoute()
 
 const clients = computed(() => roomsStore.clients.sort((a, b) => a.subtitle - b.subtitle))
 const activeRoom = route.params?.id
+const userInRoom = computed(() => userRoom.userInRoom)
 
 onBeforeMount(() => {
   if(!activeRoom){
@@ -36,9 +39,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-<!--    <Button @click="roomsStore.leaveRoom(activeRoom)">Leave</Button>-->
     <RoomUserList
         v-if="clients"
+        :userInRoom="userInRoom"
         :users="clients"
     />
   </div>
