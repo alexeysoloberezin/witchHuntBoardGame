@@ -29,6 +29,11 @@ export const useRoomsStore = defineStore('rooms', () => {
     socket.value.on('connect', () => {
       console.log('connect');
       isActive.value = true
+
+      socket.value?.on('roomCreated', (data) => {
+        console.log('data roomCreated: ', data)
+        rooms.value = data.rooms;
+      });
     });
 
     socket.value.on('disconnect', async (e) => {
@@ -98,11 +103,6 @@ export const useRoomsStore = defineStore('rooms', () => {
     setInterval(() => {
       console.log(rooms.value)
     }, 1000)
-
-    socket.value?.on('roomCreated', (data) => {
-      console.log('data roomCreated: ', data)
-      rooms.value = data.rooms;
-    });
 
     socket.value?.emit("getRoomsList", (roomsList) => {
       rooms.value = roomsList || [];
