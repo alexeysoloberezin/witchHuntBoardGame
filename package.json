@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev:local": "vite --mode loc",
+    "dev:prod": "vite --mode prod",
+    "dev": "vite --mode dev",
     "build": "vite build",
     "serve": "vue-cli-service serve",
-    "buildOld": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "list_fix": "eslint --fix src"
   },

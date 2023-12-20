@@ -1,12 +1,14 @@
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {io} from "socket.io-client";
 import {defineStore} from "pinia";
 import {useRouter} from "vue-router";
 import {useRoomUserStore} from "@/store/roomUser";
 import {toast} from "vue3-toastify";
-import axios from 'axios';
 
 export const useRoomsStore = defineStore('rooms', () => {
+  const socketUrl = computed(() => import.meta.env.VITE_WS_SERVER)
+  const socketPORT = computed(() => import.meta.env.VITE_WS_PORT || '')
+
   const socket = ref(null);
   const rooms = ref([]);
   const clients = ref([])
@@ -14,8 +16,10 @@ export const useRoomsStore = defineStore('rooms', () => {
   const router = useRouter()
   const roomUserStore = useRoomUserStore()
 
+
   const createConnection = async () => {
-    socket.value = await io(window.location.host + ':3333');
+    console.log(socketUrl.value + socketPORT.value)
+    socket.value = await io(socketUrl.value + socketPORT.value);
 
     socket.value.on('connect', () => {
       console.log('connect');
@@ -57,7 +61,6 @@ export const useRoomsStore = defineStore('rooms', () => {
 
   const getClients = async (roomId) => {
     socket.value?.emit('getClientsList', {roomId}, (data) => {
-      console.log('Clients in room:', data);
       clients.value = data
     });
   }
