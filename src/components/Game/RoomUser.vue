@@ -23,10 +23,10 @@ const props = defineProps({
              alt="Neil image">
       </div>
       <div class="flex-1 min-w-0 ms-4">
-        <p class="text-sm font-medium text-gray-900 "
+        <p class="text-sm font-medium  "
            :class="active ? 'text-green-500' : 'text-white'"
         >
-          {{ active && 'Вы:' }} {{ user?.name }}
+          {{ active ? 'Вы:' : '' }} {{ user?.name }}
         </p>
       </div>
       <div class="inline-flex items-center text-base font-semibold "

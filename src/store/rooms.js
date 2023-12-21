@@ -17,12 +17,9 @@ export const useRoomsStore = defineStore('rooms', () => {
   const route = useRoute()
   const loading = ref(false)
   const roomUserStore = useRoomUserStore()
-  
-
 
   const createConnection = async () => {
-    console.log('socketUrl.value + socketPORT.value', socketUrl.value + socketPORT.value)
-    debugger
+    console.log(socketUrl.value + socketPORT.value)
     socket.value = await io(socketUrl.value + socketPORT.value);
 
     socket.value.on('connect', () => {
@@ -33,7 +30,6 @@ export const useRoomsStore = defineStore('rooms', () => {
       rooms.value = []
       clients.value = []
       isActive.value = false
-      await router.push('/GameRoom/rooms')
     });
   };
 
@@ -83,6 +79,8 @@ export const useRoomsStore = defineStore('rooms', () => {
   };
 
   const leaveRoom = (room) => {
+    console.log('leave')
+    alert('leave', room)
     socket.value?.emit('leaveRoom', {room});
   };
 

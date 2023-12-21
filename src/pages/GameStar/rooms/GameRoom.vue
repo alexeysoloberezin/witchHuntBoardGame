@@ -31,10 +31,14 @@ onBeforeMount(() => {
   roomsStore.getClients(activeRoom)
 })
 
-onBeforeUnmount(() => {
-  console.log('unmount')
-  roomsStore.leaveRoom(activeRoom)
+const leaveRoomBeforeUnload = async () => {
+  await roomsStore.leaveRoom(activeRoom);
+};
+
+onBeforeUnmount(async () => {
+  await leaveRoomBeforeUnload()
 })
+
 </script>
 
 <template>
