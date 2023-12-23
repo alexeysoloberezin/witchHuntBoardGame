@@ -58,10 +58,15 @@
         Роли разданы, далее
       </Button>
       <Button
-          v-if="true"
           @click="random"
       >
-        random
+        Рандомная расдача
+      </Button>
+      <Button
+          outlined
+          @click="clear"
+      >
+        Сбросить
       </Button>
     </div>
     <div v-if="Object.keys(playersRoles).length !== roles.length" style="font-size: 12px" class="pl-2 pt-1 opacity-50">
@@ -78,6 +83,8 @@ import {arrayStartGameTakeCards} from "@/js/GameModData";
 import CardSafe from "@/components/Card.vue";
 import mirImg from '@/assets/mir.png'
 import witchImg from '@/assets/witch.png'
+import GameMod from "@/js/GameMod";
+import {toast} from 'vue3-toastify'
 
 export default {
   name: "GameComming",
@@ -118,31 +125,35 @@ export default {
     }
   },
   methods: {
-    prevModal(){
+    clear(){
+      this.playersRoles = {}
+      this.save()
+    },
+    prevModal() {
       this.showModalRoles = true;
       this.showModalType = false;
     },
-    nextModal(){
+    nextModal() {
       this.showModalRoles = null;
       this.showModalType = true;
     },
     random() {
-      let roles = localStorage.getItem('gameRoles')
-      if (roles) {
-        roles = JSON.parse(roles)
-
-        const res = {}
-
-        roles.forEach((role, i) => {
-          res[i + 1] = {
-            type: i < 4 ? 'witch' : 'mir',
-            name: role
-          }
-        })
-
-        this.playersRoles = res
-        this.save()
+      let witches = GameMod.askWitches()
+      if(!witches){
+        return;
       }
+
+      let roles = localStorage.getItem('gameRoles')
+      if (!roles) {
+        return toast.error('Не правильные роли!')
+      }
+
+      roles = JSON.parse(roles)
+
+      this.playersRoles = GameMod.makeRandomRoles(roles, witches)
+
+      toast.success('Роли успешно розданы!')
+      this.save()
     },
     chooseType(type) {
       this.playersRoles[this.roleFor] = {

@@ -4,12 +4,8 @@ import {useStorage} from "@vueuse/core";
 import {useRoomsStore} from "@/store/rooms";
 
 export const useRoomUserStore = defineStore('roomUser', () => {
-  const user = useStorage('room_user', null, undefined, {
-    serializer: {
-      read: (v) => (v ? JSON.parse(v) : null),
-      write: (v) => JSON.stringify(v),
-    },
-  })
+  const user = ref(null)
+
   const roomsStore = useRoomsStore()
   const clients = computed(() => roomsStore.clients)
   const loading = ref(false)
@@ -19,7 +15,7 @@ export const useRoomUserStore = defineStore('roomUser', () => {
       return false
     }
 
-    const res = clients.value.find(client => client.name === user.value.userName)
+    const res = clients.value.find(client => client.name === user.value?.userName)
 
     return res || false
   })
@@ -27,6 +23,10 @@ export const useRoomUserStore = defineStore('roomUser', () => {
   const alreadyHaveName = computed(() => {
     return !!user.value
   })
+
+  const restoreUser = () => {
+    user.value = null
+  }
 
   async function createUser({name, subtitle, roomId}) {
     loading.value = true
@@ -37,5 +37,5 @@ export const useRoomUserStore = defineStore('roomUser', () => {
     user.value = null
   }
 
-  return {user, clearUser, loading, userInRoom, createUser, alreadyHaveName}
+  return {user, clearUser, loading,restoreUser, userInRoom, createUser, alreadyHaveName}
 })

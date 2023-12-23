@@ -1,10 +1,8 @@
 import cards, {names} from "@/store/cards";
+import {toast} from 'vue3-toastify'
 
 class GameMod {
-  loadData(){
-
-  }
-  setInGlobalLog(message){
+  setInGlobalLog(message) {
     let res = localStorage.getItem('logList')
     if (res) {
       res = JSON.parse(res)
@@ -15,11 +13,11 @@ class GameMod {
     localStorage.setItem('logList', JSON.stringify(res))
   }
 
-  showRolesCards(playersRoles, shuffle){
+  showRolesCards(playersRoles, shuffle) {
     const roles = Object.values(playersRoles).map(el => el.name)
     const res = cards.filter(card => roles.map(el => el.toLowerCase()).includes(card.name.toLowerCase()))
 
-    if(shuffle){
+    if (shuffle) {
       for (let i = res.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [res[i], res[j]] = [res[j], res[i]];
@@ -29,7 +27,7 @@ class GameMod {
     return res;
   }
 
-  gamblerChoose(players, choose){
+  gamblerChoose(players, choose) {
     return players.map(el => {
       if (el.name === names.Gambler) {
         return {
@@ -49,11 +47,73 @@ class GameMod {
       const numbers = matches.map(match => parseInt(match.match(/\d+/)[0], 10));
       return numbers[type ? 1 : 0];
     } else {
-      return null; // Или любое другое значение по умолчанию, если скобки не найдены
+      return null;
     }
   }
 
-  gamblerShield(nightVal){
+  askWitches() {
+    let witches = window.prompt('Сколько ведьм будет?')
+    if (!witches) {
+      toast.error('Нет данных о кол. ведьм')
+      return null
+    }
+
+    witches = parseInt(witches)
+
+    if (!witches) {
+      toast.error('Число ведьм не правильное')
+      return null
+    }
+    if (witches >= 5) {
+      toast.error('Слишком много ведьм!')
+      return null
+    }
+
+    return witches
+  }
+
+  shuffleRoles(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  generateRandomRoles(arr, witchCount) {
+    const copyArr = [...arr]
+    return copyArr.filter(role => role !== 'Священник').slice(0, witchCount)
+  }
+
+  makeRandomRoles(roles, witchCount) {
+    const shuffledRoles = [...roles];
+    this.shuffleRoles(shuffledRoles);
+
+    const witchRoles = this.generateRandomRoles(shuffledRoles, witchCount)
+
+    this.shuffleRoles(shuffledRoles);
+
+    const res = {};
+
+    shuffledRoles.forEach((role, i) => {
+      res[i + 1] = {
+        type: witchRoles.includes(role) ? 'witch' : 'mir',
+        name: role
+      };
+    });
+
+    return res;
+  }
+
+  priestShield(nightVal){
+    const find = this.playersRoles.find(player => player.name === names.Priest)
+    if (find) {
+      if(nightVal === 0){
+        find.shield = find.shield + 1
+      }
+    }
+  }
+
+  gamblerShield(nightVal) {
     const find = this.playersRoles.find(player => player.name === names.Gambler)
     if (find) {
       if (find.killed) {
@@ -74,8 +134,8 @@ class GameMod {
     return false
   }
 
-  filterStepsPolesInGame(array, roles){
-   return array.filter((el) => {
+  filterStepsPolesInGame(array, roles) {
+    return array.filter((el) => {
       if (el.ifPlayerInGame === false) {
         return true
       } else {
@@ -84,7 +144,7 @@ class GameMod {
     })
   }
 
-  getNightWelcomePerson(playersRoles, step, nightStepsWelcome){
+  getNightWelcomePerson(playersRoles, step, nightStepsWelcome) {
     const person = nightStepsWelcome[step]
 
     if (person?.name === names.Apprentice) {

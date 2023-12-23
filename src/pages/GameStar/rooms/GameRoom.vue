@@ -5,6 +5,7 @@ import {useRoute, useRouter} from "vue-router";
 import {toast} from "vue3-toastify";
 import RoomUserList from "@/components/Game/RoomUserList.vue";
 import {useRoomUserStore} from "@/store/roomUser";
+import useSocketListener from "@/composables/socketListen";
 
 const props = defineProps([])
 
@@ -38,6 +39,16 @@ const leaveRoomBeforeUnload = async () => {
 onBeforeUnmount(async () => {
   await leaveRoomBeforeUnload()
 })
+
+// useSocketListener(
+//     'roomChanged',
+//     data => {
+//       roomsStore.$patch({
+//         clients: data.clients,
+//       })
+//     }
+// )
+
 
 </script>
 

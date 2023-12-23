@@ -163,7 +163,7 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
 
   const dayLogGravedigger = dayLog.filter(el => el.type === logType.dayKill || el.type === logType.kill)
 
-  if(night !== 0){
+  if (night !== 0) {
     res = [
       {
         id: start + 2,
@@ -261,21 +261,25 @@ export const nigthStepNew = (night = 0, users, dayLog) => {
 }
 
 export const dayUsers = ({night, users, nightLog}) => {
+  users = users.filter(user => !user.killed)
+
   const shiftArray = (arr, shift) => {
     const length = arr.length;
     const index = shift % length;
     return arr.slice(index).concat(arr.slice(0, index));
   };
 
-  const res = shiftArray(users, night).filter(user => !user.killed).map(user => {
-    return {
-      id: 'daySpeach-' + night + '-' + user.number,
-      title: 'Речь игрока: ' + (+user.number ),
-      ifPlayerInGame: false,
-      text: 'Дневная речь',
-      type: 'day'
-    };
-  });
+  const res =
+    shiftArray(users, night)
+      .map(user => {
+        return {
+          id: 'daySpeach-' + night + '-' + user.number,
+          title: 'Речь игрока: ' + (+user.number),
+          ifPlayerInGame: false,
+          text: 'Дневная речь',
+          type: 'day'
+        };
+      });
 
   let speachDeadPerson = []
   let firstPlayer30Sec = []
@@ -290,7 +294,7 @@ export const dayUsers = ({night, users, nightLog}) => {
         type: 'day'
       }
     ]
-  }else{
+  } else {
     firstPlayer30Sec = [
       {
         id: 'daySpeach-end-' + night,

@@ -5,14 +5,15 @@ import StatusConnect from "@/components/Game/StatusConnect.vue";
 
 const roomsStore = useRoomsStore()
 const isActive = computed(() => roomsStore.isActive)
+const socket = computed(() => roomsStore.$state.socket); // Подставьте свой метод для получения сокета
 
 onBeforeMount(() => {
   roomsStore.createConnection()
 })
 
 onBeforeUnmount(() => {
-  console.log('leave')
-})
+  socket.value?.disconnect();
+});
 </script>
 
 <template>

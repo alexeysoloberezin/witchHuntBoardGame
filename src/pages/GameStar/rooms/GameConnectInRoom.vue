@@ -36,7 +36,7 @@ const goToRoom = () => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto mt-6">
+  <div class="max-w-md mx-auto mt-6 bg_app">
     <div class="text-lg text-center mb-4">
       <div>
         Подключиться в комнату

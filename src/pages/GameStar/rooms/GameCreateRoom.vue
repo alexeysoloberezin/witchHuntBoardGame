@@ -2,7 +2,6 @@
 import {computed, onMounted, ref} from 'vue';
 import { useRoomsStore } from "@/store/rooms";
 import RoomsList from "@/components/Game/RoomsList.vue";
-import axios from 'axios';
 
 const nameRoom = ref('');
 const roomsStore = useRoomsStore();
@@ -16,10 +15,12 @@ const deleteAllRooms = () => {
   roomsStore.deleteAllRooms()
 }
 
+
+
 </script>
 
 <template>
-  <div class="text-white p-5 grid gap-4">
+  <div class="text-white p-5 grid gap-4 bg_app">
     <h1>Создать комнату</h1>
     <InputText placeholder="Название комнаты" v-model="nameRoom"/>
     <div class="flex gap-2">

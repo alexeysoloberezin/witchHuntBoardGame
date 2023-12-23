@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen text-white p-6 bg-gray-200 dark:bg-gray-900 overflow-x-hidden">
+  <div class="min-h-screen text-white p-6 overflow-x-hidden bg_app">
     <template v-if="!showRoles">
       <Timer
           v-if="playersRoles"
@@ -474,16 +474,10 @@ export default {
     gamblerShield() {
       GameMod.gamblerShield.apply(this, [this.countNight])
     },
-    startNight() {
-      this.gamblerShield()
-      this.isNight = true
-      const nightTryKills = this.nightHistory.filter(el => el.type === logType.tryKill)
-
-      this.dayLog = this.dayLog.concat(nightTryKills)
-
-      this.nightHistory = []
-      this.countNight = this.countNight + 1
+    priestShield() {
+      GameMod.priestShield.apply(this, [this.countNight])
     },
+
     makeFoll(index) {
       const find = this.playersRoles.find(player => player.number === index)
 
@@ -513,6 +507,18 @@ export default {
       this.gamblerChooseClosed = true
       this.setInGlobalLog('Гамблер (Азартный игрок выбирает): ' + choose + ' ночи')
     },
+    startNight() {
+      this.gamblerShield()
+      this.priestShield()
+      this.isNight = true
+
+      const nightTryKills = this.nightHistory.filter(el => el.type === logType.tryKill)
+
+      this.dayLog = this.dayLog.concat(nightTryKills)
+
+      this.nightHistory = []
+      this.countNight = this.countNight + 1
+    },
     handleCloseNight() {
       this.playersRoles = this.playersRoles.map(el => {
         return {
@@ -523,8 +529,13 @@ export default {
         }
       })
       this.isNight = false
-      this.dayLog = []
+
       this.nightVal = ++this.nightVal
+
+      const dayInNigthLog = this.dayLog.filter(el => el.inNextLog)
+      this.nightHistory = this.nightHistory.concat(dayInNigthLog)
+
+      this.dayLog = []
       this.activeNightStep = 0
     },
     setPanelAction(action) {
@@ -534,17 +545,19 @@ export default {
       }
       this.panelAction = action
     },
-    setKillLog(indexPlayer){
+    setKillLog(indexPlayer, inNextLog = false){
       if (this.isNight) {
         this.nightHistory.push({
           player: this.playersRoles[indexPlayer].number,
-          type: logType.kill
+          type: logType.kill,
+          inNextLog
         })
         this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
       } else {
         this.dayLog.push({
           player: this.playersRoles[indexPlayer].number,
-          type: logType.dayKill
+          type: logType.dayKill,
+          inNextLog
         })
         this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
       }
@@ -578,16 +591,16 @@ export default {
           return;
         }
 
-        const kill = () => {
+        const kill = (inNextLog) => {
           this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
           toast.success('Игрок: ' + this.playersRoles[indexPlayer].number + ' убит')
 
-          this.setKillLog(indexPlayer)
+          this.setKillLog(indexPlayer, inNextLog)
           this.refreshList()
         }
 
         if (typeAction === 'goodKill') {
-          kill();
+          kill(true);
           return;
         }
 

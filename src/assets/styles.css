@@ -1,3 +1,25 @@
+/*#main-content {*/
+/*    background: url("./fon.jpg") center/contain;*/
+/*}*/
+.app_bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: 0.03;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    pointer-events: none;
+}
+body{
+    background: #191a1c;
+
+}
+#main-content, .bg_app {
+    position: relative;
+    z-index: 10;
+}
 .cardSafe{
     border: 1px solid rgba(255, 255, 255, 0.13);
     background: rgba(26, 28, 35);

@@ -9,7 +9,7 @@ const props = defineProps({
 
 <template>
   <div class="room">
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="p-6 bg-white bg-gray-800 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <div class="flex items-center">
         <h5 class="text-sm mr-2">
           Users: {{ room.clients.length }}

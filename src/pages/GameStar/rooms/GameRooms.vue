@@ -11,7 +11,6 @@ const roomsStore = useRoomsStore()
     <div>
       <h1>Подключение:</h1>
     </div>
-    {{ isActive }}
   </div>
 </template>
 

@@ -7,14 +7,24 @@
     <div class="flex items-center gap-3 flex-wrap mb-3">
       <vs-avatar v-for="user in users"
                  :key="id + user.number"
-                 :style="{backgroundColor: isActive(user.number) ? '#6366F1' : ''}"
-                 v-badge="imageMode ? user.number : null"
+                 :style="
+                     {
+                       backgroundColor: isActive(user.number) ? '#6366F1' : '',
+                       opacity: isDisabled(user.number) ? 0.15 : 1,
+                     }
+                  "
+                 v-badge="
+                   imageMode
+                      ? user.number
+                      : null
+                 "
                  size="large"
-                 :label="!imageMode && user.number"
+                 :label="!imageMode && isDisabled(user.number) ? 'Disb' : user.number"
                  :image="imageMode ? user.ava : null"
                  @click="toggleActive(user.number)"
       >
       </vs-avatar>
+
     </div>
     <Button @click="emitReady">
       Подтвердить
@@ -25,13 +35,17 @@
 <script>
 export default {
   name: 'ChooseUser',
-  props: ['users', 'id', 'multi', 'title', 'imageMode'],
+  props: ['users', 'id', 'multi', 'title', 'imageMode', 'disabled'],
   data() {
     return {
-      active: []
+      active: [],
+      disabledArr: this.disabled || []
     }
   },
   methods: {
+    isDisabled(number){
+      return  this.disabledArr.includes(number)
+    },
     isActive(number) {
       return this.active.includes(number);
     },

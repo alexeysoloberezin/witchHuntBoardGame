@@ -1,11 +1,10 @@
 <template>
   <div id="app" class="theme-dark">
+    <img :src="img" class="app_bg" alt="">
     <router-view />
   </div>
 </template>
 
-<script>
-export default {
-  name: "app",
-};
+<script setup>
+import img from './assets/fon.jpg'
 </script>

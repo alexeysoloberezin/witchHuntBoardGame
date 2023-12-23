@@ -173,6 +173,7 @@
                 <ChooseUser
                     :users="users.filter(el => !el.killed)"
                     :multi="true"
+                    :disabled="blockHeal"
                     @update:clickReady="(ids) => angelChoose(ids)"
                     :id="'angel-choose'"
                 />
