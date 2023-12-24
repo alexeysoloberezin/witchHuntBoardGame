@@ -15,11 +15,12 @@ export const arrayStartGameTakeCards = (playersLength, players) => {
   const arr = []
   for (let i = 1; i < playersLength + 1; i++) {
     const find = players[i]
+    console.log('find', find?.type)
     arr.push({
       id: i,
       title: `Посыпается Игрок ${i}`,
       text: `${find?.name || ''} -- ${find?.type || ''}`,
-      isGood: find?.type === 'mir',
+      isGood: find?.type,
       role: find?.name,
       type: 'night',
     })

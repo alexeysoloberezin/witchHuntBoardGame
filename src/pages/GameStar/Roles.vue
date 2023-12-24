@@ -19,7 +19,7 @@ import cards from "@/store/cards";
 const route = useRoute()
 const getInfo = computed(() => {
   const role = route?.query?.role
-  const isGood = route?.query?.isGood === 'mir'
+  const isGood = route?.query?.isGood.trim() === 'mir'
 
   if(!role){
     return null
