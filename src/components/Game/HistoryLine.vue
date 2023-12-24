@@ -42,7 +42,7 @@
                 <Button outlined size="small" class="ml-4">QR code карт</Button>
                 <vs-dialog modal :visible="showLinkQr" @update:visible="(v) => {showLinkQr = v;activeQrLink=null}">
                   <template #header>
-                    <router-link v-if="activeQrLink" :to="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
+                    <router-link v-if="activeQrLink" :to="`/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
                       <h4  class="not-margin text-white">
                         <VueQrcode :value="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`" :size="320" />
                       </h4>
