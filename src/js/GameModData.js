@@ -19,7 +19,7 @@ export const arrayStartGameTakeCards = (playersLength, players) => {
       id: i,
       title: `Посыпается Игрок ${i}`,
       text: `${find?.name || ''} -- ${find?.type || ''}`,
-      isGood: find.type === 'mir',
+      isGood: find?.type === 'mir',
       role: find?.name,
       type: 'night',
     })
