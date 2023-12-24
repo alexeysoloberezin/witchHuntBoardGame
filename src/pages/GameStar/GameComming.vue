@@ -63,6 +63,8 @@
       >
         Рандомная расдача
       </Button>
+    </div>
+    <div>
       <Button
           outlined
           @click="clear"
