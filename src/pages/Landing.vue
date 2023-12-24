@@ -31,12 +31,6 @@
               </div>
             </div>
             <div class="hidden md:flex items-center justify-center">
-              <a
-                v-if="auth"
-                href="#"
-                class="mr-5 text-lg font-medium text-true-gray-800 dark:text-gray-100 hover:text-cool-gray-700 transition duration-150 ease-in-out"
-                >{{ username }}</a
-              >
               <router-link
                 :to="{ path: '/main/home/' }"
                 class="px-6 py-3 rounded-3xl font-medium bg-gradient-to-b from-red-600 to-red-700 hover:from-red-900 text-white outline-none focus:outline-none hover:shadow-md hover:from-true-gray-900 transition duration-200 ease-in-out"
@@ -80,36 +74,8 @@
 </template>
 
 <script>
-import queryString from "@/utils/queryString";
-import config from "@/config";
-
 export default {
   name: "Landing",
-  computed: {
-
-    state() {
-      return btoa(this.stateParam);
-    },
-    username() {
-      return this.user
-        ? `${this.user.username}#${this.user.discriminator}`
-        : "Anonymous";
-    },
-    loginUrl() {
-      const loginParams = {
-        client_id: config.clientId,
-        redirect_uri: config.home,
-        response_type: "token",
-        scope: "identify guilds",
-        state: this.state,
-      };
-      return `${config.discordApi}/oauth2/authorize${queryString(loginParams)}`;
-    },
-  },
-  data() {
-    return {
-      botUrl: `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&permissions=268438560&scope=bot`,
-    };
-  },
+  computed: {},
 };
 </script>

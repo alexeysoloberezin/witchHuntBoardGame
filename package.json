@@ -7,6 +7,7 @@
     "dev:prod": "vite --mode prod",
     "dev": "vite --mode dev",
     "build": "vite build",
+    "test": "vitest",
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
     "list_fix": "eslint --fix src"
@@ -16,6 +17,7 @@
     "axios": "^1.6.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
+    "happy-dom": "^12.10.3",
     "pinia": "^2.1.7",
     "primeflex": "^3.3.1",
     "primevue": "^3.43.0",
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "@tailwindcss/custom-forms": "^0.2.1",
+    "@testing-library/vue": "^8.0.1",
     "@vitejs/plugin-vue": "^4.5.0",
     "@vue/cli-plugin-pwa": "^4.5.9",
     "@vue/cli-service": "^4.2.0",
@@ -45,6 +48,7 @@
     "tailwindcss": "^1.9.6",
     "tailwindcss-multi-theme": "^1.0.4",
     "vite": "^5.0.0",
+    "vitest": "^1.1.0",
     "vue-template-compiler": "^2.6.11"
   }
 }

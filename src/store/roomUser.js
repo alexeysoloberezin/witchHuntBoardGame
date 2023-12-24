@@ -1,7 +1,7 @@
 import {computed, ref} from "vue";
 import {defineStore} from "pinia";
-import {useStorage} from "@vueuse/core";
 import {useRoomsStore} from "@/store/rooms";
+
 
 export const useRoomUserStore = defineStore('roomUser', () => {
   const user = ref(null)
@@ -11,11 +11,11 @@ export const useRoomUserStore = defineStore('roomUser', () => {
   const loading = ref(false)
 
   const userInRoom = computed(() => {
-    if (!user.value?.userName || !clients.value.length) {
+    if (!user.value?.clientId || !clients.value.length) {
       return false
     }
 
-    const res = clients.value.find(client => client.name === user.value?.userName)
+    const res = clients.value.find(client => client.id === user.value?.clientId)
 
     return res || false
   })

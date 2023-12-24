@@ -68,7 +68,6 @@ const roomsStore = useRoomsStore()
 const socket = computed(() => roomsStore.$state.socket);
 
 const requireConfirmation = (clientId) => {
-  console.log('clientID', clientId)
   startTimer()
   confirm.require({
     group: 'headless',
@@ -92,7 +91,6 @@ onBeforeUnmount(() => {
 useSocketListener(
     'checkConnection',
     ({clientId}) => {
-      console.log('checkConnection', clientId)
       requireConfirmation(clientId);
     }
 )

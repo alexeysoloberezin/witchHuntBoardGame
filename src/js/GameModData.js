@@ -1,6 +1,7 @@
 import {getByNames, names} from "@/store/cards";
 import GameMod from "@/js/GameMod";
 import {logType} from "@/js/types";
+import {getWatchManList} from "@/js/modules/watchManList";
 
 export const dayPersonWhoHaveSkills = [
   names.Assassin,
@@ -10,10 +11,6 @@ export const dayPersonWhoHaveSkills = [
   names["Loose Cannon"],
 ]
 
-export const GET_dayPersonWhoHaveSkills = () => {
-  return getByNames(dayPersonWhoHaveSkills)
-}
-
 export const arrayStartGameTakeCards = (playersLength, players) => {
   const arr = []
   for (let i = 1; i < playersLength + 1; i++) {
@@ -22,6 +19,8 @@ export const arrayStartGameTakeCards = (playersLength, players) => {
       id: i,
       title: `Посыпается Игрок ${i}`,
       text: `${find?.name || ''} -- ${find?.type || ''}`,
+      isGood: find.type === 'mir',
+      role: find?.name,
       type: 'night',
     })
   }
@@ -330,26 +329,5 @@ export const voted = (prevId) => ([
   },
 ])
 
-const watchmanList = [
-  names['Nurse'],
-  names['Survivalist'],
-  names['Judge'],
-  names['Hunter'],
-  names['Assassin'],
-  names['Gravedigger'],
-  names['Benevolent Old Dame'],
-  names['Peeping Tom'],
-  names['Inquisitor'],
-  names['Loose Cannon'],
-  names['Fanatic'],
-  names['Emissary'],
-  names['(D.O.B.) Dirty Old Bastard'],
-]
-const watchmanListEnd = (playersList) => {
-  let res;
 
-  res = playersList.filter(player => watchmanList.includes(player.name))
-  res = res.filter(player => !!player.isGood)
-
-  return res.map(el => el.number).join(' , ')
-}
+export const watchmanListEnd = (playersList) => getWatchManList(playersList)

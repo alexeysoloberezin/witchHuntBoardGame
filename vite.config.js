@@ -14,4 +14,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // Укажите путь к вашей папке src
     },
   },
+  test: {
+    global: true,
+    environment: "happy-dom"
+  }
 })

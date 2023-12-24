@@ -35,6 +35,23 @@
               <div v-if="!isActive(el.id) && showPointer" class="ml-4">
                 <IconPointer/>
               </div>
+              <div v-if="witchQr" @click.stop.prevent="() => {
+                showLinkQr = true;
+                activeQrLink = el
+              }">
+                <Button outlined size="small" class="ml-4">QR code карт</Button>
+                <vs-dialog modal :visible="showLinkQr" @update:visible="(v) => {showLinkQr = v;activeQrLink=null}">
+                  <template #header>
+<!--                    https://witch-hunt-board-game-opad.vercel.app-->
+                    <router-link :to="`/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
+                      <h4 v-if="activeQrLink" class="not-margin text-white">
+                        <VueQrcode :value="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`" :size="320" />
+                      </h4>
+                    </router-link>
+
+                  </template>
+                </vs-dialog>
+              </div>
             </div>
 
             <div v-if="el.id === activeStep" class="pl-8 ml-1">
@@ -228,12 +245,18 @@ import {toast} from 'vue3-toastify'
 import imgCard2 from '@/assets/cards/v2.png'
 import imgCard7 from '@/assets/cards/v7.png'
 import ToggleAccord from "@/components/ToggleAccord.vue";
+import VueQrcode from 'qrcode.vue';
+import {computed} from "vue";
+
 
 export default {
   name: "HistoryLine",
-  components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus},
-  props: ['array', 'active', 'showPointer', 'hunterList', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
+  components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus, VueQrcode},
+  props: ['array', 'active', 'showPointer','witchQr', 'hunterList', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
   computed: {
+    thisLink() {
+      return window.location.href
+    },
     hunterWakeUpInThisNight() {
       const hunter = this.hunter
 
@@ -281,6 +304,8 @@ export default {
 
   data() {
     return {
+      showLinkQr: false,
+      activeQrLink: null,
       imgs: {
         'imgCard7': imgCard7,
         'imgCard2': imgCard2
@@ -465,7 +490,6 @@ export default {
       return ''
     },
     isActiveStep(id) {
-      console.log('id === this.activeStep', id === this.activeStep, this.activeStep)
       return id === this.activeStep
     },
     setGamblerChoose(choose) {

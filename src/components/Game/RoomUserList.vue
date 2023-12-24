@@ -46,7 +46,7 @@ const verifyConnections = () => {
         </transition-group>
       </div>
 
-      <Button outlined size="small" class="mb-4" @click="verifyConnections">Проверить подключения!</Button>
+      <Button v-if="users.length" outlined size="small" class="mb-4" @click="verifyConnections">Проверить подключения!</Button>
 
 
       <ConfirmDialog />

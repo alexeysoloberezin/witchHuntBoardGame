@@ -4,10 +4,12 @@ import {defineStore} from "pinia";
 import {useRoute, useRouter} from "vue-router";
 import {useRoomUserStore} from "@/store/roomUser";
 import {toast} from "vue3-toastify";
+import {useLocalStorage} from "@vueuse/core/index";
 
 export const useRoomsStore = defineStore('rooms', () => {
   const socketUrl = computed(() => import.meta.env.VITE_WS_SERVER)
   const socketPORT = computed(() => import.meta.env.VITE_WS_PORT || '')
+  const userClientHistory = useLocalStorage('userClientHistory', [])
 
   const socket = ref(null);
   const rooms = ref([]);
@@ -19,13 +21,14 @@ export const useRoomsStore = defineStore('rooms', () => {
   const loading = ref(false)
   const roomUserStore = useRoomUserStore()
 
+
+
   const createConnection = async () => {
-    console.log(socketUrl.value + socketPORT.value)
     socket.value = await io(socketUrl.value + socketPORT.value);
 
     socket.value.on('connect', () => {
       isActive.value = true
-      console.log(socket.value.id)
+      hashClearUsers()
     });
 
     socket.value.on('globalRoomChange', (data) => {
@@ -72,6 +75,17 @@ export const useRoomsStore = defineStore('rooms', () => {
     getClients(route.params?.id)
   }
 
+  const hashClearUsers = () => {
+    userClientHistory.value.forEach(user => {
+      leaveFromAllRooms(user)
+    })
+    userClientHistory.value = []
+  }
+
+  const leaveFromAllRooms = (user) => {
+    socket.value?.emit('leaveFromAllRooms', user)
+  }
+
   const deleteAllRooms = () => {
     socket.value?.emit('deleteAllRooms', () => {
       rooms.value = []
@@ -111,16 +125,18 @@ export const useRoomsStore = defineStore('rooms', () => {
 
     try {
       socket.value?.emit('joinRoom', {roomId, subtitle, userName}, (data) => {
-        console.log('data', data)
         if (userName === data.userName) {
+          const user =  {
+            userName,
+            subtitle,
+            clientId: data.clientId
+          }
+
           roomUserStore.$patch({
-            user: {
-              userName,
-              subtitle,
-              clientId: data.clientId
-            },
+            user,
             loading: false
           })
+          userClientHistory.value = [...userClientHistory.value, user]
         }
         router.push('/GameRoom/room/' + roomId)
       });
@@ -138,6 +154,7 @@ export const useRoomsStore = defineStore('rooms', () => {
   return {
     socket,
     isActive,
+    userClientHistory,
     rooms,
     clients,
     confirmations,

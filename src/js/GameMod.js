@@ -1,7 +1,9 @@
 import cards, {names} from "@/store/cards";
 import {toast} from 'vue3-toastify'
+import {GameModPlayers} from "@/js/GameModModules/GameModPlayers";
+import GameModRandomStart from "@/js/GameModModules/GameModRandomStart";
 
-class GameMod {
+class GameMod extends GameModPlayers{
   setInGlobalLog(message) {
     let res = localStorage.getItem('logList')
     if (res) {
@@ -25,19 +27,6 @@ class GameMod {
     }
 
     return res;
-  }
-
-  gamblerChoose(players, choose) {
-    return players.map(el => {
-      if (el.name === names.Gambler) {
-        return {
-          ...el,
-          gamblerChoose: choose
-        }
-      } else {
-        return el
-      }
-    })
   }
 
   getNumberFromText(text, type) {
@@ -72,66 +61,8 @@ class GameMod {
     return witches
   }
 
-  shuffleRoles(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-
-  generateRandomRoles(arr, witchCount) {
-    const copyArr = [...arr]
-    return copyArr.filter(role => role !== 'Священник').slice(0, witchCount)
-  }
-
-  makeRandomRoles(roles, witchCount) {
-    const shuffledRoles = [...roles];
-    this.shuffleRoles(shuffledRoles);
-
-    const witchRoles = this.generateRandomRoles(shuffledRoles, witchCount)
-
-    this.shuffleRoles(shuffledRoles);
-
-    const res = {};
-
-    shuffledRoles.forEach((role, i) => {
-      res[i + 1] = {
-        type: witchRoles.includes(role) ? 'witch' : 'mir',
-        name: role
-      };
-    });
-
-    return res;
-  }
-
-  priestShield(nightVal){
-    const find = this.playersRoles.find(player => player.name === names.Priest)
-    if (find) {
-      if(nightVal === 0){
-        find.shield = find.shield + 1
-      }
-    }
-  }
-
-  gamblerShield(nightVal) {
-    const find = this.playersRoles.find(player => player.name === names.Gambler)
-    if (find) {
-      if (find.killed) {
-        return null;
-      }
-      if (this.gamblerHaveShield(find.gamblerChoose, nightVal)) {
-        find.shield = find.shield + 1
-      }
-    }
-  }
-
-  gamblerHaveShield(choose, nightVal) {
-    if (choose === 'четные') {
-      return nightVal % 2 !== 0;
-    } else if (choose === 'нечетные') {
-      return nightVal % 2 === 0;
-    }
-    return false
+  makeRandomRoles(...args) {
+    return GameModRandomStart.makeRandomRoles(...args)
   }
 
   filterStepsPolesInGame(array, roles) {
@@ -142,31 +73,6 @@ class GameMod {
         return roles.includes(el.name)
       }
     })
-  }
-
-  getNightWelcomePerson(playersRoles, step, nightStepsWelcome) {
-    const person = nightStepsWelcome[step]
-
-    if (person?.name === names.Apprentice) {
-      const roles = Object.values(playersRoles)
-
-      let gravedigger, judge;
-
-      roles.forEach(role => {
-        if (role.name === names.Gravedigger) {
-          gravedigger = role.number
-        } else if (role.name === names.Judge) {
-          judge = role.number
-        }
-      })
-
-      return {
-        ...person,
-        text: person.text(gravedigger, judge)
-      }
-    }
-
-    return nightStepsWelcome[step]
   }
 }
 

@@ -20,9 +20,9 @@
               :cardTypes="cardTypes"
               :shields="playersRoles[i].shield"
               :hearts="playersRoles[i].heart"
-              @update:shieldPlus="playersRoles[i].shield++;saveAll();setInGlobalLog('Добавлена броня Игрока: ' + i)"
+              @update:shieldPlus="playersRoles[i].shield++;saveAll();"
               @update:shieldMinus="playersRoles[i].shield--;saveAll();handlerWithShieldOrHeart(i)"
-              @update:heartPlus="playersRoles[i].heart++;saveAll();setInGlobalLog('Добавлена жизнь Игроку: ' + i)"
+              @update:heartPlus="playersRoles[i].heart++;saveAll();"
               @update:heartMinus="playersRoles[i].heart--;saveAll();handlerWithShieldOrHeart(i)"
               @update:clickOnSkeleton="action(i)"
               @update:foll="makeFoll"
@@ -158,7 +158,6 @@
       Показать роли
     </Button>
     <br><br><br><br><br><br><br><br><br><br>
-
   </div>
 </template>
 
@@ -166,14 +165,16 @@
 import {getByNames, names} from "@/store/cards";
 import types, {logType} from "@/js/types";
 import CardPlayer from "@/components/CardPlayer.vue";
-import resetGame from "@/js/utils";
+import resetGame, {scrollTo} from "@/js/utils";
 import CardSafe from "@/components/Card.vue";
 import GameMod from "@/js/GameMod";
 import {firstStep, generate, historyLineData} from "@/js/GameModData";
 import HistoryLine from "@/components/Game/HistoryLine.vue";
 import Timer from "@/components/Timer.vue";
 import DaySkillModal from "@/components/DaySkillsModal.vue";
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
+import GameModWitchKill from "@/js/GameModModules/GameModWitchKill";
+import {saveGameData} from "@/js/GameModModules/GameModCore";
 
 export default {
   name: "Game",
@@ -204,7 +205,7 @@ export default {
     }
   },
   computed: {
-    hunterList(){
+    hunterList() {
       return this.dayLog.filter(el => el.type === logType.tryKill)
     },
     showRolesCards() {
@@ -227,13 +228,7 @@ export default {
       this.detailMode = !this.detailMode
 
       if (this.detailMode) {
-        setTimeout(() => {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 200)
+        scrollTo(0, 200)
       }
     },
     changeHistoryItem(id) {
@@ -253,18 +248,18 @@ export default {
       }
     },
     hunterKill(id) {
-      if(!id){
-        toast.error('Не корректный id')
+      if (!id) {
+        return toast.error('Не корректный id')
       }
 
       const index = this.playersRoles.findIndex(el => el.number == id);
 
-      if (index !== -1) {
-        this.action(index, 'kill')
-        this.setNextActive()
-      } else {
-        console.log('not found', id)
+      if (index === -1) {
+        return console.log('not found', id)
       }
+
+      this.action(index, 'kill')
+      this.setNextActive()
     },
     witchFakeKill(id) {
       if (!id) {
@@ -282,79 +277,14 @@ export default {
       )
     },
     showPriestCheck(ids) {
-      const fanatic = this.playersRoles.find(el => el.name === names.Fanatic)
-      if (fanatic) {
-        fanatic.fanaticCheck = 0
-      }
-
-      const id = ids[0]
-      const find = this.playersRoles.find(el => el.number === id)
-      let checkUser = [find]
-
-      if (find.chain === true) {
-        checkUser = this.playersRoles.filter(el => (el.chain && el.number !== id))
-      }
-
-      const res = !checkUser[0].isGood ? 'Ведьма' : 'Мирный'
-      const isFanatic = find.name === names.Fanatic
-
-      if (isFanatic) {
-
-        const fanatic = this.playersRoles.find(el => el.name === names.Fanatic)
-        fanatic.heart = fanatic.heart + 1
-        fanatic.fanaticCheck = fanatic.fanaticCheck + 1
-        this.refreshList()
-      }
-
+      const res = GameMod.showPriestCheck(this.playersRoles, ids, this.refreshList, this.setNextActive)
       alert(res)
-
-      this.setNextActive()
     },
     witchKill(ids) {
-      if (ids.length === 0 || !Array.isArray(ids)) {
-        toast.error('Не полные данные для защиты..')
-        return;
-      }
-
-      if (ids.length > 2) {
-        toast.error('Ведьмы не могут убивать больше 2')
-        return;
-      }
-
-      ids.forEach(id => {
-        const index = this.playersRoles.findIndex(el => el.number === id);
-        this.action(index, 'kill')
-      })
+      GameModWitchKill.apply(this, [ids, this.playersRoles, (index) => this.action(index, 'kill')])
     },
     angelChoose(ids) {
-      if (ids.length === 0 || !Array.isArray(ids)) {
-        toast.error('Не полные данные защиты ангелов..')
-        return;
-      }
-
-      ids.forEach(id => {
-        const find = this.playersRoles.find(el => el.number === id);
-
-        const isBlock = this.blockHeal.indexOf(find.number)
-
-        if (isBlock !== -1) {
-          toast.success(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
-            duration: 6000,
-          })
-          return null;
-        }
-
-        if (find.chain) {
-          this.blockHeal.push(find.number)
-        }
-
-        toast.success(`Защитна ангелов установлена на: ${id}`, {
-          duration: 2000,
-        })
-        find.shield = find.shield + 1
-      })
-
-      this.setNextActive()
+      GameMod.angelChoose(ids, this.playersRoles, this.blockHeal, this.setNextActive)
     },
     demonChoose(ids) {
       this.playersRoles.forEach(el => {
@@ -475,7 +405,7 @@ export default {
       GameMod.gamblerShield.apply(this, [this.countNight])
     },
     priestShield() {
-      GameMod.priestShield.apply(this, [this.countNight])
+       GameMod.priestShield.apply(this, [this.countNight])
     },
 
     makeFoll(index) {
@@ -485,16 +415,13 @@ export default {
         find.foll = 0
       } else {
         find.foll = find.foll + 1
-        toast.success('Фол Игроку: ' + index +  `. У вас ${find.foll} фола`)
+        toast.success('Фол Игроку: ' + index + `. У вас ${find.foll} фола`)
       }
 
       this.saveAll()
     },
     handlerResetGame() {
       resetGame()
-    },
-    setInGlobalLog(message) {
-      GameMod.setInGlobalLog(message)
     },
     handlerWithShieldOrHeart(index) {
       this.setTryKillLog(index)
@@ -505,7 +432,6 @@ export default {
     setGamblerChoose(choose) {
       this.playersRoles = GameMod.gamblerChoose(this.playersRoles, choose)
       this.gamblerChooseClosed = true
-      this.setInGlobalLog('Гамблер (Азартный игрок выбирает): ' + choose + ' ночи')
     },
     startNight() {
       this.gamblerShield()
@@ -545,46 +471,45 @@ export default {
       }
       this.panelAction = action
     },
-    setKillLog(indexPlayer, inNextLog = false){
+    setKillLog(indexPlayer, inNextLog = false) {
       if (this.isNight) {
         this.nightHistory.push({
           player: this.playersRoles[indexPlayer].number,
           type: logType.kill,
           inNextLog
         })
-        this.setInGlobalLog('Убийство Игрока: ' + indexPlayer)
       } else {
         this.dayLog.push({
           player: this.playersRoles[indexPlayer].number,
           type: logType.dayKill,
           inNextLog
         })
-        this.setInGlobalLog('Казнь Игрока: ' + indexPlayer)
       }
     },
-    setTryKillLog(indexPlayer){
+    setTryKillLog(indexPlayer) {
       if (this.isNight) {
         this.nightHistory.push({
           player: this.playersRoles[indexPlayer].number,
           type: logType.tryKill
         })
-      }else{
-        this.dayLog.push({
-          player: this.playersRoles[indexPlayer].number,
-          type: logType.tryKill
-        })
+        return;
       }
+
+      this.dayLog.push({
+        player: this.playersRoles[indexPlayer].number,
+        type: logType.tryKill
+      })
     },
     action(indexPlayer, type) {
       const typeAction = type || this.panelAction
+      const PLAYER = this.playersRoles[indexPlayer]
 
       if (typeAction === 'kill' || typeAction === 'goodKill') {
-        if (this.playersRoles[indexPlayer].name === names.Emissary && this.nightVal <= 3) {
-          toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
-          this.setInGlobalLog('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+        if (PLAYER.name === names.Emissary && this.nightVal <= 3) {
+          toast.success('Попытка убийства Игрока: ' + PLAYER.number)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
-            id: this.playersRoles[indexPlayer].number
+            id: PLAYER.number
           }])
           this.setTryKillLog(indexPlayer)
           this.saveAll()
@@ -592,8 +517,8 @@ export default {
         }
 
         const kill = (inNextLog) => {
-          this.playersRoles[indexPlayer].killed = !this.playersRoles[indexPlayer].killed
-          toast.success('Игрок: ' + this.playersRoles[indexPlayer].number + ' убит')
+          PLAYER.killed = !PLAYER.killed
+          toast.success('Игрок: ' + PLAYER.number + ' убит')
 
           this.setKillLog(indexPlayer, inNextLog)
           this.refreshList()
@@ -604,40 +529,33 @@ export default {
           return;
         }
 
-        if ((this.playersRoles[indexPlayer].heart > 1 || this.playersRoles[indexPlayer].shield > 0) && !this.playersRoles[indexPlayer].killed) {
-          if (this.playersRoles[indexPlayer].shield > 0) {
-            this.playersRoles[indexPlayer].shield = this.playersRoles[indexPlayer].shield - 1
+        if ((PLAYER.heart > 1 || PLAYER.shield > 0) && !PLAYER.killed) {
+          if (PLAYER.shield > 0) {
+            PLAYER.shield = PLAYER.shield - 1
           } else {
-            this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart - 1
+            PLAYER.heart = PLAYER.heart - 1
           }
-          toast.success('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
+          toast.success('Попытка убийства Игрока: ' + PLAYER.number)
           this.setTryKillLog(indexPlayer)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
-            id: this.playersRoles[indexPlayer].number
+            id: PLAYER.number
           }])
-          this.setInGlobalLog('Попытка убийства Игрока: ' + this.playersRoles[indexPlayer].number)
         } else {
           kill();
         }
       } else if (typeAction === 'fakeKill') {
-        // this.handlerWithShieldOrHeart(indexPlayer)
-        this.setInGlobalLog('Фейковое Убийство Игрока: ' + indexPlayer)
-
-        this.playersRoles[indexPlayer].fakeKill = !this.playersRoles[indexPlayer].fakeKill
+        PLAYER.fakeKill = !PLAYER.fakeKill
         this.setTryKillLog(indexPlayer)
 
       } else if (typeAction === 'makeWitch') {
-        this.playersRoles[indexPlayer].isGood = !this.playersRoles[indexPlayer].isGood
-        this.setInGlobalLog('Выбрана ведьма: ' + indexPlayer)
+        PLAYER.isGood = !PLAYER.isGood
         return
       } else if (typeAction === 'chain') {
-        this.playersRoles[indexPlayer].chain = !this.playersRoles[indexPlayer].chain
-        this.setInGlobalLog('Выбрана связь: ' + indexPlayer)
+        PLAYER.chain = !PLAYER.chain
         return;
       } else if (typeAction === 'addHeart') {
-        this.playersRoles[indexPlayer].heart = this.playersRoles[indexPlayer].heart + 1
-        this.setInGlobalLog('Добавлена жизнь: ' + indexPlayer)
+        PLAYER.heart = PLAYER.heart + 1
         toast.success('Добавлена жизнь: ' + indexPlayer + ' Игроку')
         return;
       }
@@ -646,23 +564,22 @@ export default {
       this.saveAll()
     },
     saveAll() {
-      const dataToSave = {
-        panelAction: this.panelAction,
-        isNight: this.isNight,
-        nightVal: this.nightVal,
-        detailMode: this.detailMode,
-        countNight: this.countNight,
-        blockHeal: this.blockHeal,
-        log: this.log,
-        activeStep: this.activeStep,
-        nightHistory: this.nightHistory,
-        dayLog: this.dayLog,
-        activeNightStep: this.activeNightStep,
-        gamblerChooseClosed: this.gamblerChooseClosed
-      };
-
-      localStorage.setItem('saveGame_all', JSON.stringify(dataToSave));
-      localStorage.setItem('saveGame', JSON.stringify(this.playersRoles))
+      saveGameData({
+            panelAction: this.panelAction,
+            isNight: this.isNight,
+            nightVal: this.nightVal,
+            detailMode: this.detailMode,
+            countNight: this.countNight,
+            blockHeal: this.blockHeal,
+            log: this.log,
+            activeStep: this.activeStep,
+            nightHistory: this.nightHistory,
+            dayLog: this.dayLog,
+            activeNightStep: this.activeNightStep,
+            gamblerChooseClosed: this.gamblerChooseClosed
+          },
+          this.playersRoles
+      )
     },
     loadData() {
       const savedData = localStorage.getItem('saveGame_all');

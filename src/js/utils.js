@@ -4,13 +4,16 @@ const resetGame = () => {
     clearInterval(i);
   }
   localStorage.clear()
+}
 
-  // localStorage.removeItem('playersRoles')
-  // localStorage.removeItem('gameRoles')
-  // localStorage.removeItem('saveGame')
-  // localStorage.removeItem('logList')
-  // localStorage.removeItem('votedListItems')
-  // localStorage.removeItem('saveGame_all')
+export const scrollTo = (position = 0, after = 0) => {
+  setTimeout(() => {
+    window.scrollTo({
+      top: position,
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, after)
 }
 
 export default resetGame

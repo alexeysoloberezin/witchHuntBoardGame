@@ -12,9 +12,11 @@ const GameCreateRoom  = () => import('@/pages/GameStar/rooms/GameCreateRoom.vue'
 const GameConnectInRoom  = () => import('@/pages/GameStar/rooms/GameConnectInRoom.vue')
 const GameRoom  = () => import('@/pages/GameStar/rooms/GameRoom.vue')
 const GameRooms  = () => import('@/pages/GameStar/rooms/GameRooms.vue')
+const Roles  = () => import('@/pages/GameStar/Roles.vue')
 
 export default [
   {path: '/', name: 'Homepage', component: Landing},
+  {path: '/Roles', name: 'Roles', component: Roles},
   {
     path: '/main',
     component: Dashboard,
