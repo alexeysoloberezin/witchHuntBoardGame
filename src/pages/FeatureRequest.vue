@@ -55,7 +55,7 @@
 
 <script>
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
-import config from "@/config";
+import config from "@/config.ts";
 import fetch from "@/utils/fetch";
 import queryString from "@/utils/queryString";
 

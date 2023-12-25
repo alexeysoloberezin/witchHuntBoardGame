@@ -21,8 +21,6 @@ export const useRoomsStore = defineStore('rooms', () => {
   const loading = ref(false)
   const roomUserStore = useRoomUserStore()
 
-
-
   const createConnection = async () => {
     socket.value = await io(socketUrl.value + socketPORT.value);
 

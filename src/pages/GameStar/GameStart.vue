@@ -56,8 +56,8 @@
 </template>
 
 <script >
-import cards from "@/store/cards";
-import resetGame from "@/js/utils";
+import cards from "@/store/cards.ts";
+import resetGame from "@/js/utils.ts";
 import Button from 'primevue/button';
 const defRoles = [
   "Священник",

@@ -31,10 +31,10 @@ test('makeRandomRoles function generates random roles with types "witch" and "mi
 
   expect(Object.keys(result).length).toEqual(roles.length);
 
-  Object.values(result).forEach(role => {
-    expect(role.type).toMatch(/witch|mir/);
+  Object.values(result).forEach((role: any) => {
+    expect(role?.type).toMatch(/witch|mir/);
   });
 
-  const witchRolesCount = Object.values(result).filter(role => role.type === 'witch').length;
+  const witchRolesCount = Object.values(result).filter((role: any) => role?.type === 'witch').length;
   expect(witchRolesCount).toEqual(witchCount);
 });

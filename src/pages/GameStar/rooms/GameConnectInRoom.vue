@@ -3,7 +3,7 @@ import {Form} from 'vee-validate';
 import * as yup from 'yup';
 import {useRoute, useRouter} from "vue-router";
 import FormInput from "@/components/FormInput.vue";
-import {useRoomUserStore} from "@/store/roomUser";
+import {useRoomUserStore} from "@/store/roomUser.ts";
 import {computed, onMounted, ref} from "vue";
 import {useRoomsStore} from "@/store/rooms";
 

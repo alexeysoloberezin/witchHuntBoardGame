@@ -328,7 +328,7 @@ import { mapState, mapGetters } from "vuex";
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import Modal from "@/components/Modal.vue";
 
-import config from "@/config";
+import config from "@/config.ts";
 import fetch from "@/utils/fetch";
 import queryString from "@/utils/queryString";
 

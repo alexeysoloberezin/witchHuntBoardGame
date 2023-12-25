@@ -1,4 +1,4 @@
-const types = {
+const types: Record<string, string> = {
   'info': 'Информация',
   'attack': 'Атака',
   'holy': 'Святость',
@@ -11,7 +11,7 @@ import im2 from '../assets/roles/Group 65.png'
 import im3 from '../assets/roles/Group 68.png'
 import im4 from '../assets/roles/Group 66.png'
 
-export const roles = {
+export const roles: Record<string, string> = {
   'info': im1,
   'attack':im2,
   'holy': im3,
@@ -19,7 +19,7 @@ export const roles = {
   'attack|info': null
 }
 
-export const logType = {
+export const logType: Record<string, string> = {
   'tryKill': "Попытка убийства",
   'dayKill': "Казнь",
   'kill': "Убийство",

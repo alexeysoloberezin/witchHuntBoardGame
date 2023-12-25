@@ -10,11 +10,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "CardSafe",
-  props: ['card', 'hideImage', 'detail']
-}
+<script setup lang="ts">
+import {Card} from "@/store/cards.types";
+
+const props = defineProps<{
+  card: Card,
+  hideImage: boolean,
+  detail: boolean
+}>()
+
 </script>
 
 <style >

@@ -60,7 +60,7 @@ import { mapGetters } from "vuex";
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import Command from "@/components/Command.vue";
 
-import config from "@/config";
+import config from "@/config.ts";
 import fetch from "@/utils/fetch";
 
 export default {

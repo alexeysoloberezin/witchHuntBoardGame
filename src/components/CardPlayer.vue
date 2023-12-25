@@ -39,8 +39,8 @@
                   card.number
                 }}:</span>
             <div class="flex items-center">
-            <Folls :folls="card.foll" :card-number="card.number" :key-id="'cardPlayer'"/>
-            <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
+              <Folls :folls="card.foll" :card-number="card.number" :key-id="'cardPlayer'"/>
+              <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
               <svg style="width: 17px;margin-right: -4px;margin-top: -2px" fill="rgb(255,71,87)"
                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exclamation-thick</title><path
                   d="M10 3H14V14H10V3M10 21V17H14V21H10Z"/></svg>
@@ -114,7 +114,7 @@
       </div>
 
       <div v-if="panelAction" class="absolute top-0 left-0 h-full w-full" @click="handleClickOnSkeleton(index)">
-        <Skeleton />
+        <Skeleton/>
       </div>
     </div>
 
@@ -139,123 +139,127 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import HearIcon from "@/components/HearIcon.vue";
 import Skeleton from "@/components/Skeleton.vue";
 import ShieldIcon from "@/components/ShieldIcon.vue";
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
 import Folls from "@/components/Folls.vue";
+import {computed, Ref, ref} from "vue";
+import {PlayerRole} from "@/globalTypes";
 
-export default {
-  name: 'CardPlayer',
-  components: {Folls, HearIcon, Skeleton, ShieldIcon},
-  props: {
-    panelAction: String,
-    gamblerHaveShield: Boolean,
-    index: Number,
-    isNight: Boolean,
-    hearts: Number,
-    shields: Number,
-    card: Object,
-    cardTypes: [Array, Object],
-  },
-  data() {
-    return {
-      touchMove: {
-        x: 0,
-        xStart: 0,
-        y: 0,
-        yStart: 0
-      },
-      activeTouch: false,
-      timer: null
+const props = defineProps<{
+  panelAction: string;
+  gamblerHaveShield: boolean;
+  index: number;
+  isNight: boolean;
+  hearts: number;
+  shields: number;
+  card: PlayerRole;
+  cardTypes: Array<any> | object;
+}>();
+
+const touchMove = ref({
+  x: 0,
+  xStart: 0,
+  y: 0,
+  yStart: 0
+})
+const activeTouch = ref(false)
+const timer: Ref<NodeJS.Timeout | null> = ref(null);
+
+const disableTouch = computed(() => props.card.killed || !activeTouch.value)
+const movingParams = computed(() => {
+  if (disableTouch.value) {
+    return 'translateX(0px)'
+  }
+
+  const position = touchMove.value.x - touchMove.value.xStart
+
+  if (position > 100) {
+    return `translateX(100px)`
+  } else if (position < -100) {
+    return `translateX(-100px)`
+  } else {
+    return `translateX(${touchMove.value.x - touchMove.value.xStart}px)`
+  }
+})
+
+
+function tapHandler() {
+  activeTouch.value = true
+  timer.value = setTimeout(() => {
+    activeTouch.value = false
+  }, 3500)
+}
+
+function movedHandler() {
+  if (disableTouch.value) {
+    return null;
+  }
+
+  const position = touchMove.value.x - touchMove.value.xStart
+  if (position > 85) {
+    const votedListItems = new Set(JSON.parse(localStorage.getItem('votedListItems')) || []);
+
+    if (!votedListItems.has(this.card.number)) {
+      votedListItems.add(this.card.number);
+      localStorage.setItem('votedListItems', JSON.stringify(Array.from(votedListItems)));
+
+      toast.success('Игрок: ' + this.card.number + ' выставлен на голосование')
+    } else {
+      toast.success('Поддержано')
     }
-  },
-  computed: {
-    disableTouch(){
-      return this.card.killed || !this.activeTouch
-    },
-    movingParams() {
-      if (this.disableTouch) {
-        return 'translateX(0px)'
-      }
+  } else if (position < -85) {
+    this.$emit('update:foll', this.card.number)
+  }
 
-      const position = this.touchMove.x - this.touchMove.xStart
+  touchMove.value = {
+    ...touchMove.value,
+    x: 0,
+    xStart: 0,
+  }
+  activeTouch.value = false
+  clearTimeout(timer.value);
+  timer.value = null
+}
 
-      if (position > 100) {
-        return `translateX(100px)`
-      } else if (position < -100) {
-        return `translateX(-100px)`
-      } else {
-        return `translateX(${this.touchMove.x - this.touchMove.xStart}px)`
-      }
-    },
-  },
-  methods: {
-    tapHandler(){
-      this.activeTouch = true
-      this.timer = setTimeout(() => {
-        this.activeTouch = false
-      }, 3500)
-    },
-    movedHandler() {
-      if (this.disableTouch) {
-        return null;
-      }
-
-      const position = this.touchMove.x - this.touchMove.xStart
-      if (position > 85) {
-        const votedListItems = new Set(JSON.parse(localStorage.getItem('votedListItems')) || []);
-
-        if (!votedListItems.has(this.card.number)) {
-          votedListItems.add(this.card.number);
-          localStorage.setItem('votedListItems', JSON.stringify(Array.from(votedListItems)));
-
-          toast.success('Игрок: ' + this.card.number + ' выставлен на голосование')
-        } else {
-          toast.success('Поддержано')
-        }
-      } else if (position < -85) {
-        this.$emit('update:foll', this.card.number)
-      }
-
-      this.touchMove = {
-        x: 0,
-        xStart: 0,
-      }
-      this.activeTouch = false
-      clearTimeout(this.timer);
-      this.timer = null
-    },
-    movingHandler(event) {
-      if(this.disableTouch){
-        return null;
-      }
+function movingHandler(event) {
+  if (disableTouch.value) {
+    return null;
+  }
 
 
-      if (this.touchMove.xStart === 0) {
-        this.touchMove.xStart = event.touches[0].clientX;
-      }
-      this.touchMove.x = event.touches[0].clientX;
-    },
+  if (touchMove.value.xStart === 0) {
+    touchMove.value.xStart = event.touches[0].clientX;
+  }
+  touchMove.value.x = event.touches[0].clientX;
+}
 
+const emits = defineEmits(
+    [
+      'update:shieldPlus', 'update:shieldMinus', 'update:heartPlus', 'update:heartMinus', 'update:clickOnSkeleton'
+    ]
+)
 
-    handleShieldPlus(index) {
-      this.$emit('update:shieldPlus', index);
-    },
-    handleShieldMinus(index) {
-      this.$emit('update:shieldMinus', index);
-    },
-    handleHeartPlus(index) {
-      this.$emit('update:heartPlus', index);
-    },
-    handleHeartMinus(index) {
-      this.$emit('update:heartMinus', index);
-    },
-    handleClickOnSkeleton(index) {
-      this.$emit('update:clickOnSkeleton', index);
-    },
-  },
+function handleShieldPlus(index) {
+  emits('update:shieldPlus', index);
+}
+
+function handleShieldMinus(index) {
+  emits('update:shieldMinus', index);
+}
+
+function handleHeartPlus(index) {
+  emits('update:heartPlus', index);
+}
+
+function handleHeartMinus(index) {
+  emits('update:heartMinus', index);
+}
+
+function handleClickOnSkeleton(index) {
+  emits('update:clickOnSkeleton', index);
 }
 </script>
 

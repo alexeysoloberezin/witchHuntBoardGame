@@ -32,7 +32,7 @@
 
 <script>
 
-import cards from "@/store/cards";
+import cards from "@/store/cards.ts";
 import CardSafe from "@/components/Card.vue";
 
 export default {

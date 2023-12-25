@@ -4,8 +4,8 @@ import {useRoomsStore} from "@/store/rooms";
 import {useRoute, useRouter} from "vue-router";
 import {toast} from "vue3-toastify";
 import RoomUserList from "@/components/Game/RoomUserList.vue";
-import {useRoomUserStore} from "@/store/roomUser";
-import useSocketListener from "@/composables/socketListen";
+import {useRoomUserStore} from "@/store/roomUser.ts";
+import useSocketListener from "@/composables/socketListen.ts";
 
 const props = defineProps([])
 

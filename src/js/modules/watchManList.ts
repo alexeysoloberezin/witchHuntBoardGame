@@ -1,6 +1,7 @@
 import {names} from "@/store/cards";
+import {PlayerRole} from "@/globalTypes";
 
-export const watchmanList = [
+export const watchmanList: string[] = [
   names['Nurse'],
   names['Survivalist'],
   names['Judge'],
@@ -16,12 +17,12 @@ export const watchmanList = [
   names['(D.O.B.) Dirty Old Bastard'],
 ]
 
-export const getWatchManList = (playersList) => {
+export const getWatchManList = (playersList: PlayerRole[]): string => {
   let res;
 
   res = playersList.filter(player => watchmanList.includes(player.name))
   res = res.filter(player => !!player.isGood)
 
-  return res.map(el => el.number).join(' , ')
+  return res.map(el => el.number).join(' , ') || ''
 }
 

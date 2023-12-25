@@ -1,4 +1,5 @@
 import {names} from "@/store/cards";
+import {Role, RoleWithType} from "@/globalTypes";
 
 class GameModRandomStart {
   shuffleRoles(array) {
@@ -8,12 +9,12 @@ class GameModRandomStart {
     }
   }
 
-  generateRandomRoles(arr, witchCount) {
+  generateRandomRoles(arr: Role[], witchCount: number): Role[] {
     const copyArr = [...arr]
     return copyArr.filter(role => role !== names.Priest).slice(0, witchCount)
   }
 
-  makeRandomRoles(roles, witchCount) {
+  makeRandomRoles(roles: Role[], witchCount: number): Record<number, RoleWithType> {
     const shuffledRoles = [...roles];
     this.shuffleRoles(shuffledRoles);
 

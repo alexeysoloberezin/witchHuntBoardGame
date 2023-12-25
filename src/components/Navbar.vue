@@ -190,7 +190,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import config from "@/config";
+import config from "@/config.ts";
 import queryString from "@/utils/queryString";
 import fetch from "@/utils/fetch";
 import coinData from "@/utils/coinData";

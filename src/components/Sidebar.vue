@@ -120,7 +120,7 @@
 
 <script>
 
-import config from "@/config";
+import config from "@/config.ts";
 
 export default {
   name: "Sidebar",

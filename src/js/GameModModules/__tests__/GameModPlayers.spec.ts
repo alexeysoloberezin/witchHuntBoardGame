@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { names } from '@/store/cards';
 import { GameModPlayers } from '@/js/GameModModules/GameModPlayers';
+import {PlayerRole} from "@/globalTypes";
 
 test('gamblerChoose function sets gamblerChoose property for Gambler', () => {
   const players = [
@@ -26,16 +27,16 @@ test('gamblerShield function increments shield for Gambler based on gamblerChoos
   const nightValOdd = 3;
   const nightValEven = 4;
 
-  const gameModPlayers = new GameModPlayers();
+  const gameModPlayers: any = new GameModPlayers();
   gameModPlayers.playersRoles = playersRoles;
 
-  gameModPlayers.gamblerShield(nightValOdd);
-  expect(gambler.shield).toEqual(1);
+  gameModPlayers.gamblerShield(nightValOdd, playersRoles as PlayerRole[]);
+  expect<any>(gambler.shield).toEqual(1);
 
   gambler.shield = 0;
 
-  gameModPlayers.gamblerShield(nightValEven);
-  expect(gambler.shield).toEqual(0);
+  gameModPlayers.gamblerShield(nightValEven, playersRoles as PlayerRole[]);
+  expect<any>(gambler.shield).toEqual(0);
 });
 
 test('gamblerHaveShield function returns true if Gambler has a shield based on choose and nightVal', () => {
@@ -58,11 +59,10 @@ test('priestShield function increments shield for Priest if nightVal is 0', () =
   const priest = { name: names.Priest, shield: 0 };
   const playersRoles = [priest, { name: 'Role1' }, { name: 'Role2' }];
 
-  const gameModPlayers = new GameModPlayers();
-  gameModPlayers.playersRoles = playersRoles;
+  const gameModPlayers: any = new GameModPlayers();
 
   // Test with nightVal = 0
-  gameModPlayers.priestShield(0);
+  gameModPlayers.priestShield(0, playersRoles as PlayerRole[]);
   expect(priest.shield).toEqual(1);
 });
 

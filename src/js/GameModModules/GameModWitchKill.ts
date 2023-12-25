@@ -1,6 +1,7 @@
 import {toast} from "vue3-toastify";
+import {PlayerRole} from "@/globalTypes";
 
-export default function GameModWitchKill(ids, playersRoles, cb){
+export default function GameModWitchKill(ids: string[], playersRoles: PlayerRole[], cb: (index: string | number) => any): void{
   if (ids.length === 0 || !Array.isArray(ids)) {
     toast.error('Не полные данные для защиты..')
     return;

@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import {getCardById, getLinks} from "@/store/cards";
-import types from "@/js/types";
+import {getCardById, getLinks} from "@/store/cards.ts";
+import types from "@/js/types.ts";
 import CardSafe from "@/components/Card.vue";
 
 export default {
