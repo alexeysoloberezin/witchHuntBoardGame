@@ -35,20 +35,23 @@
               <div v-if="!isActive(el.id) && showPointer" class="ml-4">
                 <IconPointer/>
               </div>
-              <div v-if="witchQr" @click.stop.prevent="() => {
+              <div v-if="witchQr && isActive(el.id)" @click.stop.prevent="() => {
                 showLinkQr = true;
                 activeQrLink = el
               }">
                 <Button outlined size="small" class="ml-4">QR code карт</Button>
                 <vs-dialog modal :visible="showLinkQr" @update:visible="(v) => {showLinkQr = v;activeQrLink=null}">
                   <template #header>
+                    <h4>Get your cards:</h4>
+                  </template>
+
+                  <div>
                     <router-link v-if="activeQrLink" :to="`/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
                       <h4  class="not-margin text-white">
                         <VueQrcode :value="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`" :size="320" />
                       </h4>
                     </router-link>
-
-                  </template>
+                  </div>
                 </vs-dialog>
               </div>
             </div>

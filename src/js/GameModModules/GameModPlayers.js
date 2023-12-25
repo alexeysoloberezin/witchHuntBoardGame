@@ -70,8 +70,6 @@ export class GameModPlayers {
       refreshList();
     }
 
-    setNextActive();
-
     return res
   }
 

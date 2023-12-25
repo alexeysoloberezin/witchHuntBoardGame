@@ -58,13 +58,14 @@
       >
         Роли разданы, далее
       </Button>
+
+    </div>
+    <div class="flex gap-3 mt-4">
       <Button
           @click="random"
       >
         Рандомная расдача
       </Button>
-    </div>
-    <div>
       <Button
           outlined
           @click="clear"
