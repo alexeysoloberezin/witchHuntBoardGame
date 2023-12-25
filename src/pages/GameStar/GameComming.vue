@@ -81,9 +81,9 @@
 </template>
 
 <script>
-import cards, {getByNames} from "@/store/cards";
+import cards, {getByNames} from "@/store/cards.ts";
 import HistoryLine from "@/components/Game/HistoryLine.vue";
-import {arrayStartGameTakeCards} from "@/js/GameModData";
+import {arrayStartGameTakeCards} from "@/js/GameModData.ts";
 import CardSafe from "@/components/Card.vue";
 import mirImg from '@/assets/mir.png'
 import witchImg from '@/assets/witch.png'

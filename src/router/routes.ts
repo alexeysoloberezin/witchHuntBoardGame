@@ -1,4 +1,5 @@
 import Landing from '@/pages/Landing.vue';
+import {RouteRecordRaw} from "vue-router";
 
 const CardZoom = () => import('@/pages/CardZoom.vue');
 const Dashboard = () => import('@/layouts/Dashboard.vue');
@@ -41,4 +42,4 @@ export default [
   {path: '/GameComming', name: 'GameComming', component: GameComming},
   {path: '/Game', name: 'Game', component: Game},
   // {path: "*", component: NotFound},
-]
+] as RouteRecordRaw[]

@@ -1,5 +1,6 @@
 import {names} from "@/store/cards";
 import {toast} from "vue3-toastify";
+import {PlayerRole} from "@/globalTypes";
 
 export class GameModPlayers {
   gamblerChoose(players, choose) {
@@ -15,8 +16,8 @@ export class GameModPlayers {
     })
   }
 
-  gamblerShield(nightVal) {
-    const find = this.playersRoles.find(player => player.name === names.Gambler)
+  gamblerShield(nightVal, playersRoles) {
+    const find = playersRoles.find(player => player.name === names.Gambler)
     if (find) {
       if (find.killed) {
         return null;
@@ -37,8 +38,8 @@ export class GameModPlayers {
   }
 
 
-  priestShield(nightVal) {
-    const find = this.playersRoles.find(player => player.name === names.Priest)
+  priestShield(nightVal: number, playersRoles: PlayerRole[]) {
+    const find = playersRoles.find(player => player.name === names.Priest)
     if (find) {
       if (nightVal === 0) {
         find.shield = find.shield + 1
@@ -46,7 +47,7 @@ export class GameModPlayers {
     }
   }
 
-  showPriestCheck(playersRoles, ids, refreshList, setNextActive) {
+  showPriestCheck(playersRoles: PlayerRole[], ids: string[], refreshList: any): string {
     const fanatic = playersRoles.find((el) => el.name === names.Fanatic);
     if (fanatic) {
       fanatic.fanaticCheck = 0;
@@ -73,7 +74,7 @@ export class GameModPlayers {
     return res
   }
 
-  angelChoose(ids, playersRoles, blockHeal, setNextActive) {
+  angelChoose(ids: string[], playersRoles: PlayerRole[], blockHeal: string[]): void {
     if (ids.length === 0 || !Array.isArray(ids)) {
       toast.error('Не полные данные защиты ангелов..')
       return;
@@ -82,9 +83,7 @@ export class GameModPlayers {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i]
       if (blockHeal.includes(id)) {
-        toast.error(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`, {
-          duration: 6000,
-        })
+        toast.error(`Вы не можете защитить: ${id}. Так как его уже лечили под связкой демонов.`)
         return;
       }
     }
@@ -96,12 +95,8 @@ export class GameModPlayers {
         blockHeal.push(find.number)
       }
 
-      toast.success(`Защитна ангелов установлена на: ${id}`, {
-        duration: 2000,
-      })
+      toast.success(`Защитна ангелов установлена на: ${id}`)
       find.shield = find.shield + 1
     })
-
-    setNextActive()
   }
 }

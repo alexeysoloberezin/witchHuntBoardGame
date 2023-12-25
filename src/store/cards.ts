@@ -1,3 +1,5 @@
+import {Card} from "@/store/cards.types";
+
 export const names = {
     "Benevolent Old Dame": "Старая дама",
     "Gravedigger": "Могильщик",
@@ -70,7 +72,7 @@ import img21 from '../assets/ava/Property 1=Variant21.png';
 import img22Big from '../assets/cards/v24.png';
 import img22 from '../assets/ava/Property 1=Variant22.png';
 
-const cards = [
+const cards: Card[] = [
   {
     image: img1Big,
     ava: img1,
@@ -618,10 +620,16 @@ const cards = [
   },
 ]
 
-export const getCardById = (id) => cards.find(el => el.id === +id)
+export const getCardById = (id: string): Card | undefined => {
+  return cards.find((el) => el.id === +id);
+};
 
-export const getLinks = (ids) => cards.filter(a => ids.some(id => +id === a.id))
+export const getLinks = (ids: string[]): Card[] => {
+  return cards.filter((a) => ids.some((id) => +id === a.id));
+};
 
-export const getByNames = (names) => cards.filter(a => names.some(name => name === a.name))
+export const getByNames = (namesArr: string[]): Card[] => {
+  return cards.filter((a) => namesArr.some((name) => name === a.name));
+};
 
 export default cards;

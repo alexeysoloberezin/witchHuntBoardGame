@@ -14,7 +14,7 @@ import witchImg from '@/assets/witch.png'
 
 import {useRoute} from "vue-router";
 import {computed} from "vue";
-import cards from "@/store/cards";
+import cards from "@/store/cards.ts";
 
 const route = useRoute()
 const getInfo = computed(() => {

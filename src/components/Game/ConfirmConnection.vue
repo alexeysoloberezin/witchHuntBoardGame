@@ -37,7 +37,7 @@ import {toast} from "vue3-toastify";
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue';
 import RadialProgressBar from 'vue-radial-progress'
 import {useRoomsStore} from "@/store/rooms";
-import useSocketListener from "@/composables/socketListen";
+import useSocketListener from "@/composables/socketListen.ts";
 
 const confirm = useConfirm();
 const completedSteps = ref(0)

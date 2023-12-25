@@ -1,6 +1,6 @@
-import {names} from "@/store/cards";
+import {PlayerRole} from "@/globalTypes";
 
-export function saveGameData(allData, playersRolesData) {
+export function saveGameData(allData: AllData, playersRolesData: PlayerRole[]) {
   const dataToSave = {
     panelAction: allData.panelAction,
     isNight: allData.isNight,
@@ -20,3 +20,17 @@ export function saveGameData(allData, playersRolesData) {
   localStorage.setItem('saveGame', JSON.stringify(playersRolesData));
 }
 
+export type AllData = {
+  panelAction: string | null;
+  isNight: boolean;
+  nightVal: number;
+  detailMode: boolean;
+  countNight: number;
+  blockHeal: string[];
+  log: string | boolean;
+  activeStep: string;
+  nightHistory: string[];
+  dayLog: string[];
+  activeNightStep: number;
+  gamblerChooseClosed: boolean;
+};

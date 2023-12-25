@@ -114,10 +114,10 @@
 import { mapState, mapGetters } from "vuex";
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
-import config from "@/config";
+import config from "@/config.ts";
 import fetch from "@/utils/fetch";
 import queryString from "@/utils/queryString";
-import randomString from "@/utils/randomString";
+import randomString from "@/utils/randomString.ts";
 
 export default {
   name: "Settings",

@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import App from './App.vue';
 
 import router from './router';
@@ -7,7 +7,7 @@ import '@/assets/css/tailwind.css';
 import './assets/styles.css';
 import './registerServiceWorker';
 
-import Vue3Toasity from 'vue3-toastify';
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
 import Vue3TouchEvents from "vue3-touch-events";
@@ -23,6 +23,7 @@ import InputSwitch from 'primevue/inputswitch';
 import Avatar from 'primevue/avatar';
 import ConfirmationService from 'primevue/confirmationservice';
 import {createPinia} from "pinia";
+
 const app = createApp(App);
 const pinia = createPinia()
 
@@ -41,11 +42,16 @@ app.component('vs-avatar', Avatar);
 
 app.use(Vue3TouchEvents);
 
-app.use( Vue3Toasity,
-  {
-      autoClose: 3000,
-  })
+  interface ToastTypes {
+    error: (message: string, duration?: number) => void;
+    success: (message: string, duration?: number) => void;
+  }
 
-app.use(i18n);
+app.use(Vue3Toastify,
+  {
+    autoClose: 3000,
+  } as any)
+
+app.use(i18n as any);
 
 app.mount('#app');

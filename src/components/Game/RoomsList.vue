@@ -2,7 +2,7 @@
 import {computed, onMounted, ref} from "vue";
 import RoomItem from "@/components/Game/RoomItem.vue";
 import {useRoomsStore} from "@/store/rooms";
-import useSocketListener from "@/composables/socketListen";
+import useSocketListener from "@/composables/socketListen.ts";
 
 const roomsStore = useRoomsStore()
 const socket = computed(() => roomsStore.$state.socket)

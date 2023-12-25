@@ -70,7 +70,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import config from "@/config";
+import config from "@/config.ts";
 
 export default {
   name: "Guilds",

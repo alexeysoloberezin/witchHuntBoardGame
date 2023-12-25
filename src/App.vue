@@ -5,6 +5,6 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import img from './assets/fon.jpg'
 </script>

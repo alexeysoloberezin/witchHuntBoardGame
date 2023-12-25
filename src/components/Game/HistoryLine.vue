@@ -239,10 +239,10 @@
 <script>
 import HistoryStatus from "@/components/Game/HistoryStatus.vue";
 import IconPointer from "@/components/icons/IconPointer.vue";
-import {names} from "@/store/cards";
+import {names} from "@/store/cards.ts";
 import ChooseUser from "@/components/ChooseUser.vue";
 import GameMod from "@/js/GameMod";
-import {roles} from "@/js/types";
+import {roles} from "@/js/types.ts";
 import {toast} from 'vue3-toastify'
 import imgCard2 from '@/assets/cards/v2.png'
 import imgCard7 from '@/assets/cards/v7.png'

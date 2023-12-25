@@ -162,19 +162,19 @@
 </template>
 
 <script>
-import {getByNames, names} from "@/store/cards";
-import types, {logType} from "@/js/types";
+import {getByNames, names} from "@/store/cards.ts";
+import types, {logType} from "@/js/types.ts";
 import CardPlayer from "@/components/CardPlayer.vue";
-import resetGame, {scrollTo} from "@/js/utils";
+import resetGame, {scrollTo} from "@/js/utils.ts";
 import CardSafe from "@/components/Card.vue";
 import GameMod from "@/js/GameMod";
-import {firstStep, generate, historyLineData} from "@/js/GameModData";
+import {firstStep, generate, historyLineData} from "@/js/GameModData.ts";
 import HistoryLine from "@/components/Game/HistoryLine.vue";
 import Timer from "@/components/Timer.vue";
 import DaySkillModal from "@/components/DaySkillsModal.vue";
 import {toast} from 'vue3-toastify';
-import GameModWitchKill from "@/js/GameModModules/GameModWitchKill";
-import {saveGameData} from "@/js/GameModModules/GameModCore";
+import GameModWitchKill from "@/js/GameModModules/GameModWitchKill.ts";
+import {saveGameData} from "@/js/GameModModules/GameModCore.ts";
 
 export default {
   name: "Game",
@@ -277,14 +277,14 @@ export default {
       )
     },
     showPriestCheck(ids) {
-      const res = GameMod.showPriestCheck(this.playersRoles, ids, this.refreshList, this.setNextActive)
+      const res = GameMod.showPriestCheck(this.playersRoles, ids, this.refreshList)
       alert(res)
     },
     witchKill(ids) {
       GameModWitchKill.apply(this, [ids, this.playersRoles, (index) => this.action(index, 'kill')])
     },
     angelChoose(ids) {
-      GameMod.angelChoose(ids, this.playersRoles, this.blockHeal, this.setNextActive)
+      GameMod.angelChoose(ids, this.playersRoles, this.blockHeal)
     },
     demonChoose(ids) {
       this.playersRoles.forEach(el => {
@@ -402,10 +402,10 @@ export default {
       this.showRoles = false
     },
     gamblerShield() {
-      GameMod.gamblerShield.apply(this, [this.countNight])
+      GameMod.gamblerShield(this.countNight, this.playersRoles)
     },
     priestShield() {
-       GameMod.priestShield.apply(this, [this.countNight])
+       GameMod.priestShield(this.countNight, this.playersRoles)
     },
 
     makeFoll(index) {

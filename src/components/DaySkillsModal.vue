@@ -126,8 +126,8 @@
 
 <script>
 import ChooseUser from "@/components/ChooseUser.vue";
-import {dayPersonWhoHaveSkills} from "@/js/GameModData";
-import {names} from "@/store/cards";
+import {dayPersonWhoHaveSkills} from "@/js/GameModData.ts";
+import {names} from "@/store/cards.ts";
 import { toast } from 'vue3-toastify';
 
 
