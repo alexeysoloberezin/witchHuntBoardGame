@@ -1,10 +1,20 @@
 <template>
   <div class="min-h-screen text-white p-6 bg_app">
-    <router-link to="/main/home/" class="mb-1">
-      <Button >
-        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-      </Button>
-    </router-link>
+
+    <div class="flex mb-1">
+      <router-link to="/main/home/" class=" ">
+        <Button >
+          <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px;" fill="#fff" viewBox="0 0 24 24"><title>arrow-left</title><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </Button>
+      </router-link>
+
+      <router-link to="/GameVariants" class=" ">
+        <Button size="small" class="ml-2">
+          Шаблоны ролей
+        </Button>
+      </router-link>
+    </div>
+
 
 
    <template v-if="savedGame">
@@ -24,6 +34,10 @@
       <div class="mb-5 mt-3">
         <div class="text-sm opacity-50 mb-1">Кол. игроков</div>
         <InputText v-model.number="players" placeholder="Кол. игроков" class="w-full"/>
+      </div>
+      <div v-if="isMode" class="my-2 text-blue-500">
+        Мод:
+        <b>{{ isMode.title }}</b>
       </div>
       <div>
         <div class="text-sm opacity-50 mb-1">Роли</div>
@@ -59,6 +73,7 @@
 import cards from "@/store/cards.ts";
 import resetGame from "@/js/utils.ts";
 import Button from 'primevue/button';
+import GameVariants from "@/js/GameModModules/GameVariants.ts";
 const defRoles = [
   "Священник",
   "Судья",
@@ -81,6 +96,11 @@ export default {
       roles: defRoles,
       rolesItems: cards,
       savedGame: null,
+    }
+  },
+  computed:{
+    isMode(){
+      return GameVariants.isMode(this.roles, this.players)
     }
   },
   methods: {

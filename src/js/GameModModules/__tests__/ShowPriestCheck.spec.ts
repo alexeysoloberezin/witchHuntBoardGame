@@ -17,8 +17,6 @@ describe("showPriestCheck", () => {
 
     const res = GameMod.showPriestCheck(playersRoles as PlayerRole[], ids, refreshList);
 
-    console.log('playersRoles', playersRoles)
-
     expect(playersRoles[0].fanaticCheck).toBe(1);
     expect(playersRoles[0].heart).toBe(2);
     expect(refreshList).toHaveBeenCalled();
