@@ -271,8 +271,6 @@ export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) =>
 }
 
 export const dayUsers = ({night, users, nightLog}: {night: number, users: PlayerRole[], nightLog: HistoryItem[]}) => {
-  users = users.filter(user => !user.killed)
-
   const shiftArray = (arr, shift) => {
     const length = arr.length;
     const index = shift % length;
@@ -281,6 +279,7 @@ export const dayUsers = ({night, users, nightLog}: {night: number, users: Player
 
   const res =
     shiftArray(users, night)
+      .filter(user => !user.killed)
       .map(user => {
         return {
           id: 'daySpeach-' + night + '-' + user.number,
