@@ -45,11 +45,13 @@
               @update:witchFakeKill="(id) => witchFakeKill(id)"
               @update:angelChoose="(ids) => angelChoose(ids)"
               @update:hunterKill="hunterKill"
-              @update:witchKill="(ids) => witchKill(ids)"
+              @update:witchKill="(ids, ownerShot) => witchKill(ids, ownerShot)"
+              @update:toggleWereWolf="toggleWereWolf"
               @update:setChooseApprentice="(choose) => setChooseApprentice(choose)"
               @update:changeHistoryItem="changeHistoryItem"
               @update:votedUsers="votedUsers"
               @update:gamblerChoose="(choose) => setGamblerChoose(choose)"
+              @update:wereWolfChoose="(choose) => setWereWoolfChoose(choose)"
               :gamblerChooseClosed="gamblerChooseClosed"
               ref="historyList"
           ></HistoryLine>
@@ -244,8 +246,8 @@ export default {
       const res = GameMod.showPriestCheck(this.playersRoles, ids, this.refreshList)
       alert(res)
     },
-    witchKill(ids) {
-      GameModWitchKill.apply(this, [ids, this.playersRoles, (index) => this.action(index, 'kill')])
+    witchKill(ids, ownerShot) {
+      GameModWitchKill.apply(this, [ids, this.playersRoles, (index) => this.action(index, 'kill', ownerShot)])
     },
     angelChoose(ids) {
       GameMod.angelChoose(ids, this.playersRoles, this.blockHeal)
@@ -362,8 +364,15 @@ export default {
     gamblerShield() {
       GameMod.gamblerShield(this.countNight, this.playersRoles)
     },
+    wereWoolfShield(){
+      GameMod.wereWoolfShieldBeforeTurn(this.playersRoles)
+    },
     priestShield() {
        GameMod.priestShield(this.countNight, this.playersRoles)
+    },
+    toggleWereWolf(){
+      this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
+      this.saveAll()
     },
     makeFoll(index) {
       const find = this.playersRoles.find(player => player.number === index)
@@ -389,8 +398,14 @@ export default {
       this.playersRoles = GameMod.gamblerChoose(this.playersRoles, choose)
       this.gamblerChooseClosed = true
     },
+    setWereWoolfChoose(choose) {
+      this.playersRoles = GameMod.wereWoolfChoose(this.playersRoles, choose)
+      toast.success('Успешно установленна роль ' + ( choose === 'mir' ? 'Мирный' : "Ведьма" )  + ' для оборотня')
+      this.saveAll()
+    },
     startNight() {
       this.gamblerShield()
+      this.wereWoolfShield()
       this.priestShield()
       this.isNight = true
 
@@ -410,6 +425,7 @@ export default {
           chain: false,
         }
       })
+      this.playersRoles = GameMod.makeRoleForWereWolf(this.playersRoles)
       this.isNight = false
 
       this.nightVal = ++this.nightVal
@@ -456,7 +472,7 @@ export default {
         type: logType.tryKill
       })
     },
-    action(indexPlayer, type) {
+    action(indexPlayer, type, ownerShot) {
       const typeAction = type || this.panelAction
       const PLAYER = this.playersRoles[indexPlayer]
 
@@ -488,6 +504,10 @@ export default {
         if ((PLAYER.heart > 1 || PLAYER.shield > 0) && !PLAYER.killed) {
           if (PLAYER.shield > 0) {
             PLAYER.shield = PLAYER.shield - 1
+            if(ownerShot === 'witchKill' && PLAYER.name === names.Werewolf){
+              toast.success('Обращение оборотня: ' + PLAYER.number)
+              this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
+            }
           } else {
             PLAYER.heart = PLAYER.heart - 1
           }
@@ -503,6 +523,10 @@ export default {
       } else if (typeAction === 'fakeKill') {
         PLAYER.fakeKill = !PLAYER.fakeKill
         this.setTryKillLog(indexPlayer)
+        if(PLAYER.name === names.Werewolf){
+          toast.success('Обращение оборотня: ' + PLAYER.number)
+          this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
+        }
 
       } else if (typeAction === 'makeWitch') {
         PLAYER.isGood = !PLAYER.isGood
@@ -573,6 +597,8 @@ export default {
             foll: 0,
             isGood: el.type === 'mir',
             gamblerChoose: '',
+            wereWolfChoose: '',
+            wereWolfTurned: false,
             fanaticCheck: 0,
             hunterWakeUp: [],
             deadOnDay: false,

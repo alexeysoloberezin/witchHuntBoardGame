@@ -124,6 +124,16 @@ export const historyLineData = ({initialPlayers, nights = 0, nightLog, dayLog}: 
           `
     },
     {
+      id: 2777,
+      title: 'Просыпается Оборотень',
+      name: names.Werewolf,
+      ifPlayerInGame: true,
+      type: DayType.NIGHT,
+      text: `
+            Выбирает будет ли он играть за мирных или за ведьм. 
+          `
+    },
+    {
       id: 28,
       title: 'Все просыпаются, наступил день.',
       ifPlayerInGame: false,
@@ -212,6 +222,16 @@ export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) =>
   return [
     ...res,
     ...hunterArr,
+    {
+      id: start + 555,
+      title: 'Просыпается Оборотень',
+      name: names.Werewolf,
+      ifPlayerInGame: true,
+      type: DayType.NIGHT,
+      text: `
+            Просыпается Оборотень.
+          `
+    },
     {
       id: start + 5,
       title: 'Просыпаются Ведьмы',

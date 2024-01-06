@@ -61,16 +61,53 @@
                 <div v-if="!gamblerChooseClosed" class="flex items-center mt-2 gap-4">
                   <Button
                       size="small"
+                      data-cy="gambler-chooseBtn-even"
                       @click="setGamblerChoose('четные')"
                   >
                     Четные ночи
                   </Button>
                   <Button
                       size="small"
+                      data-cy="gambler-chooseBtn-odd"
                       @click="setGamblerChoose('нечетные')"
                   >
                     Нечетные
                   </Button>
+                </div>
+              </div>
+
+              <div v-if="el.name === names.Werewolf">
+
+                <div v-if="el.id === 2777" class="flex items-center mt-2 gap-4">
+                  <Button
+                      size="small"
+                      @click.stop="setWereWolfChoose('mir')"
+                  >
+                    Крестьяне
+                  </Button>
+                  <Button
+                      size="small"
+                      @click.stop="setWereWolfChoose('witch')"
+                  >
+                    Ведьмы
+                  </Button>
+                </div>
+                <div v-else class="">
+<!--                  <Button outlined size="small" class="my-2" @click="toggleWereWolf">-->
+<!--                    Принудительно превратить Оборотня-->
+<!--                  </Button>-->
+                  <p>Сейчас: {{ currentCard.wereWolfTurned ? 'Обращен' : "Не обращен" }}</p>
+                </div>
+                <div v-if="currentCard.wereWolfTurned">
+                  <div v-if="Array.isArray(users)" class="flex flex-wrap gap-3 mt-2">
+                    <ChooseUser
+                        :title="'Киса выходит на охоту:'"
+                        :users="users.filter(el => !el.killed)"
+                        :multi="false"
+                        @update:clickReady="(ids) => wereWoolfKill(ids)"
+                        :id="'wereWoolf-choose'"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -213,12 +250,12 @@
 
               <template v-if="isActiveStep(el.id)">
                 <div v-if="!isShow && el.type === 'day'" class="mt-3">
-                  <Button @click.stop="emitStartTimer('start')" size="small">
+                  <Button @click.stop="emitStartTimer('start')" size="small" data-cy="historyLine-startTimer">
                     Старт таймера
                   </Button>
                 </div>
 
-                <div v-if="nextBtnIsShow(el.id, el.type)" class="mt-3">
+                <div v-if="nextBtnIsShow(el.id, el.type)" class="mt-3" data-cy="historyLine-nextBtn">
                   <Button @click.stop="emitClickNext(el.id)" @keydown.down="emitClickNext(el.id)" size="small">
                     Далее
                   </Button>
@@ -397,6 +434,16 @@ export default {
       return inHiddenList === -1
 
     },
+    toggleWereWolf() {
+      this.$emit('update:toggleWereWolf')
+    },
+    wereWoolfKill(ids) {
+      if (!Array.isArray(ids) || ids.length === 0) {
+        toast.error('Не правильное значение')
+        return;
+      }
+      this.$emit('update:witchKill', ids)
+    },
     bomberKill(ids) {
       if (!Array.isArray(ids) || ids.length === 0) {
         toast.error('Не правильное значение')
@@ -439,7 +486,7 @@ export default {
       this.$emit('update:showPriestCheck', ids)
     },
     witchKill(ids) {
-      this.$emit('update:witchKill', ids)
+      this.$emit('update:witchKill', ids, 'witchKill')
     },
     demonChoose(ids) {
       this.$emit('update:demonChoose', ids)
@@ -496,6 +543,9 @@ export default {
     },
     setGamblerChoose(choose) {
       this.$emit('update:gamblerChoose', choose);
+    },
+    setWereWolfChoose(choose) {
+      this.$emit('update:wereWolfChoose', choose);
     },
     isActive(id) {
       if (Array.isArray(this.active)) {

@@ -38,6 +38,10 @@
               Игрок {{
                   card.number
                 }}:</span>
+            <span class="ml-2 opacity-50 text-sm" v-if="card.name === names.Werewolf">
+                <span v-if="card?.wereWolfChoose === 'mir'">Мирный</span>
+                <span v-else-if="card?.wereWolfChoose === 'witch'">Ведьма</span>
+            </span>
             <div class="flex items-center">
               <Folls :folls="card.foll" :card-number="card.number" :key-id="'cardPlayer'"/>
               <span v-for="el in card.foll" :key="card.number + '-folls-' + el">
@@ -147,6 +151,7 @@ import {toast} from 'vue3-toastify';
 import Folls from "@/components/Folls.vue";
 import {computed, Ref, ref} from "vue";
 import {PlayerRole} from "@/globalTypes";
+import {names} from "@/store/cards";
 
 const props = defineProps<{
   panelAction: string;

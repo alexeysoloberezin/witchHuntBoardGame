@@ -3,6 +3,57 @@ import {toast} from "vue3-toastify";
 import {PlayerRole} from "@/globalTypes";
 
 export class GameModPlayers {
+  wereWoolfChoose(players, choose) {
+    return players.map(el => {
+      if (el.name !== names.Werewolf) {
+        return el
+      }
+
+      return {
+        ...el,
+        wereWolfChoose: choose
+      }
+    })
+  }
+
+  makeRoleForWereWolf(players) {
+    return players.map(el => {
+      if (el.name !== names.Werewolf) {
+        return el
+      }
+
+      return {
+        ...el,
+        isGood: !el.wereWolfTurned
+      }
+    })
+  }
+
+  wereWoolfTurning(players) {
+    return players.map(el => {
+      if (el.name !== names.Werewolf) {
+        return el
+      }
+
+      return {
+        ...el,
+        wereWolfTurned: true
+      }
+    })
+  }
+
+  wereWoolfShieldBeforeTurn(playersRoles) {
+    const find = playersRoles.find(player => player.name === names.Werewolf)
+    if (find) {
+      if (find.killed) {
+        return null;
+      }
+      if(!find?.wereWolfTurned){
+        find.shield = find.shield + 1
+      }
+    }
+  }
+
   gamblerChoose(players, choose) {
     return players.map(el => {
       if (el.name !== names.Gambler) {

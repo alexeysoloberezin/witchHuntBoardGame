@@ -11,7 +11,9 @@ class GameModRandomStart {
 
   generateRandomRoles(arr: Role[], witchCount: number): Role[] {
     const copyArr = [...arr]
-    return copyArr.filter(role => role !== names.Priest).slice(0, witchCount)
+    return copyArr
+      .filter(role => role !== names.Priest && role !== names.Werewolf)
+      .slice(0, witchCount)
   }
 
   makeRandomRoles(roles: Role[], witchCount: number): Record<number, RoleWithType> {
