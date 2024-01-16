@@ -226,12 +226,13 @@ body{
 .historyList-move,
 .historyList-enter-active,
 .historyList-leave-active {
-    transition: all 0.7s ease;
+    transition: transform 0.8s, opacity 0.4s;
 }
 .historyList-enter-from,
 .historyList-leave-to {
     opacity: 0;
-    transform: translateY(-35px);
+    transform-origin: left top;
+    transform: translateY(-50px) scale(0.75);
 }
 .historyList-leave-active {
     position: absolute;

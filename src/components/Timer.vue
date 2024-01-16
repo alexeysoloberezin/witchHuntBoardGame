@@ -107,7 +107,7 @@
                   />
                 </div>
                 <div>
-                  <Button size="small" outlined  rounded @click="makeFoll(person.number)">
+                  <Button size="small" class="p-1" outlined  rounded @click="makeFoll(person.number)">
                     Фолл
                   </Button>
                 </div>

@@ -15,6 +15,7 @@ const GameRoom  = () => import('@/pages/GameStar/rooms/GameRoom.vue')
 const GameRooms  = () => import('@/pages/GameStar/rooms/GameRooms.vue')
 const Roles  = () => import('@/pages/GameStar/Roles.vue')
 const GameVariantsPage  = () => import('@/pages/GameStar/GameVariants.vue')
+const GuardGame = () => import('@/components/GuardGame/index.vue')
 
 export default [
   {path: '/', name: 'Homepage', component: Landing},
@@ -39,9 +40,10 @@ export default [
       {path: 'connectInRoom/:id', name: 'connectInRoom', component: GameConnectInRoom},
     ],
   },
-  {path: '/GameVariants', name: 'GameVariants', component: GameVariantsPage},
-  {path: '/GameStart', name: 'GameStart', component: GameStart},
-  {path: '/GameComming', name: 'GameComming', component: GameComming},
-  {path: '/Game', name: 'Game', component: Game},
+  {path: '/GameGuard', name: 'GuardGame', component: GuardGame},
+  {path: '/GameVariants', name: 'GameVariants',meta: {requiresAuth: true}, component: GameVariantsPage},
+  {path: '/GameStart', name: 'GameStart', meta: {requiresAuth: true}, component: GameStart},
+  {path: '/GameComming', name: 'GameComming', meta: {requiresAuth: true}, component: GameComming},
+  {path: '/Game', name: 'Game', meta: {requiresAuth: true}, component: Game},
   // {path: "*", component: NotFound},
 ] as RouteRecordRaw[]

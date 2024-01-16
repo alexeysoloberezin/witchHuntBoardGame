@@ -344,14 +344,14 @@ export const dayUsers = ({night, users, nightLog}: {night: number, users: Player
 
 export const voted = (prevId: string) => ([
   {
-    id: prevId,
+    id: prevId + '-1',
     title: 'Голосование!',
     ifPlayerInGame: false,
     text: "Дневная речь",
     type: DayType.VOTED
   },
   {
-    id: prevId + 1,
+    id: prevId + '-2',
     title: 'Речь заголосованного игрока.',
     ifPlayerInGame: false,
     text: "Последняя минута.",

@@ -2,10 +2,13 @@ import {PlayerRole} from "@/globalTypes";
 
 export function saveGameData(allData: AllData, playersRolesData: PlayerRole[]) {
   const dataToSave = {
+    finishGameBlock: allData.finishGameBlock,
+    finishGameResult: allData.finishGameResult,
     panelAction: allData.panelAction,
     isNight: allData.isNight,
     nightVal: allData.nightVal,
     detailMode: allData.detailMode,
+    emissaryTryKilled: allData.emissaryTryKilled,
     countNight: allData.countNight,
     blockHeal: allData.blockHeal,
     log: allData.log,
@@ -21,11 +24,14 @@ export function saveGameData(allData: AllData, playersRolesData: PlayerRole[]) {
 }
 
 export type AllData = {
+  finishGameBlock: boolean,
+  finishGameResult: string | null,
   panelAction: string | null;
   isNight: boolean;
   nightVal: number;
   detailMode: boolean;
   countNight: number;
+  emissaryTryKilled: boolean;
   blockHeal: string[];
   log: string | boolean;
   activeStep: string;

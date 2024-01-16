@@ -1,5 +1,9 @@
 <template>
   <div class="min-h-screen text-white p-6 overflow-x-hidden bg_app">
+    <Congradilations v-if="finishGameResult && !finishGameBlock"
+                     :text="finishGameResult"
+                     @update:setFinishGameBlock="() => finishGameBlock = true"
+    />
     <template v-if="!showRoles">
       <Timer
           v-if="playersRoles"
@@ -91,10 +95,10 @@
             </div>
           </div>
           <template v-if="detailMode">
-            <KillButton :panelAction="panelAction" @click="setPanelAction('kill')" />
-            <FakeKillButton :panelAction="panelAction" @click="setPanelAction('fakeKill')" />
-            <MakeWitchButton :panelAction="panelAction" @click="setPanelAction('makeWitch')" />
-            <ChainButton :panelAction="panelAction" @click="setPanelAction('chain')" />
+            <KillButton :panelAction="panelAction" @click="setPanelAction('kill')"/>
+            <FakeKillButton :panelAction="panelAction" @click="setPanelAction('fakeKill')"/>
+            <MakeWitchButton :panelAction="panelAction" @click="setPanelAction('makeWitch')"/>
+            <ChainButton :panelAction="panelAction" @click="setPanelAction('chain')"/>
           </template>
           <template v-else>
             <ShowRolesButton :showRoles="showRoles" @click="showRoles = !showRoles"/>
@@ -137,16 +141,22 @@ import FakeKillButton from "@/components/Buttons/FakeKillButton.vue";
 import KillButton from "@/components/Buttons/KillButton.vue";
 import ChainButton from "@/components/Buttons/ChainButton.vue";
 import DetailModeToggleButton from "@/components/Buttons/DetailModeToggleButton.vue";
+import Congradilations from "@/components/Congradilations/Congradilations.vue";
 
 export default {
   name: "Game",
   components: {
+    Congradilations,
     DetailModeToggleButton,
     ChainButton,
     KillButton,
-    FakeKillButton, MakeWitchButton, ShowRolesButton, DaySkillModal, Timer, HistoryLine, CardSafe, CardPlayer},
+    FakeKillButton, MakeWitchButton, ShowRolesButton, DaySkillModal, Timer, HistoryLine, CardSafe, CardPlayer
+  },
   data() {
     return {
+      finishGameResult: null,
+      finishGameBlock: false,
+
       activeStep: firstStep,
       countNight: 0,
       blockHeal: [],
@@ -160,12 +170,16 @@ export default {
       log: false,
       cardTypes: types,
       showDaySkills: false,
+
       nightVal: 0,
       nightHistory: [],
       dayLog: [],
-
       activeNightStep: 0,
+
       gamblerChooseClosed: false,
+      emissaryTryKilled: false,
+      fanaticGotHeart: false,
+      fanaticWasChecked: false,
 
       saveInterval: null,
     }
@@ -183,6 +197,9 @@ export default {
     }
   },
   methods: {
+    checkEndGame(){
+      this.finishGameResult = GameMod.checkEndGame(this.playersRoles)
+    },
     votedResultHandler(res) {
       this.votedUsers(res)
     },
@@ -197,11 +214,16 @@ export default {
         scrollTo(0, 200)
       }
     },
-    changeHistoryItem(id) {
+    changeHistoryItem(id, reload) {
       const realy = confirm('Вы уверены? сейчас это не безопасно. Только если на несколько шагов назад. Без смены дня ночи.')
 
       if (realy) {
         this.activeStep = id
+        this.saveAll()
+
+        if(reload){
+          location.reload()
+        }
       }
     },
     skillAction(number, type) {
@@ -245,6 +267,7 @@ export default {
     showPriestCheck(ids) {
       const res = GameMod.showPriestCheck(this.playersRoles, ids, this.refreshList)
       alert(res)
+      this.refreshList()
     },
     witchKill(ids, ownerShot) {
       GameModWitchKill.apply(this, [ids, this.playersRoles, (index) => this.action(index, 'kill', ownerShot)])
@@ -279,7 +302,15 @@ export default {
         const find = this.playersRoles.find(el => el.number === user1);
 
         if (index !== -1) {
-          this.action(index, 'kill');
+          if(find.name === names.Fanatic){
+            this.fanaticGotHeart = true
+            find.heart = find.heart + 1
+            this.setTryKillLog(index)
+            toast.success('Попытка убийства - ' + find.number)
+            toast.success('Фанатик получает жизнь')
+          }else{
+            this.action(index, 'kill');
+          }
         }
         find.deadOnDay = true
 
@@ -332,6 +363,28 @@ export default {
           const nextElement = this.historyLine[currentIndex + 1];
 
           if (find.type !== 'night' && nextElement.type === 'night') {
+            if(this.countNight === 3){
+              const indexEmissary = this.playersRoles.findIndex(player => player.name === names.Emissary)
+              const emissary = this.playersRoles.find(player => player.name === names.Emissary)
+
+              const fanatic = this.playersRoles.find(player => player.name === names.Fanatic)
+              const indexFanatic = this.playersRoles.findIndex(player => player.name === names.Fanatic)
+
+              if(fanatic && !fanatic?.killed){
+                if(!this.fanaticGotHeart && fanatic.fanaticCheck === 0){
+                  toast.warn('Фанатик не выполнил условия он умирает!.')
+                  this.action(indexFanatic, 'goodKill')
+                  return null;
+                }
+              }
+
+              if(emissary && !this.emissaryTryKilled && !emissary?.killed){
+                toast.warn('Эмиссар не выполнил условия он умирает!.')
+                this.action(indexEmissary, 'goodKill')
+                return null;
+              }
+            }
+
             this.startNight()
             this.refreshList()
           }
@@ -364,13 +417,13 @@ export default {
     gamblerShield() {
       GameMod.gamblerShield(this.countNight, this.playersRoles)
     },
-    wereWoolfShield(){
+    wereWoolfShield() {
       GameMod.wereWoolfShieldBeforeTurn(this.playersRoles)
     },
     priestShield() {
-       GameMod.priestShield(this.countNight, this.playersRoles)
+      GameMod.priestShield(this.countNight, this.playersRoles)
     },
-    toggleWereWolf(){
+    toggleWereWolf() {
       this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
       this.saveAll()
     },
@@ -400,7 +453,7 @@ export default {
     },
     setWereWoolfChoose(choose) {
       this.playersRoles = GameMod.wereWoolfChoose(this.playersRoles, choose)
-      toast.success('Успешно установленна роль ' + ( choose === 'mir' ? 'Мирный' : "Ведьма" )  + ' для оборотня')
+      toast.success('Успешно установленна роль ' + (choose === 'mir' ? 'Мирный' : "Ведьма") + ' для оборотня')
       this.saveAll()
     },
     startNight() {
@@ -425,6 +478,7 @@ export default {
           chain: false,
         }
       })
+
       this.playersRoles = GameMod.makeRoleForWereWolf(this.playersRoles)
       this.isNight = false
 
@@ -459,6 +513,10 @@ export default {
       }
     },
     setTryKillLog(indexPlayer) {
+      if(this.playersRoles[indexPlayer].name === names.Emissary){
+        this.emissaryTryKilled = true
+      }
+
       if (this.isNight) {
         this.nightHistory.push({
           player: this.playersRoles[indexPlayer].number,
@@ -477,7 +535,7 @@ export default {
       const PLAYER = this.playersRoles[indexPlayer]
 
       if (typeAction === 'kill' || typeAction === 'goodKill') {
-        if (PLAYER.name === names.Emissary && this.nightVal <= 3) {
+        if (PLAYER.name === names.Emissary && this.nightVal <= 3 && typeAction !== 'goodKill') {
           toast.success('Попытка убийства Игрока: ' + PLAYER.number)
           this.hunterWakeUp([...this.hunter.hunterWakeUp, {
             night: this.countNight,
@@ -504,7 +562,7 @@ export default {
         if ((PLAYER.heart > 1 || PLAYER.shield > 0) && !PLAYER.killed) {
           if (PLAYER.shield > 0) {
             PLAYER.shield = PLAYER.shield - 1
-            if(ownerShot === 'witchKill' && PLAYER.name === names.Werewolf){
+            if (ownerShot === 'witchKill' && PLAYER.name === names.Werewolf) {
               toast.success('Обращение оборотня: ' + PLAYER.number)
               this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
             }
@@ -523,11 +581,10 @@ export default {
       } else if (typeAction === 'fakeKill') {
         PLAYER.fakeKill = !PLAYER.fakeKill
         this.setTryKillLog(indexPlayer)
-        if(PLAYER.name === names.Werewolf){
+        if (PLAYER.name === names.Werewolf) {
           toast.success('Обращение оборотня: ' + PLAYER.number)
           this.playersRoles = GameMod.wereWoolfTurning(this.playersRoles)
         }
-
       } else if (typeAction === 'makeWitch') {
         PLAYER.isGood = !PLAYER.isGood
         return
@@ -544,7 +601,13 @@ export default {
       this.saveAll()
     },
     saveAll() {
+      if(!this.finishGameBlock){
+        this.checkEndGame()
+      }
+
       saveGameData({
+            finishGameBlock: this.finishGameBlock,
+            finishGameResult: this.finishGameResult,
             panelAction: this.panelAction,
             isNight: this.isNight,
             nightVal: this.nightVal,
@@ -552,6 +615,7 @@ export default {
             countNight: this.countNight,
             blockHeal: this.blockHeal,
             log: this.log,
+            emissaryTryKilled: this.emissaryTryKilled,
             activeStep: this.activeStep,
             nightHistory: this.nightHistory,
             dayLog: this.dayLog,

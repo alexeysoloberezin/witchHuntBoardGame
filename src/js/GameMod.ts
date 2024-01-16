@@ -6,6 +6,16 @@ import {PlayerRole} from "@/globalTypes";
 import {Card} from "@/store/cards.types";
 
 class GameMod extends GameModPlayers {
+  checkEndGame(players: PlayerRole[]): string | null {
+    const witchesAlived = players.filter(el => !el.isGood && !el.killed);
+
+    if(witchesAlived.length === 0){
+      return 'mir'
+    }
+
+    return null
+  }
+
   showRolesCards(playersRoles: PlayerRole[], shuffle: boolean): Card[] {
     const roles = Object.values(playersRoles).map(el => el.name);
     const res = cards.filter(card => roles.map(el => el.toLowerCase()).includes(card.name.toLowerCase()));

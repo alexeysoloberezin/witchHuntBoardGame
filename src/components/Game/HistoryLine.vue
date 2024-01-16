@@ -5,10 +5,15 @@
          style="background: rgba(255,255,255,0.08);border-radius: 8px">
       {{ showAll ? 'Скрыть пройденые' : 'Показать всю историю' }}
     </div>
+
+<!--    activeStep: {{ activeStep }}-->
+<!--    <hr/>-->
+<!--    hiddenSteps: {{ hiddenSteps }}-->
+<!--    <hr/>-->
+<!--    arr: {{ array.map(el => el.id) }}-->
     <div class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400 historyLine"
          ref="historyLine"
     >
-
       <transition-group tag="ul" name="historyList">
         <div v-for="el in arrayFinished"
              :key="el.id"
@@ -266,8 +271,14 @@
         </div>
       </transition-group>
 
-      <div v-if="!currentEl && !!this.activeStep">
-        <Button @click="reload">Dont worry.. Refresh</Button>
+      <div v-if="!currentEl && !!this.activeStep" class="p-3">
+        <h2 class="text-xl text-white">Хм, след шаг не найден</h2>
+        <h2>Перейти в этап:</h2>
+        <div class="flex gap-4">
+          <Button @click="goTo('voted')">Голосование</Button>
+          <Button @click="goTo('night')">Ночь</Button>
+          <Button @click="goTo('day')">День</Button>
+        </div>
       </div>
     </div>
   </div>
@@ -293,6 +304,18 @@ export default {
   components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus, VueQrcode},
   props: ['array', 'active', 'showPointer','witchQr', 'hunterList', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
   computed: {
+    hiddenSteps(){
+      const activeElRef = this.$refs['list-el-' + this.activeStep];
+
+      const find = Object.keys(this.$refs).findIndex(refKey => this.$refs[refKey] === activeElRef)
+
+      if(find === -1){
+        this.$nextTick()
+        return []
+      }
+
+      return Object.keys(this.$refs).slice(0, find)
+    },
     thisLink() {
       return window.location.href
     },
@@ -343,13 +366,13 @@ export default {
 
   data() {
     return {
+      mounted: 1,
       showLinkQr: false,
       activeQrLink: null,
       imgs: {
         'imgCard7': imgCard7,
         'imgCard2': imgCard2
       },
-      hiddenSteps: [],
       showAll: false,
       names: names,
       isShow: false,
@@ -381,11 +404,29 @@ export default {
   mounted() {
     this.checkVotedType()
 
-    if (this.isHistoryLine) {
-      this.updateFinisherList()
-    }
+    // if (this.isHistoryLine) {
+    //   this.updateFinisherList()
+    // }
+
+    this.mounted += 1
   },
   methods: {
+    goTo(type){
+      const refKeys = Object.keys(this.$refs);
+      const patterns = {
+        'voted': /^list-el-voted-user-/,
+        'night': /^list-el-night-/,
+        'day': /^list-el-daySpeach-/
+      };
+
+      const pattern = patterns[type];
+      if (!pattern) return;
+
+      const foundKey = refKeys.findLast(refKey => pattern.test(refKey));
+      if(foundKey){
+        this.$emit('update:changeHistoryItem', foundKey.replace('list-el-', ''), true)
+      }
+    },
     reload() {
       location.reload()
     },
@@ -400,30 +441,30 @@ export default {
         if (this.currentEl.type === 'day') {
           this.$emit('update:clickNext');
           this.isShow = true
-          this.updateFinisherList()
+          // this.updateFinisherList()
           this.$emit('update:startTimer', 'start');
         } else {
           this.$emit('update:startTimer', 'stop');
         }
       }
     },
-    updateFinisherList() {
-      this.hiddenSteps = []
-      const activeElRef = this.$refs['list-el-' + this.activeStep];
-      let block = false;
-
-      Object.keys(this.$refs).forEach(refKey => {
-        const ref = this.$refs[refKey];
-
-        if (ref === activeElRef) {
-          block = true;
-        }
-
-        if (!block) {
-          this.hiddenSteps.push(refKey)
-        }
-      });
-    },
+    // updateFinisherList() {
+    //   this.hiddenSteps = []
+    //   const activeElRef = this.$refs['list-el-' + this.activeStep];
+    //   let block = false;
+    //
+    //   Object.keys(this.$refs).forEach(refKey => {
+    //     const ref = this.$refs[refKey];
+    //
+    //     if (ref === activeElRef) {
+    //       block = true;
+    //     }
+    //
+    //     if (!block) {
+    //       this.hiddenSteps.push(refKey)
+    //     }
+    //   });
+    // },
     alreadyFinish(id) {
       if (this.showAll) {
         return true
@@ -557,7 +598,7 @@ export default {
       this.emitStartTimer('stop');
       this.isShow = false;
       this.$emit('update:clickNext');
-      this.updateFinisherList();
+      // this.updateFinisherList();
     },
     emitStartTimer(type) {
       this.isShow = true
