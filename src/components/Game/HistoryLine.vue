@@ -309,6 +309,8 @@ export default {
 
       const find = Object.keys(this.$refs).findIndex(refKey => this.$refs[refKey] === activeElRef)
 
+     console.log(this.mounted);
+      
       if(find === -1){
         this.$nextTick()
         return []
