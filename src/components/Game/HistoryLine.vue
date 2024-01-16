@@ -6,9 +6,6 @@
       {{ showAll ? 'Скрыть пройденые' : 'Показать всю историю' }}
     </div>
 
-<!--    activeStep: {{ activeStep }}-->
-<!--    <hr/>-->
-<!--    hiddenSteps: {{ hiddenSteps }}-->
 <!--    <hr/>-->
 <!--    arr: {{ array.map(el => el.id) }}-->
     <div class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400 historyLine"
@@ -308,6 +305,8 @@ export default {
       const activeElRef = this.$refs['list-el-' + this.activeStep];
 
       const find = Object.keys(this.$refs).findIndex(refKey => this.$refs[refKey] === activeElRef)
+
+      console.log(this.mounted)
 
       if(find === -1){
         this.$nextTick()
