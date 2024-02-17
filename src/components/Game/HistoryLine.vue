@@ -320,7 +320,7 @@ export default {
 
       console.log(this.mounted)
 
-      if (find === -1) {
+      if(find === -1){
         this.$nextTick()
         return []
       }
