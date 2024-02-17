@@ -6,8 +6,8 @@
       {{ showAll ? 'Скрыть пройденые' : 'Показать всю историю' }}
     </div>
 
-<!--    <hr/>-->
-<!--    arr: {{ array.map(el => el.id) }}-->
+    <!--    <hr/>-->
+    <!--    arr: {{ array.map(el => el.id) }}-->
     <div class="relative text-gray-500 border-l-2 border-gray-200 border-gray-600 text-gray-400 historyLine"
          ref="historyLine"
     >
@@ -21,7 +21,7 @@
               class="mb-10 cursor-pointer "
               @click="emitClickOnItem(el.id)"
           >
-            <div class="flex">
+            <div class="flex ">
               <div @click.stop="handleDoubleClick(el.id)"
               >
                 <HistoryStatus
@@ -30,9 +30,17 @@
                 />
               </div>
 
-              <div class="pl-8 ml-2" :class="classes(el.id), !isActive(el.id) ? 'text-white' : 'text-green-600'">
-                <h3 class="font-medium leading-tight">{{ el.title }}</h3>
-                <p class="text-sm opacity-50">{{ el.text }}</p>
+              <div v-if="bigFonts" class="ml-8 pl-1 d-flex gap-3" style="margin-right: -20px">
+                <vs-avatar v-if="el.role" :image="getImageByName(el.role)" size="xlarge" shape="circle">
+                </vs-avatar>
+                <vs-avatar v-if="el.isGood" :image="getTypeByName(el.isGood)" size="xlarge" shape="circle">
+                </vs-avatar>
+              </div>
+
+              <div class="pl-8 ml-2" :class="classes(el.id), !isActive(el.id) ? 'text-white' : 'text-green-500'">
+                <h3 class="font-medium leading-tight opacity-80">{{ el.title }}</h3>
+                <p v-if="bigFonts" class="text-lg font-bold">{{ el.text }}</p>
+                <p v-else class="text-md">{{ el.text }}</p>
               </div>
               <div v-if="!isActive(el.id) && showPointer" class="ml-4">
                 <IconPointer/>
@@ -48,9 +56,12 @@
                   </template>
 
                   <div>
-                    <router-link v-if="activeQrLink" :to="`/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
-                      <h4  class="not-margin text-white">
-                        <VueQrcode :value="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`" :size="320" />
+                    <router-link v-if="activeQrLink"
+                                 :to="`/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`">
+                      <h4 class="not-margin text-white">
+                        <VueQrcode
+                            :value="`https://witch-hunt-board-game-opad.vercel.app/Roles/?role=${activeQrLink.role}&isGood=${activeQrLink.isGood}`"
+                            :size="320"/>
                       </h4>
                     </router-link>
                   </div>
@@ -95,9 +106,9 @@
                   </Button>
                 </div>
                 <div v-else class="">
-<!--                  <Button outlined size="small" class="my-2" @click="toggleWereWolf">-->
-<!--                    Принудительно превратить Оборотня-->
-<!--                  </Button>-->
+                  <!--                  <Button outlined size="small" class="my-2" @click="toggleWereWolf">-->
+                  <!--                    Принудительно превратить Оборотня-->
+                  <!--                  </Button>-->
                   <p>Сейчас: {{ currentCard.wereWolfTurned ? 'Обращен' : "Не обращен" }}</p>
                 </div>
                 <div v-if="currentCard.wereWolfTurned">
@@ -284,7 +295,7 @@
 <script>
 import HistoryStatus from "@/components/Game/HistoryStatus.vue";
 import IconPointer from "@/components/icons/IconPointer.vue";
-import {names} from "@/store/cards.ts";
+import cards, {names} from "@/store/cards.ts";
 import ChooseUser from "@/components/ChooseUser.vue";
 import GameMod from "@/js/GameMod";
 import {roles} from "@/js/types.ts";
@@ -294,21 +305,22 @@ import imgCard7 from '@/assets/cards/v7.png'
 import ToggleAccord from "@/components/ToggleAccord.vue";
 import VueQrcode from 'qrcode.vue';
 import {computed} from "vue";
-
+import avaWitch from '@/assets/avWit.png'
+import avaVill from '@/assets/avVill.png'
 
 export default {
   name: "HistoryLine",
   components: {ToggleAccord, ChooseUser, IconPointer, HistoryStatus, VueQrcode},
-  props: ['array', 'active', 'showPointer','witchQr', 'hunterList', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
+  props: ['array', 'active', 'showPointer', 'witchQr', 'hunterList', 'bigFonts', 'activeStep', 'blockHeal', 'gamblerChooseClosed', 'users', 'countNight', 'isHistoryLine'],
   computed: {
-    hiddenSteps(){
+    hiddenSteps() {
       const activeElRef = this.$refs['list-el-' + this.activeStep];
 
       const find = Object.keys(this.$refs).findIndex(refKey => this.$refs[refKey] === activeElRef)
 
       console.log(this.mounted)
 
-      if(find === -1){
+      if (find === -1) {
         this.$nextTick()
         return []
       }
@@ -410,7 +422,7 @@ export default {
     this.mounted += 1
   },
   methods: {
-    goTo(type){
+    goTo(type) {
       const refKeys = Object.keys(this.$refs);
       const patterns = {
         'voted': /^list-el-voted-user-/,
@@ -422,7 +434,7 @@ export default {
       if (!pattern) return;
 
       const foundKey = refKeys.findLast(refKey => pattern.test(refKey));
-      if(foundKey){
+      if (foundKey) {
         this.$emit('update:changeHistoryItem', foundKey.replace('list-el-', ''), true)
       }
     },
@@ -613,6 +625,15 @@ export default {
       //   return null;
       // }
       this.$emit('update:clickOnItem', itemId);
+    },
+
+    getImageByName(ruName) {
+      const find = cards.find(card => card.name === ruName)
+      return find?.ava || ''
+    },
+
+    getTypeByName(role){
+      return role === 'witch' ? avaWitch : avaVill
     }
   }
 }
