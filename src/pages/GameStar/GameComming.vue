@@ -12,7 +12,7 @@
     <div class="pl-4 pt-4">
       <HistoryLine
           :array="historyLine"
-          :witchQr="false"
+          :witchQr="true"
           :bigFonts="true"
           :active="pickedUsers"
           @update:clickOnItem="makeRole"
