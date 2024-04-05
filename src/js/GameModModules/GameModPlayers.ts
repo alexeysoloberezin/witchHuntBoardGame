@@ -105,6 +105,7 @@ export class GameModPlayers {
     }
 
     const id = ids[0];
+    localStorage.setItem('lastPriestCheck', id)
     const find = playersRoles.find((el) => el.number === id);
     let checkUser = [find];
 

@@ -142,6 +142,7 @@ import KillButton from "@/components/Buttons/KillButton.vue";
 import ChainButton from "@/components/Buttons/ChainButton.vue";
 import DetailModeToggleButton from "@/components/Buttons/DetailModeToggleButton.vue";
 import Congradilations from "@/components/Congradilations/Congradilations.vue";
+import {useStorage} from "@vueuse/core/index";
 
 export default {
   name: "Game",
@@ -156,6 +157,7 @@ export default {
     return {
       finishGameResult: null,
       finishGameBlock: false,
+      shabash: useStorage('shabash', false),
 
       activeStep: firstStep,
       countNight: 0,

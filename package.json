@@ -13,7 +13,7 @@
     "list_fix": "eslint --fix src"
   },
   "dependencies": {
-    "@vueuse/core": "^10.7.0",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",

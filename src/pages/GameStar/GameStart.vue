@@ -50,6 +50,14 @@
       </div>
       <hr class="my-2 opacity-25"/>
 
+      <div class="flex items-center gap-4">
+        <div>
+          Шабаш ведьм:
+        </div>
+        <InputSwitch v-model="shabash" />
+      </div>
+      <hr class="my-2 opacity-25"/>
+
       <div class="flex  items-center gap-4">
         <Button :disabled="roles.length !== players" @click="start" size="small">
           Начать игру
@@ -74,6 +82,7 @@ import cards from "@/store/cards.ts";
 import resetGame from "@/js/utils.ts";
 import Button from 'primevue/button';
 import GameVariants from "@/js/GameModModules/GameVariants.ts";
+import {useStorage} from "@vueuse/core/index";
 const defRoles = [
   "Священник",
   "Судья",
@@ -96,6 +105,7 @@ export default {
       roles: defRoles,
       rolesItems: cards,
       savedGame: null,
+      shabash: useStorage('shabash', false)
     }
   },
   computed:{

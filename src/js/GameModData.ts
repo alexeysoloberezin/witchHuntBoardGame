@@ -3,6 +3,7 @@ import GameMod from "@/js/GameMod";
 import {logType} from "@/js/types";
 import {getWatchManList} from "@/js/modules/watchManList";
 import {DayType, HistoryItem, HistoryLineData, HistoryLineItem, PlayerRole} from "@/globalTypes";
+import {useStorage} from "@vueuse/core/index";
 
 export const dayPersonWhoHaveSkills: string[] = [
   names.Assassin,
@@ -219,6 +220,24 @@ export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) =>
     ]
   }
 
+  const shabash = useStorage('shabash', false)
+  console.log('shabash', shabash)
+  let shabashArr = []
+
+  if(night === 0 && shabash.value){
+    const lastCheck = localStorage.getItem('lastPriestCheck')
+    shabashArr = [{
+      id: start + 1444,
+      title: 'Шабаш ведьм',
+      name: 'Шабаш ведьм',
+      ifPlayerInGame: false,
+      type: DayType.NIGHT,
+      text: `
+          Проверка ведьм - ${lastCheck}
+        `
+    }]
+  }
+
   return [
     ...res,
     ...hunterArr,
@@ -287,6 +306,7 @@ export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) =>
             Просыпаются Бомбардировщик и подает сигнал если хочет взорвать бомбу.
           `
     },
+    ...shabashArr
   ]
 }
 
