@@ -23,7 +23,8 @@ export const names = {
     "Fanatic": "Фанатик",
     "Acolyte": "Послушник",
     "Emissary": "Эмиссар",
-    "Werewolf": "Оборотень"
+    "Werewolf": "Оборотень",
+    "Necromancer": "Некромант",
 }
 
 import img1Big from '../assets/cards/v1.png';
@@ -74,6 +75,9 @@ import img22Big from '../assets/cards/v24.png';
 import img22 from '../assets/ava/Property 1=Variant22.png';
 import img23Big from '../assets/cards/werewolf.png';
 import img23 from '../assets/ava/werewolf_ava.png';
+
+import img24Big from '../assets/cards/v25.jpg';
+import img24 from '../assets/ava/nec.png';
 
 const cards: Card[] = [
   {
@@ -644,6 +648,18 @@ const cards: Card[] = [
   <p>Нет, он будет знать только мирный вы или ведьма. (В вашем случае обернулись вы или нет.)</p>
     `,
     name_en: "Werewolf"
+  },
+  {
+    image: img24Big,
+    ava: img24,
+    id: 24,
+    type: 'guard',
+    name: names["Necromancer"],
+    linkCards: [], info: `
+      <h3>Он может один раз за игру воскресить любого игрока, убитого прошлой ночью или днем
+и умереть сам</h3>
+    `,
+    name_en: "Necromancer"
   },
 ]
 

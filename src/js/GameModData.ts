@@ -165,6 +165,16 @@ export const generate = (initialPlayers: PlayerRole[], night: number, nightLog: 
 export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) => {
   let start = 'night-' + night + '-'
 
+  const necrList = dayLog.filter(el => el.type === logType.tryKill).map(e => e.player).join(' , ')
+  let necrListArr = [{
+    id: start + 0,
+    title: 'Просыпается Некромант',
+    name: names.Necromancer,
+    ifPlayerInGame: true,
+    type: DayType.NIGHT,
+    text: "тт"
+  }]
+
   const hunterList = dayLog.filter(el => el.type === logType.tryKill).map(e => e.player).join(' , ')
   let hunterArr = [{
     id: start + 1,
@@ -239,6 +249,7 @@ export const nigthStepNew = (night: number = 0, users, dayLog: HistoryItem[]) =>
   }
 
   return [
+    ...necrListArr,
     ...res,
     ...hunterArr,
     {

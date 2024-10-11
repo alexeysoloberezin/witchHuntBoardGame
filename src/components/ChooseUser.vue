@@ -9,7 +9,7 @@
                  :key="id + user.number"
                  :style="
                      {
-                       backgroundColor: isActive(user.number) ? '#6366F1' : '',
+                       backgroundColor: getColor(user.number, user),
                        opacity: isDisabled(user.number) ? 0.15 : 1,
                      }
                   "
@@ -35,7 +35,7 @@
 <script>
 export default {
   name: 'ChooseUser',
-  props: ['users', 'id', 'multi', 'title', 'imageMode', 'disabled'],
+  props: ['users', 'id','showRed','countNight', 'multi', 'title', 'imageMode', 'disabled'],
   data() {
     return {
       active: [],
@@ -45,6 +45,18 @@ export default {
   methods: {
     isDisabled(number){
       return  this.disabledArr.includes(number)
+    },
+    getColor(number, user){
+      if(this.isActive(number)){
+        return '#6366F1'
+      }
+      if(this.showRed){
+        if(user.killedBy === this.countNight - 1){
+          return '#931723'
+        }
+      }
+
+      return  ''
     },
     isActive(number) {
       return this.active.includes(number);

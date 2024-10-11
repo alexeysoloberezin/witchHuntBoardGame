@@ -62,6 +62,17 @@ class GameMod extends GameModPlayers {
     return witches as number;
   }
 
+  necrChoose(id, players) {
+    const newPlayers = players.map((player) => {
+      if(player.number === id) {
+        player.heart = 1
+        player.killed = false
+      }
+      return player
+    });
+    return newPlayers;
+  }
+
   makeRandomRoles(roles: any, witchCount: any): Record<number, { type: string, name: string }> {
     return GameModRandomStart.makeRandomRoles(roles, witchCount);
   }

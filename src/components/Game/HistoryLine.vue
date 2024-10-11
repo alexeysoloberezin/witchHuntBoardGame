@@ -238,6 +238,22 @@
                 />
               </div>
 
+              <div v-if="el.name === 'Некромант'" class="mt-3 mb-3">
+                <div v-if="users.filter(el => el.killed).length > 0">
+                  <div>Восресить:</div>
+                  <ChooseUser
+                      :users="users.filter(el => el.killed)"
+                      :multi="false"
+                      :showRed="true"
+                      :countNight="countNight"
+                      @update:clickReady="(ids) => necrChoose(ids?.[0] || null)"
+                      :id="'angel-choose'"
+                  />
+                </div>
+
+                <div v-else>Нет мертвых игроков</div>
+              </div>
+
               <div v-if="el.name === 'Ангелы'" class="mt-3 mb-3">
                 <ChooseUser
                     :users="users.filter(el => !el.killed)"
@@ -542,6 +558,9 @@ export default {
     },
     demonChoose(ids) {
       this.$emit('update:demonChoose', ids)
+    },
+    necrChoose(id) {
+      this.$emit('update:necrChoose', id)
     },
     angelChoose(ids) {
       let errors = []

@@ -45,6 +45,7 @@
               @update:clickNext="setNextActive"
               @update:startTimer="startTimer"
               @update:showPriestCheck="(ids) => showPriestCheck(ids)"
+              @update:necrChoose="(id) => necrChoose(id)"
               @update:demonChoose="(ids) => demonChoose(ids)"
               @update:witchFakeKill="(id) => witchFakeKill(id)"
               @update:angelChoose="(ids) => angelChoose(ids)"
@@ -276,6 +277,22 @@ export default {
     },
     angelChoose(ids) {
       GameMod.angelChoose(ids, this.playersRoles, this.blockHeal)
+    },
+    necrChoose(id){
+      if(!id){
+        toast.error(`Не выбрат игрок`)
+        return
+      }
+
+      const index = this.playersRoles.findIndex(el => el.name === 'Некромант');
+      const necr = this.playersRoles.find(el => el.name === 'Некромант');
+      const newPlayers = GameMod.necrChoose(id, this.playersRoles)
+      this.playersRoles = newPlayers
+
+      if(!necr.killed){
+        this.action(index,'kill')
+      }
+      toast.success(`Игорок ${id} воскрес`)
     },
     demonChoose(ids) {
       this.playersRoles.forEach(el => {
@@ -550,6 +567,8 @@ export default {
 
         const kill = (inNextLog) => {
           PLAYER.killed = !PLAYER.killed
+          PLAYER.killedBy = this.countNight
+
           toast.success('Игрок: ' + PLAYER.number + ' убит')
 
           this.setKillLog(indexPlayer, inNextLog)
@@ -616,6 +635,7 @@ export default {
             detailMode: this.detailMode,
             countNight: this.countNight,
             blockHeal: this.blockHeal,
+            killedBy: this.killedBy,
             log: this.log,
             emissaryTryKilled: this.emissaryTryKilled,
             activeStep: this.activeStep,
@@ -661,6 +681,7 @@ export default {
             type: card[0].type,
             heart: card[0].id === 8 ? 2 : 1,
             foll: 0,
+            killedBy: null,
             isGood: el.type === 'mir',
             gamblerChoose: '',
             wereWolfChoose: '',
