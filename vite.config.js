@@ -11,6 +11,19 @@ export default defineConfig({
   // server: {
   //   port: 3000
   // },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3333",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+      "/socket.io": {
+        target: "ws://localhost:3333",
+        ws: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'), // Укажите путь к вашей папке src

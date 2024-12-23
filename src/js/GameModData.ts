@@ -29,7 +29,7 @@ export const arrayStartGameTakeCards = (playersLength: number, players: Record<a
 
     arr.push({
       id: i,
-      title: `Посыпается Игрок ${i}`,
+      title: `Просыпается Игрок ${i}`,
       text: `${find?.name || ''} -- ${find?.type || ''}`,
       isGood: find?.type,
       role: find?.name,
