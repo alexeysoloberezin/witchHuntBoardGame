@@ -200,8 +200,89 @@ export default {
     }
   },
   methods: {
+    getGameStats() {
+      let saveGame = null
+      let saveGame_all = null
+      let players = null
+      const saveGameString = localStorage.getItem('saveGame')
+      if (saveGameString) {
+        saveGame = JSON.parse(saveGameString)
+      }
+      const saveGame_allString = localStorage.getItem('saveGame_all')
+      if (saveGame_allString) {
+        saveGame_all = JSON.parse(saveGame_allString)
+      }
+      const playersString = localStorage.getItem('players')
+      if (playersString) {
+        players = JSON.parse(playersString)
+      }
+
+      const finalResult = saveGame_all.finishGameResult;
+
+      const stats = [];
+
+      for (const playerNumber in players) {
+        const playerInfo = players[playerNumber];
+
+        const sgData = saveGame.find((sg) => sg.number === playerNumber);
+
+        if (!sgData) {
+          continue;
+        }
+
+        let killsCount = 0;
+        saveGame.forEach((sg) => {
+          if (String(sg.killedBy) === playerNumber) {
+            killsCount++;
+          }
+        });
+
+        const isWin = playerInfo.role.type === finalResult;
+
+        // Build the result object
+        const result = {
+          id: playerInfo.id,
+          name: playerInfo.name,
+          telegram: playerInfo.telegram,
+          role: playerInfo.role.name,
+          side: playerInfo.role.type,
+          kills: killsCount,
+          isDead: sgData.killed,
+          isWin: isWin,
+          isWinAndNotDead: isWin && !sgData.killed,
+          foll: sgData.foll,
+        };
+
+        stats.push(result);
+      }
+
+      return stats;
+    },
+    async fetchGlobalPlayers() {
+      try {
+        const response = await fetch(`/api/sheets/stats`, {
+          method: 'POST',
+          body: JSON.stringify({
+            stats: this.getGameStats()
+          })
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        console.log(data)
+      } catch (error) {
+        console.error("Failed to fetch global players:", error);
+      }
+    },
     checkEndGame(){
-      this.finishGameResult = GameMod.checkEndGame(this.playersRoles)
+      const result = GameMod.checkEndGame(this.playersRoles)
+      this.finishGameResult = result
+      console.log('result', result)
+      if (result) {
+        console.log('gameStats', this.getGameStats())
+        this.fetchGlobalPlayers()
+      }
     },
     votedResultHandler(res) {
       this.votedUsers(res)
@@ -622,9 +703,16 @@ export default {
       this.saveAll()
     },
     saveAll() {
-      if(!this.finishGameBlock){
-        this.checkEndGame()
+      if (!this.finishGameBlock) {
+        this.checkEndGame();
       }
+
+      console.log({
+        nights: this.countNight,
+        nightLog: this.nightHistory,
+        dayLog: this.dayLog,
+        historyLine: this.historyLine,
+      });
 
       saveGameData({
             finishGameBlock: this.finishGameBlock,

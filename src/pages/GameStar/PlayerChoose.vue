@@ -91,7 +91,6 @@ const roleFor = ref(null);
 const historyLine = ref([]);
 const roles = ref([]);
 const pickedUsers = ref([]);
-
 const globalPlayers = ref([]);
 
 async function fetchGlobalPlayers() {

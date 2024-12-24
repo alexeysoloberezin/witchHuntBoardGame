@@ -196,8 +196,20 @@ export default {
       this.save()
     },
 
+    stats() {
+      const players = JSON.parse(localStorage.getItem("players"));
+      const playersRoles = JSON.parse(localStorage.getItem("playersRoles"));
+
+      Object.keys(players).forEach((player) => {
+        const playerRole = playersRoles[player];
+        players[player].role = playerRole;
+      });
+
+      localStorage.setItem("players", JSON.stringify(players));
+    },
     start() {
       this.save()
+      this.stats()
       localStorage.removeItem('gameRoles')
       this.$router.push('/Game')
     },
