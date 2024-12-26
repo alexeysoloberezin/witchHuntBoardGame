@@ -200,6 +200,10 @@ export default {
     }
   },
   methods: {
+    isGameStats(){
+      const playersString = localStorage.getItem('players')
+      return Boolean(playersString)
+    },
     getGameStats() {
       let saveGame = null
       let saveGame_all = null
@@ -310,9 +314,7 @@ export default {
     checkEndGame(){
       const result = GameMod.checkEndGame(this.playersRoles)
       this.finishGameResult = result
-      console.log('result', result)
-      if (result) {
-        console.log('gameStats', this.getGameStats())
+      if (result && this.isGameStats()) {
         this.fetchGlobalPlayers()
       }
     },
@@ -738,13 +740,6 @@ export default {
       if (!this.finishGameBlock) {
         this.checkEndGame();
       }
-
-      console.log({
-        nights: this.countNight,
-        nightLog: this.nightHistory,
-        dayLog: this.dayLog,
-        historyLine: this.historyLine,
-      });
 
       saveGameData({
             finishGameBlock: this.finishGameBlock,

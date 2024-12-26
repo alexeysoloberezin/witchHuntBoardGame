@@ -200,6 +200,10 @@ export default {
       const players = JSON.parse(localStorage.getItem("players"));
       const playersRoles = JSON.parse(localStorage.getItem("playersRoles"));
 
+      if (!players || !playersRoles) {
+        return null;
+      }
+
       Object.keys(players).forEach((player) => {
         const playerRole = playersRoles[player];
         players[player].role = playerRole;
