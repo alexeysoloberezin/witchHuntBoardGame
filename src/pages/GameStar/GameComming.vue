@@ -90,6 +90,7 @@ import mirImg from '@/assets/mir.png'
 import witchImg from '@/assets/witch.png'
 import GameMod from "@/js/GameMod";
 import {toast} from 'vue3-toastify'
+import {v4 as uuidv4} from 'uuid'
 
 export default {
   name: "GameComming",
