@@ -206,6 +206,9 @@ export default {
       });
 
       localStorage.setItem("players", JSON.stringify(players));
+
+      const newGameId = uuidv4();
+      localStorage.setItem("gameId", newGameId);
     },
     start() {
       this.save()
