@@ -200,8 +200,121 @@ export default {
     }
   },
   methods: {
+    isGameStats(){
+      const playersString = localStorage.getItem('players')
+      return Boolean(playersString)
+    },
+    getGameStats() {
+      let saveGame = null
+      let saveGame_all = null
+      let players = null;
+      let playersRoles = null;
+      let shabash = null;
+      const saveGameString = localStorage.getItem('saveGame')
+      if (saveGameString) {
+        saveGame = JSON.parse(saveGameString)
+      }
+      const saveGame_allString = localStorage.getItem('saveGame_all')
+      if (saveGame_allString) {
+        saveGame_all = JSON.parse(saveGame_allString)
+      }
+      const playersString = localStorage.getItem('players')
+      if (playersString) {
+        players = JSON.parse(playersString);
+      }
+
+      const playersRolesString = localStorage.getItem("playersRoles");
+      if (playersRolesString) {
+        playersRoles = JSON.parse(playersRolesString);
+      }
+
+      const shabashString = localStorage.getItem("shabash");
+      if (shabashString) {
+        shabash = JSON.parse(shabashString);
+      }
+
+      const gameId = localStorage.getItem("gameId");
+
+      const finalResult = saveGame_all.finishGameResult;
+
+      const stats = [];
+
+      for (const playerNumber in players) {
+        const playerInfo = players[playerNumber];
+
+        const sgData = saveGame.find((sg) => sg.number === playerNumber);
+
+        if (!sgData) {
+          continue;
+        }
+
+        let killsCount = 0;
+        saveGame.forEach((sg) => {
+          if (String(sg.killedBy) === playerNumber) {
+            killsCount++;
+          }
+        });
+
+        const isWin = playerInfo.role.type === finalResult;
+
+        // Build the result object
+        const result = {
+          id: playerInfo.id,
+          name: playerInfo.name,
+          telegram: playerInfo.telegram,
+          role: playerInfo.role.name,
+          side: playerInfo.role.type,
+          kills: killsCount,
+          isDead: sgData.killed,
+          isWin: isWin,
+          isWinAndNotDead: isWin && !sgData.killed,
+          foll: sgData.foll,
+        };
+
+        stats.push(result);
+      }
+
+      const gameStats = {
+        id: gameId,
+        totalPlayers: Object.keys(players).length,
+        roles: Object.values(playersRoles).map((el) => el.name),
+        witch: Object.values(playersRoles).filter((el) => el.type === "witch")
+          .length,
+        mir: Object.values(playersRoles).filter((el) => el.type === "mir")
+          .length,
+        shabash: shabash,
+        totalKills: saveGame.filter((el) => el.killed).length,
+        whoWin: saveGame_all.finishGameResult,
+      };
+
+      return { playersStats: stats, gameStats: gameStats };
+    },
+    async fetchGlobalPlayers() {
+      try {
+        const { playersStats, gameStats } = this.getGameStats();
+        const response = await fetch(`/api/sheets/stats`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            playersStats,
+            gameStats,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+      } catch (error) {
+        console.error("Failed to fetch global players:", error);
+      }
+    },
     checkEndGame(){
-      this.finishGameResult = GameMod.checkEndGame(this.playersRoles)
+      const result = GameMod.checkEndGame(this.playersRoles)
+      this.finishGameResult = result
+      if (result && this.isGameStats()) {
+        this.fetchGlobalPlayers()
+      }
     },
     votedResultHandler(res) {
       this.votedUsers(res)
@@ -622,8 +735,8 @@ export default {
       this.saveAll()
     },
     saveAll() {
-      if(!this.finishGameBlock){
-        this.checkEndGame()
+      if (!this.finishGameBlock) {
+        this.checkEndGame();
       }
 
       saveGameData({

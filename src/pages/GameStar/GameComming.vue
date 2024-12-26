@@ -90,6 +90,7 @@ import mirImg from '@/assets/mir.png'
 import witchImg from '@/assets/witch.png'
 import GameMod from "@/js/GameMod";
 import {toast} from 'vue3-toastify'
+import {v4 as uuidv4} from 'uuid'
 
 export default {
   name: "GameComming",
@@ -196,8 +197,27 @@ export default {
       this.save()
     },
 
+    stats() {
+      const players = JSON.parse(localStorage.getItem("players"));
+      const playersRoles = JSON.parse(localStorage.getItem("playersRoles"));
+
+      if (!players || !playersRoles) {
+        return null;
+      }
+
+      Object.keys(players).forEach((player) => {
+        const playerRole = playersRoles[player];
+        players[player].role = playerRole;
+      });
+
+      localStorage.setItem("players", JSON.stringify(players));
+
+      const newGameId = uuidv4();
+      localStorage.setItem("gameId", newGameId);
+    },
     start() {
       this.save()
+      this.stats()
       localStorage.removeItem('gameRoles')
       this.$router.push('/Game')
     },

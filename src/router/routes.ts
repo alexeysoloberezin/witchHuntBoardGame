@@ -7,6 +7,7 @@ const Dashboard = () => import('@/layouts/Dashboard.vue');
 const DashboardHome = () => import('@/pages/Home.vue');
 const GameStart  = () => import('@/pages/GameStar/GameStart.vue')
 const GameComming  = () => import('@/pages/GameStar/GameComming.vue')
+const PlayerChoose  = () => import('@/pages/GameStar/PlayerChoose.vue')
 const Game  = () => import('@/pages/GameStar/Game.vue')
 const RoomLayout  = () => import('@/pages/GameStar/rooms/RoomLayout.vue')
 const GameCreateRoom  = () => import('@/pages/GameStar/rooms/GameCreateRoom.vue')
@@ -45,5 +46,6 @@ export default [
   {path: '/GameStart', name: 'GameStart', meta: {requiresAuth: true}, component: GameStart},
   {path: '/GameComming', name: 'GameComming', meta: {requiresAuth: true}, component: GameComming},
   {path: '/Game', name: 'Game', meta: {requiresAuth: true}, component: Game},
+  {path: '/PlayerChoose', name: 'PlayerChoose', meta: {requiresAuth: true}, component: PlayerChoose},
   // {path: "*", component: NotFound},
 ] as RouteRecordRaw[]
