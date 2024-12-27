@@ -56,9 +56,7 @@
       </vs-dialog>
     </div>
     <div class="flex items-center gap-4">
-      <Button :disabled="!allRolesAssigned" @click="startChoosingRoles">
-        Игроки назначены, далее
-      </Button>
+      <Button @click="startChoosingRoles"> Игроки назначены, далее </Button>
     </div>
     <div
       v-if="Object.keys(players).length !== roles.length"
@@ -115,10 +113,6 @@ const restGlobalPlayers = computed(() => {
   );
 });
 
-const allRolesAssigned = computed(() => {
-  return Object.keys(players.value).length === roles.value.length;
-});
-
 const save = () => {
   historyLine.value = arrayStartGameTakeCards(
     roles.value.length,
@@ -164,13 +158,9 @@ const clearPlayer = (id) => {
 };
 
 const startChoosingRoles = () => {
-  if (allRolesAssigned.value) {
-    save();
-    localStorage.setItem("players", JSON.stringify(players.value));
-    router.push("/GameComming");
-  } else {
-    toast.error("Не все роли назначены!");
-  }
+  save();
+  localStorage.setItem("players", JSON.stringify(players.value));
+  router.push("/GameComming");
 };
 
 onMounted(() => {
