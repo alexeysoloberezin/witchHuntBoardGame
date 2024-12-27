@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import path from 'path';
-import VueJSX from '@vitejs/plugin-vue-jsx';
-import Checker from 'vite-plugin-checker';
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import path from "path";
+import VueJSX from "@vitejs/plugin-vue-jsx";
+import Checker from "vite-plugin-checker";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,26 +11,23 @@ export default defineConfig({
   // server: {
   //   port: 3000
   // },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"), // Укажите путь к вашей папке src
+    },
+  },
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3333",
+        target: "https://witchhuntserver.onrender.com", // Replace with your local backend server
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-      "/socket.io": {
-        target: "ws://localhost:3333",
-        ws: true,
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'), // Укажите путь к вашей папке src
     },
   },
   test: {
     global: true,
-    environment: "happy-dom"
-  }
-})
+    environment: "happy-dom",
+  },
+});
