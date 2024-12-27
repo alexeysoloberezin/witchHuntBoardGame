@@ -43,12 +43,30 @@
 <!--          <svg  class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>math-log</title><path d="M18 7C16.9 7 16 7.9 16 9V15C16 16.1 16.9 17 18 17H20C21.1 17 22 16.1 22 15V11H20V15H18V9H22V7H18M2 7V17H8V15H4V7H2M11 7C9.9 7 9 7.9 9 9V15C9 16.1 9.9 17 11 17H13C14.1 17 15 16.1 15 15V9C15 7.9 14.1 7 13 7H11M11 9H13V15H11V9Z" /></svg>-->
 <!--          <span class="sr-only">Log</span>-->
 <!--        </button>-->
+        <button @click="finishGame" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
+                style="width: 50px;height: 50px;"
+                class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+          <svg fill="#fff" class="w-6 opacity-50 block"  version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 611.999 611.999" xml:space="preserve">
+          <g>
+            <path d="M216.02,611.195c5.978,3.178,12.284-3.704,8.624-9.4c-19.866-30.919-38.678-82.947-8.706-149.952
+              c49.982-111.737,80.396-169.609,80.396-169.609s16.177,67.536,60.029,127.585c42.205,57.793,65.306,130.478,28.064,191.029
+              c-3.495,5.683,2.668,12.388,8.607,9.349c46.1-23.582,97.806-70.885,103.64-165.017c2.151-28.764-1.075-69.034-17.206-119.851
+              c-20.741-64.406-46.239-94.459-60.992-107.365c-4.413-3.861-11.276-0.439-10.914,5.413c4.299,69.494-21.845,87.129-36.726,47.386
+              c-5.943-15.874-9.409-43.33-9.409-76.766c0-55.665-16.15-112.967-51.755-159.531c-9.259-12.109-20.093-23.424-32.523-33.073
+              c-4.5-3.494-11.023,0.018-10.611,5.7c2.734,37.736,0.257,145.885-94.624,275.089c-86.029,119.851-52.693,211.896-40.864,236.826
+              C153.666,566.767,185.212,594.814,216.02,611.195z"/>
+          </g>
+          </svg>
+          <span class="sr-only">finish</span>
+        </button>
         <button @click="leaveGame" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
                 style="width: 50px;height: 50px;"
                 class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
           <svg class="w-6 opacity-50 block" fill="#fff"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>exit-run</title><path d="M13.34,8.17C12.41,8.17 11.65,7.4 11.65,6.47A1.69,1.69 0 0,1 13.34,4.78C14.28,4.78 15.04,5.54 15.04,6.47C15.04,7.4 14.28,8.17 13.34,8.17M10.3,19.93L4.37,18.75L4.71,17.05L8.86,17.9L10.21,11.04L8.69,11.64V14.5H7V10.54L11.4,8.67L12.07,8.59C12.67,8.59 13.17,8.93 13.5,9.44L14.36,10.79C15.04,12 16.39,12.82 18,12.82V14.5C16.14,14.5 14.44,13.67 13.34,12.4L12.84,14.94L14.61,16.63V23H12.92V17.9L11.14,16.21L10.3,19.93M21,23H19V3H6V16.11L4,15.69V1H21V23M6,23H4V19.78L6,20.2V23Z" /></svg>
           <span class="sr-only">leave</span>
         </button>
+
         <button @click="startTimer" type="button" data-tooltip-target="tooltip-share" data-tooltip-placement="left"
                 style="width: 50px;height: 50px;"
                 class="flex justify-center items-center w-10 h-10 text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
@@ -140,6 +158,13 @@
             </div>
 
           </div>
+            <vs-dialog v-model:visible="finishGameDialog" modal header="Завершить игру" :style="{ width: '350px' }">
+            <div class="flex flex-col gap-3">
+              <Button @click="handleGameEnd('mir')" severity="success" label="Победа мирных" />
+              <Button @click="handleGameEnd('witch')" severity="danger" label="Победа ведьм" />
+              <Button @click="closeFinishDialog" outlined label="Отмена" />
+            </div>
+          </vs-dialog>
         </div>
         <div id="tooltip-print" role="tooltip"
              class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -192,7 +217,8 @@ export default {
 
       logListShow: false,
       logList: [],
-      totalSteps: 60
+      totalSteps: 60,
+      finishGameDialog: false,
     }
   },
   computed: {
@@ -301,6 +327,16 @@ export default {
         }
       }, 1000);
     },
+    finishGame(){
+      this.finishGameDialog = true;
+    },
+    closeFinishDialog() {
+      this.finishGameDialog = false;
+    },
+    handleGameEnd(winner) {
+      this.$emit('update:finishGame', winner)
+      this.finishGameDialog = false;
+    }
   }
 }
 </script>

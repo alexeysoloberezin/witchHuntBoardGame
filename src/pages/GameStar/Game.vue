@@ -11,6 +11,7 @@
           @update:votedResult="votedResultHandler"
           :voted-list="playersRoles"
           @update:foll="makeFoll"
+          @update:finishGame="finishGame"
       />
       <div v-if="playersRoles" :key="JSON.stringify(playersRoles)">
         <template v-if="detailMode">
@@ -816,6 +817,16 @@ export default {
         this.playersRoles = {}
       }
     },
+    finishGame(value){
+      const saveGame_all = localStorage.getItem('saveGame_all')
+      if (saveGame_all) {
+        const parsedData = JSON.parse(saveGame_all)
+        parsedData.finishGameBlock = true;
+        parsedData.finishGameResult = value
+        localStorage.setItem('saveGame_all', JSON.stringify(parsedData))
+      }
+      this.checkEndGame()
+    }
   },
   mounted() {
     this.loadData()
